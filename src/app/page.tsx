@@ -9,7 +9,7 @@ export default function Home() {
           width={500}
           height={500}
           alt="ساعتين جد"
-          className="max-w-[85vw] sm:max-w-[400px] animate-bounce"
+          className="max-w-[85vw] sm:max-w-[400px] "
         />
         <h1 className="text-5xl  text-center">ساعتين جد</h1>
       </div>

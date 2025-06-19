@@ -1,8 +1,7 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
-// const minutes = 25;
 function usePomodoro({
   specificMinutes = 25,
   isBreak = false,
@@ -11,27 +10,27 @@ function usePomodoro({
   isBreak?: boolean;
 }) {
   const [isActive, setIsActive] = useState<boolean>(false);
-  const [secondPassed, setSecondPassed] = useState<number>(0);
-  const [minutes, setMinutes] = useState<number>(0);
-  const [seconds, setSeconds] = useState<number>(0);
-  // const [intervalId, setIntervalId] = useState<NodeJS.Timeout | null>(null);
+  const [timeLeft, setTimeLeft] = useState<number>(specificMinutes * 60);
   const [finished, setFinished] = useState<boolean>(false);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
-  const alarm = useMemo(() => {
-    return isBreak
-      ? new Audio("/sound/elsho8l-sho8l.mp3")
-      : new Audio("/sound/alarm-digital.mp3");
-  }, []);
+  const alarmRef = useRef<HTMLAudioElement | null>(null);
+  useEffect(() => {
+    setTimeLeft(specificMinutes * 60);
+    setFinished(false);
+    if (isActive) {
+      setIsActive(false);
+    }
+  }, [specificMinutes]);
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      alarmRef.current = isBreak
+        ? new Audio("/sound/elsho8l-sho8l.mp3")
+        : new Audio("/sound/4tbna.mp3");
+    }
+  }, [isBreak]);
 
   useEffect(() => {
-    if (!isActive) {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-        intervalRef.current = null;
-      }
-      return;
-    }
-    if (finished) {
+    if (!isActive || finished) {
       if (intervalRef.current) {
         clearInterval(intervalRef.current);
         intervalRef.current = null;
@@ -40,8 +39,15 @@ function usePomodoro({
     }
 
     intervalRef.current = setInterval(() => {
-      setSecondPassed((prev) => prev + 1);
-      setSeconds((prev) => prev + 1);
+      setTimeLeft((prev) => {
+        if (prev <= 1) {
+          setFinished(true);
+          setIsActive(false);
+          alarmRef.current?.play();
+          return 0;
+        }
+        return prev - 1;
+      });
     }, 1000);
 
     return () => {
@@ -50,71 +56,41 @@ function usePomodoro({
       }
     };
   }, [isActive, finished]);
-  useEffect(() => {}, []);
-  // useEffect(() => {
-  //   if (!isActive) {
-  //     if (intervalId) {
-  //       clearInterval(intervalId);
-  //       setIntervalId(null);
-  //     }
-  //     return;
-  //   }
 
-  //   const id = setInterval(() => {
-  //     setSecondPassed((prev) => prev + 1);
-  //     setSeconds((prev) => prev + 1);
-  //   }, 1000);
-  //   setIntervalId(id);
+  const minutes = useMemo(() => Math.floor(timeLeft / 60), [timeLeft]);
+  const seconds = useMemo(() => timeLeft % 60, [timeLeft]);
 
-  //   return () => {
-  //     if (intervalId) {
-  //       clearInterval(intervalId);
-  //     }
-  //   };
-  // }, [isActive]);
-  useEffect(() => {
-    const MinutesPassed: number = Math.floor(secondPassed / 60);
-    setMinutes(MinutesPassed);
-    if (MinutesPassed === specificMinutes) {
-      setFinished(true);
-      alarm.play();
-      setIsActive(false);
-      setSecondPassed(0);
-    }
-  }, [secondPassed, specificMinutes]);
-  useEffect(() => {
-    setSeconds(0);
-  }, [minutes]);
+  const formattedMinutes = useMemo(
+    () => (minutes < 10 ? `0${minutes}` : `${minutes}`),
+    [minutes]
+  );
+  const formattedSeconds = useMemo(
+    () => (seconds < 10 ? `0${seconds}` : `${seconds}`),
+    [seconds]
+  );
 
-  const getSecondPassed = useMemo(() => {
-    if (seconds < 10) {
-      return `0${seconds}`;
-    } else {
-      return seconds;
-    }
-  }, [seconds]);
-  const getMinutes = useMemo(() => {
-    if (minutes < 10) {
-      return `0${minutes}`;
-    } else {
-      return minutes;
-    }
-  }, [minutes]);
   const togglePomodoro = () => {
     setIsActive((prev) => !prev);
   };
-  const startPomodoro = (): void => {
+
+  const startPomodoro = useCallback((): void => {
+    setTimeLeft(specificMinutes * 60);
     setFinished(false);
     setIsActive(true);
-  };
+  }, [specificMinutes]);
+  const stopPomodoro = useCallback((): void => {
+    setIsActive(false);
+  }, []);
   return {
     isActive,
     togglePomodoro,
-    secondPassed,
-    minutes: getMinutes,
-    seconds: getSecondPassed,
+    timeLeft,
+    minutes: formattedMinutes,
+    seconds: formattedSeconds,
     finished,
     startPomodoro,
+    stopPomodoro,
   };
 }
+
 export default usePomodoro;

@@ -3,7 +3,13 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 
 // const minutes = 25;
-function usePomodoro({ sepcificMinutes }: { sepcificMinutes: number }) {
+function usePomodoro({
+  specificMinutes = 25,
+  isBreak = false,
+}: {
+  specificMinutes?: number;
+  isBreak?: boolean;
+}) {
   const [isActive, setIsActive] = useState<boolean>(false);
   const [secondPassed, setSecondPassed] = useState<number>(0);
   const [minutes, setMinutes] = useState<number>(0);
@@ -11,6 +17,11 @@ function usePomodoro({ sepcificMinutes }: { sepcificMinutes: number }) {
   // const [intervalId, setIntervalId] = useState<NodeJS.Timeout | null>(null);
   const [finished, setFinished] = useState<boolean>(false);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const alarm = useMemo(() => {
+    return isBreak
+      ? new Audio("/sound/elsho8l-sho8l.mp3")
+      : new Audio("/sound/alarm-digital.mp3");
+  }, []);
 
   useEffect(() => {
     if (!isActive) {
@@ -39,6 +50,7 @@ function usePomodoro({ sepcificMinutes }: { sepcificMinutes: number }) {
       }
     };
   }, [isActive, finished]);
+  useEffect(() => {}, []);
   // useEffect(() => {
   //   if (!isActive) {
   //     if (intervalId) {
@@ -63,12 +75,13 @@ function usePomodoro({ sepcificMinutes }: { sepcificMinutes: number }) {
   useEffect(() => {
     const MinutesPassed: number = Math.floor(secondPassed / 60);
     setMinutes(MinutesPassed);
-    if (MinutesPassed === sepcificMinutes) {
+    if (MinutesPassed === specificMinutes) {
       setFinished(true);
+      alarm.play();
       setIsActive(false);
       setSecondPassed(0);
     }
-  }, [secondPassed, sepcificMinutes]);
+  }, [secondPassed, specificMinutes]);
   useEffect(() => {
     setSeconds(0);
   }, [minutes]);
@@ -88,11 +101,12 @@ function usePomodoro({ sepcificMinutes }: { sepcificMinutes: number }) {
     }
   }, [minutes]);
   const togglePomodoro = () => {
-    setFinished((prev) => !prev);
     setIsActive((prev) => !prev);
   };
-  console.log("isActive", isActive);
-
+  const startPomodoro = (): void => {
+    setFinished(false);
+    setIsActive(true);
+  };
   return {
     isActive,
     togglePomodoro,
@@ -100,6 +114,7 @@ function usePomodoro({ sepcificMinutes }: { sepcificMinutes: number }) {
     minutes: getMinutes,
     seconds: getSecondPassed,
     finished,
+    startPomodoro,
   };
 }
 export default usePomodoro;

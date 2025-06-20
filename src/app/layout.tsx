@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import ReduxProvider from "@/providers/ReduxProvider";
+import Settings from "@/components/Settings";
 
 export const metadata: Metadata = {
   title: "ساعتين جد",
@@ -15,7 +16,10 @@ export default function RootLayout({
   return (
     <html lang="ar">
       <ReduxProvider>
-        <body dir="rtl">{children}</body>
+        <body dir="rtl">
+          <Settings />
+          {children}
+        </body>
       </ReduxProvider>
     </html>
   );

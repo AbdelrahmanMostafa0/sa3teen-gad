@@ -3,6 +3,8 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState: PomodoroInitialState = {
   focusDurationTime: 25,
+  shortBreakDuration: 5,
+  longBreakDuration: 15,
   focusTimer: {
     minutes: 25,
     seconds: 0,
@@ -15,8 +17,6 @@ const initialState: PomodoroInitialState = {
     minutes: 15,
     seconds: 0,
   },
-  shortBreakDuration: 5,
-  longBreakDuration: 15,
   isLongBreak: false,
   isFocusActive: false,
   isBreakActive: false,
@@ -27,32 +27,25 @@ const pomodoroSlice = createSlice({
   name: "pomodoro",
   initialState,
   reducers: {
-    updateDurationTime: (state, action) => {
+    updateFocusDuration: (state, action) => {
       state.focusDurationTime = action.payload;
     },
-    updateShortBreakDurtion: (state, action) => {
-      state.focusDurationTime = action.payload;
+    updateShortBreakDuration: (state, action) => {
+      state.shortBreakDuration = action.payload;
     },
-    updateFocusTimer: (state, action) => {
-      state.focusTimer.minutes = action.payload.minutes;
-      state.focusTimer.seconds = action.payload.seconds;
+    updateLongBreakDuration: (state, action) => {
+      state.longBreakDuration = action.payload;
     },
-    updateShortBreakTimer: (state, action) => {
-      state.shortBreakTimer.minutes = action.payload.minutes;
-      state.shortBreakTimer.seconds = action.payload.seconds;
-    },
-    updateLongBreakTimer: (state, action) => {
-      state.longBreakTimer.minutes = action.payload.minutes;
-      state.longBreakTimer.seconds = action.payload.seconds;
+    updateDisplayedTimer: (state, action) => {
+      state.displayedTimer = action.payload;
     },
   },
 });
 
 export default pomodoroSlice.reducer;
 export const {
-  updateFocusTimer,
-  updateShortBreakTimer,
-  updateLongBreakTimer,
-  updateDurationTime,
-  updateShortBreakDurtion,
+  updateFocusDuration,
+  updateShortBreakDuration,
+  updateLongBreakDuration,
+  updateDisplayedTimer,
 } = pomodoroSlice.actions;

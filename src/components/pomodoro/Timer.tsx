@@ -1,3 +1,7 @@
+import { RootState } from "@/store/store";
+import { useEffect } from "react";
+import { useSelector } from "react-redux";
+
 const Timer = ({
   minutes,
   seconds,
@@ -9,6 +13,16 @@ const Timer = ({
   togglePomodoro?: () => void;
   isActive?: boolean;
 }) => {
+  const { displayedTimer } = useSelector((state: RootState) => state.Pomodoro);
+  useEffect(() => {
+    if (window !== undefined) {
+      if (isActive) {
+        document.title = `${minutes}:${seconds}`;
+      } else {
+        document.title = "ساعتين جد";
+      }
+    }
+  }, [displayedTimer, minutes, seconds, isActive]);
   return (
     <div className="w-full md:max-w-[400px] space-y-4">
       <div className="md:w-full mx-auto text-center border-4 p-10 md:py-20 rounded-xl ">

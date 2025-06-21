@@ -1,7 +1,10 @@
 "use client";
 
-import { updateDisplayedTimer } from "@/store/features/pomodoroSlice";
-import { PomodoroInitialState } from "@/types/pomodora";
+import {
+  updateAutoSwitch,
+  updateDisplayedTimer,
+} from "@/store/features/pomodoroSlice";
+import { RootState } from "@/store/store";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 interface TimerProps {
@@ -15,7 +18,7 @@ function usePomodoro({ specificMinutes = 25 }: TimerProps) {
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const alarmRef = useRef<HTMLAudioElement | null>(null);
   const { displayedTimer, shortBreakDuration, focusDurationTime } = useSelector(
-    (state: { Pomodoro: PomodoroInitialState }) => state.Pomodoro
+    (state: RootState) => state.Pomodoro
   );
   const dispatch = useDispatch();
   const isBreak = displayedTimer.toLocaleLowerCase().includes("break");
@@ -26,11 +29,16 @@ function usePomodoro({ specificMinutes = 25 }: TimerProps) {
         : new Audio("/sound/4tbna.mp3");
     }
   }, [isBreak]);
-
+  useEffect(() => {}, [isBreak]);
   useEffect(() => {
     if (!isActive || finished) {
       if (finished) {
         dispatch(updateDisplayedTimer(isBreak ? "focus" : "shortBreak"));
+      }
+      console.log("outside");
+      if (finished && !isBreak) {
+        dispatch(updateAutoSwitch(true));
+        console.log("auto switch");
       }
       if (intervalRef.current) {
         clearInterval(intervalRef.current);

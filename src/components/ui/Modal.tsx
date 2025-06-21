@@ -38,7 +38,7 @@ const Modal = ({ children, isOpen, setIsOpen, className = "" }: Props) => {
       ></div>
       <div
         className={cn(
-          "bg-white rounded-lg p-5 z-50 w-full md:w-fit max-w-[95vw] md:min-w-[700px] relative space-y-4",
+          "bg-white rounded-lg p-5 z-50 w-full  max-w-[95vw] md:max-w-[700px] relative space-y-4",
           className
         )}
       >

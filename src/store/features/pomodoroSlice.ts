@@ -5,22 +5,9 @@ const initialState: PomodoroInitialState = {
   focusDurationTime: 25,
   shortBreakDuration: 5,
   longBreakDuration: 15,
-  focusTimer: {
-    minutes: 25,
-    seconds: 0,
-  },
-  shortBreakTimer: {
-    minutes: 5,
-    seconds: 0,
-  },
-  longBreakTimer: {
-    minutes: 15,
-    seconds: 0,
-  },
-  isLongBreak: false,
-  isFocusActive: false,
-  isBreakActive: false,
   displayedTimer: "focus",
+  autoBreakStart: false,
+  autoSwitch: false,
 };
 
 const pomodoroSlice = createSlice({
@@ -39,6 +26,12 @@ const pomodoroSlice = createSlice({
     updateDisplayedTimer: (state, action) => {
       state.displayedTimer = action.payload;
     },
+    updateAutoBreakStart: (state, action) => {
+      state.autoBreakStart = action.payload;
+    },
+    updateAutoSwitch: (state, action) => {
+      state.autoSwitch = action.payload;
+    },
   },
 });
 
@@ -48,4 +41,6 @@ export const {
   updateShortBreakDuration,
   updateLongBreakDuration,
   updateDisplayedTimer,
+  updateAutoBreakStart,
+  updateAutoSwitch,
 } = pomodoroSlice.actions;

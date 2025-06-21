@@ -4,19 +4,28 @@ import { useDispatch, useSelector } from "react-redux";
 import Modal from "./ui/Modal";
 import { useEffect, useState } from "react";
 import {
+  updateAutoBreakStart,
   updateFocusDuration,
   updateLongBreakDuration,
+  // updatePomoSettings,
   updateShortBreakDuration,
 } from "@/store/features/pomodoroSlice";
 import { IoMdSettings } from "react-icons/io";
 import { AppDispatch, RootState } from "@/store/store";
+import { LiaToggleOffSolid, LiaToggleOnSolid } from "react-icons/lia";
 
 const Settings = () => {
-  const { focusDurationTime, shortBreakDuration, longBreakDuration } =
-    useSelector((state: RootState) => state.Pomodoro);
+  const {
+    focusDurationTime,
+    shortBreakDuration,
+    longBreakDuration,
+    autoBreakStart,
+  } = useSelector((state: RootState) => state.Pomodoro);
   const [isOpen, setIsOpen] = useState(false);
   const dispatch = useDispatch<AppDispatch>();
-
+  const toggleAutoBreak = () => {
+    dispatch(updateAutoBreakStart(!autoBreakStart));
+  };
   // Load settings from localStorage on first render
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -76,7 +85,11 @@ const Settings = () => {
         <IoMdSettings />
       </button>
 
-      <Modal className="space-y-8" isOpen={isOpen} setIsOpen={setIsOpen}>
+      <Modal
+        className="space-y-8 md:max-w-[500px]"
+        isOpen={isOpen}
+        setIsOpen={setIsOpen}
+      >
         <h5 className="text-2xl">الإعدادات</h5>
         <div className="space-y-2 w-full">
           <p className="font-light">تظبيط الوقت</p>
@@ -106,7 +119,7 @@ const Settings = () => {
             </div>
 
             {/* Long Break */}
-            <div className="w-full space-y-2">
+            {/* <div className="w-full space-y-2">
               <p>بريك كبير</p>
               <input
                 value={longBreakDuration === 0 ? "" : longBreakDuration}
@@ -116,8 +129,14 @@ const Settings = () => {
                 min={1}
                 className="p-3 rounded bg-gray-100 outline-0 w-full"
               />
-            </div>
+            </div> */}
           </div>
+        </div>
+        <div className="flex justify-between items-center ">
+          <p>بدأ البريك اوتوماتيكى</p>
+          <button className="text-4xl rotate-180" onClick={toggleAutoBreak}>
+            {autoBreakStart ? <LiaToggleOnSolid /> : <LiaToggleOffSolid />}
+          </button>
         </div>
       </Modal>
     </>

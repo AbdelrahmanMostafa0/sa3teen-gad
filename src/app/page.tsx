@@ -15,7 +15,7 @@ export default function Home() {
         <h1 className="text-5xl  text-center">ساعتين جد</h1>
       </div> */}
       <Pomodoro />
-      <hr className="max-w-[700px] w-full" />
+      <hr className="max-w-[95%] md:max-w-[700px] w-full  " />
       <UserTasks />
     </div>
   );

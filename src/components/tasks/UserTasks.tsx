@@ -5,7 +5,6 @@ import { setTasks } from "@/store/features/tasksSlice";
 import { AppDispatch, RootState } from "@/store/store";
 import detectStartingLang from "@/utils/detectLang";
 import { useEffect, useState } from "react";
-import { FiDelete } from "react-icons/fi";
 import { TbTrash } from "react-icons/tb";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -45,7 +44,7 @@ const UserTasks = () => {
     addTaks(inputValue);
   };
   return (
-    <div className="flex flex-col items-center justify-center  space-y-4 max-w-[700px] w-full">
+    <div className="flex flex-col items-center justify-center  space-y-4 max-w-[700px] w-full px-3">
       <h2 className="text-2xl font-bold text-start w-full">الكلام على إيه؟</h2>
       <form noValidate onSubmit={handleSubmt} className="w-full space-y-4">
         <input

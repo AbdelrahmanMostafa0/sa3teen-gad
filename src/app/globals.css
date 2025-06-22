@@ -1,5 +1,5 @@
 @import "tailwindcss";
-
+@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@100;200;300;400;500;600;700&display=swap");
 :root {
   --background: #ffffff;
   --foreground: #171717;
@@ -19,13 +19,14 @@
   }
 } */
 @font-face {
-  font-family: "KOSans";
-  src: url("/fonts/KOSans-SemiBold.otf") format("opentype");
+  font-family: "Cairo";
+  src: url("/fonts/Cairo.ttf") format("opentype");
   font-weight: 600;
   font-style: normal;
 }
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: "KOSans", Helvetica, sans-serif;
+  font-family: "IBM Plex Sans Arabic", sans-serif;
+  font-optical-sizing: auto;
 }

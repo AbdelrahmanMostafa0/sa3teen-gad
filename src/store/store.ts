@@ -1,8 +1,10 @@
 import { configureStore } from "@reduxjs/toolkit";
 import pomodoroReducer from "./features/pomodoroSlice";
+import tasksReducer from "./features/tasksSlice";
 const store = configureStore({
   reducer: {
     Pomodoro: pomodoroReducer,
+    Tasks: tasksReducer,
   },
 });
 

@@ -1,8 +1,9 @@
 import Pomodoro from "@/components/pomodoro/Pomodoro";
+import UserTasks from "@/components/tasks/UserTasks";
 
 export default function Home() {
   return (
-    <div className="flex flex-col items-center justify-center h-screen  bg-[#FEECD2]">
+    <div className="flex flex-col items-center justify-center min-h-screen  bg-[#FEECD2] space-y-8 font-bold">
       {/* <div className="space-y-6">
         <Image
           src={"/character.png"}
@@ -14,6 +15,8 @@ export default function Home() {
         <h1 className="text-5xl  text-center">ساعتين جد</h1>
       </div> */}
       <Pomodoro />
+      <hr className="max-w-[700px] w-full" />
+      <UserTasks />
     </div>
   );
 }

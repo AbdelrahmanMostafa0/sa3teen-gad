@@ -1,4 +1,4 @@
-interface TaskType {
+export interface TaskType {
   id?: string;
   title: string;
   description?: string;
@@ -9,5 +9,3 @@ interface TaskType {
   priority?: "low" | "medium" | "high"; // Optional priority level
   tags?: string[]; // Optional tags for categorization
 }
-
-export default TaskType;

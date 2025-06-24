@@ -1,12 +1,20 @@
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "./../store/store";
-import TaskType from "@/types/tasks";
+import { TaskType } from "@/types/tasks";
 import { setTasks } from "@/store/features/tasksSlice";
 import { nanoid } from "nanoid";
+import { useEffect } from "react";
 
 const useTasks = () => {
   const dispatch = useDispatch<AppDispatch>();
   const tasks = useSelector((state: RootState) => state.Tasks.tasks);
+  useEffect(() => {
+    const storedTasks = localStorage.getItem("tasks");
+    if (storedTasks) {
+      const parsedTasks = JSON.parse(storedTasks);
+      dispatch(setTasks(parsedTasks));
+    }
+  }, [dispatch]);
   const addTaks = (task: string) => {
     const newTask: TaskType = {
       id: nanoid(),
@@ -34,6 +42,6 @@ const useTasks = () => {
     localStorage.setItem("tasks", JSON.stringify(updatedTasks));
     dispatch(setTasks(updatedTasks));
   };
-  return { addTaks, deleteTask, updateTask };
+  return { addTaks, deleteTask, updateTask, tasks };
 };
 export default useTasks;

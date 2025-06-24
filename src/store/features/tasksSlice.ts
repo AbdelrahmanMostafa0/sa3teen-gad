@@ -1,4 +1,4 @@
-import TaskType from "@/types/tasks";
+import { TaskType } from "@/types/tasks";
 import { createSlice } from "@reduxjs/toolkit";
 
 interface InitialState {

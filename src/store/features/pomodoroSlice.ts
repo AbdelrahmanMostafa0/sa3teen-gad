@@ -8,6 +8,8 @@ const initialState: PomodoroInitialState = {
   displayedTimer: "focus",
   autoBreakStart: false,
   autoSwitch: false,
+  isWaterReminderOn: false,
+  waterReminderInterval: 20,
 };
 
 const pomodoroSlice = createSlice({
@@ -32,6 +34,12 @@ const pomodoroSlice = createSlice({
     updateAutoSwitch: (state, action) => {
       state.autoSwitch = action.payload;
     },
+    updateWaterReminder: (state, action) => {
+      state.isWaterReminderOn = action.payload;
+    },
+    updateWaterReminderInterval: (state, action) => {
+      state.waterReminderInterval = action.payload;
+    },
   },
 });
 
@@ -43,4 +51,6 @@ export const {
   updateDisplayedTimer,
   updateAutoBreakStart,
   updateAutoSwitch,
+  updateWaterReminderInterval,
+  updateWaterReminder,
 } = pomodoroSlice.actions;

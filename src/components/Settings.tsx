@@ -4,28 +4,30 @@ import { useDispatch, useSelector } from "react-redux";
 import Modal from "./ui/Modal";
 import { useEffect, useState } from "react";
 import {
-  updateAutoBreakStart,
+  // updateAutoBreakStart,
   updateFocusDuration,
   updateLongBreakDuration,
   // updatePomoSettings,
   updateShortBreakDuration,
+  updateWaterReminderInterval,
 } from "@/store/features/pomodoroSlice";
 import { IoMdSettings } from "react-icons/io";
 import { AppDispatch, RootState } from "@/store/store";
-import { LiaToggleOffSolid, LiaToggleOnSolid } from "react-icons/lia";
+// import { LiaToggleOffSolid, LiaToggleOnSolid } from "react-icons/lia";
 
 const Settings = () => {
   const {
     focusDurationTime,
     shortBreakDuration,
     longBreakDuration,
-    autoBreakStart,
+    // autoBreakStart,
+    waterReminderInterval,
   } = useSelector((state: RootState) => state.Pomodoro);
   const [isOpen, setIsOpen] = useState(false);
   const dispatch = useDispatch<AppDispatch>();
-  const toggleAutoBreak = () => {
-    dispatch(updateAutoBreakStart(!autoBreakStart));
-  };
+  // const toggleAutoBreak = () => {
+  //   dispatch(updateAutoBreakStart(!autoBreakStart));
+  // };
   // Load settings from localStorage on first render
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -70,11 +72,15 @@ const Settings = () => {
   };
   const handleInput = (
     value: string,
-    type: "focus" | "shortBreak" | "longBreak"
+    type: "focus" | "shortBreak" | "longBreak" | "waterReminder"
   ) => {
     // Remove leading zeros (preserves "0" as 0, but "05" becomes 5)
     const clean = value.startsWith("0") ? value.slice(1) : value;
-    updateDuration(Number(clean), type);
+    if (type === "waterReminder") {
+      dispatch(updateWaterReminderInterval(Number(clean)));
+    } else {
+      updateDuration(Number(clean), type);
+    }
   };
   return (
     <>
@@ -132,11 +138,24 @@ const Settings = () => {
             </div> */}
           </div>
         </div>
-        <div className="flex justify-between items-center ">
+        {/* <div className="flex justify-between items-center ">
           <p>بدأ البريك اوتوماتيكى</p>
           <button className="text-4xl rotate-180" onClick={toggleAutoBreak}>
             {autoBreakStart ? <LiaToggleOnSolid /> : <LiaToggleOffSolid />}
           </button>
+        </div> */}
+        <div className="space-y-2">
+          <p>تذكيرات</p>
+          <div className="flex items-center gap-4">
+            <p className="w-">تذكير بشرب الماء كل</p>
+            <input
+              value={waterReminderInterval === 0 ? "" : waterReminderInterval}
+              onChange={(e) => handleInput(e.target.value, "waterReminder")}
+              type="number"
+              max={999}
+              className="p-3 rounded bg-gray-100 outline-0 w-20 text-center"
+            />
+          </div>
         </div>
       </Modal>
     </>

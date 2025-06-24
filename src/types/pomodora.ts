@@ -5,4 +5,6 @@ export interface PomodoroInitialState {
   displayedTimer: "focus" | "shortBreak" | "longBreak";
   autoBreakStart: boolean;
   autoSwitch: boolean;
+  isWaterReminderOn: boolean;
+  waterReminderInterval: number; // in min  utes
 }

@@ -28,14 +28,14 @@ const Modal = ({ children, isOpen, setIsOpen, className = "" }: Props) => {
   if (!isOpen) return null;
 
   const modalContent = (
-    <div className="fixed inset-0 flex justify-center items-center z-50">
+    <div className="fixed inset-0 flex justify-center items-center z-50 ">
       <div
         className="absolute inset-0 bg-black opacity-50"
         onClick={() => setIsOpen(false)}
       ></div>
       <div
         className={cn(
-          "bg-white rounded-lg p-5 z-50 w-full max-w-[95vw] md:max-w-[700px] relative space-y-4",
+          "bg-white rounded-lg p-5 z-50 w-full max-w-[95vw] md:max-w-[700px] pb-0 overflow-hidden relative space-y-4 pt-10",
           className
         )}
       >

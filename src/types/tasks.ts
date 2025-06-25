@@ -1,9 +1,9 @@
 export interface TaskType {
-  id?: string;
+  id: string;
   title: string;
   description?: string;
   completed?: boolean;
-  createdAt?: string;
+  createdAt: string;
   updatedAt?: string;
   dueDate?: string; // Optional due date
   priority?: "low" | "medium" | "high"; // Optional priority level

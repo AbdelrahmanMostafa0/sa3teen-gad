@@ -35,13 +35,14 @@ const useTasks = () => {
     localStorage.setItem("tasks", JSON.stringify(updatedTasks));
     dispatch(setTasks(updatedTasks));
   };
-  const updateTask = (updatedTask: TaskType) => {
+  const updateTask = (id: string, changes: Partial<TaskType>) => {
     const updatedTasks = tasks.map((task) =>
-      task.id === updatedTask.id ? updatedTask : task
+      task.id === id ? { ...task, ...changes } : task
     );
     localStorage.setItem("tasks", JSON.stringify(updatedTasks));
     dispatch(setTasks(updatedTasks));
   };
+
   return { addTaks, deleteTask, updateTask, tasks };
 };
 export default useTasks;

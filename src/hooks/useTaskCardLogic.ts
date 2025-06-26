@@ -36,9 +36,12 @@ export const useTaskCardLogic = (task: TaskType) => {
       }
     };
 
+    if (task.completed) {
+      animationFrame = requestAnimationFrame(animate);
+    }
+
     if (task.completed && hasInteracted) {
       pencilRef.current?.play();
-      animationFrame = requestAnimationFrame(animate);
     } else {
       setPathLength(0);
     }

@@ -1,5 +1,7 @@
 ![Sa3teen Gad Banner](./public/banners/readme-banner.png) <!-- Replace with actual path once banner is added -->
 
+# Sa3teen Gad (Under Development) 🚧
+
 **Sa3teen Gad** is your personal productivity buddy. It helps you stay focused and balanced throughout your workday—with a playful and minimal UI. Whether you're working, in a meeting, or just need a reminder to drink water or pray, Sa3teen Gad has your back.
 
 ---

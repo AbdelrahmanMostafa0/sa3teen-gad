@@ -4,6 +4,8 @@
 
 **Sa3teen Gad** is your personal productivity buddy. It helps you stay focused and balanced throughout your workday—with a playful and minimal UI. Whether you're working, in a meeting, or just need a reminder to drink water or pray, Sa3teen Gad has your back.
 
+> ⚠️ **Note**: This app is currently under active development. Expect rapid changes and frequent updates!
+
 ---
 
 ## ✨ Features
@@ -45,12 +47,11 @@
 # Clone the repo
 git clone https://github.com/AbdelrahmanMostafa0/sa3teen-gad
 
-# Navigate to folder
+# Navigate to the folder
 cd sa3teen-gad
 
 # Install dependencies
 npm install
 
-# Start the dev server
+# Start the development server
 npm run dev
-```

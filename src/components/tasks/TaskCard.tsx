@@ -29,7 +29,7 @@ const TaskCard = ({ task }: { task: TaskType }) => {
         height="21"
         viewBox="0 0 804 21"
         fill="none"
-        className="absolute left-1/2 top-0 -translate-x-1/2 w-[105%] h-full opacity-70"
+        className="absolute left-1/2 top-0 -translate-x-1/2 w-[103%] h-full opacity-70 `"
         xmlns="http://www.w3.org/2000/svg"
       >
         <path
@@ -37,8 +37,7 @@ const TaskCard = ({ task }: { task: TaskType }) => {
           stroke="black"
           strokeWidth="8"
           strokeLinecap="round"
-          strokeDasharray="1000" // Approximate total path length
-          // strokeDashoffset={1000 - (1000 * pathLength) / 100}
+          strokeDasharray="1000"
           strokeDashoffset={1000 - (1000 * pathLength) / 100}
         />
       </svg>
@@ -49,7 +48,7 @@ const TaskCard = ({ task }: { task: TaskType }) => {
       >
         {task.title}
       </button>
-      <div className="flex items-center gap-2 relative z-10">
+      <div className="flex items-center gap-2 relative ">
         <button className="text-3xl" onClick={handleCheckboxClick}>
           {taskCompleted ? (
             <MdCheckBox className="text-green-500" />
@@ -57,9 +56,8 @@ const TaskCard = ({ task }: { task: TaskType }) => {
             <MdCheckBoxOutlineBlank />
           )}
         </button>
-
-        <TaskModal task={task} isOpen={isOpen} setIsOpen={handleModalToggle} />
       </div>
+      <TaskModal task={task} isOpen={isOpen} setIsOpen={handleModalToggle} />
     </div>
   );
 };

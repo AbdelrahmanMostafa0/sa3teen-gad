@@ -1,7 +1,7 @@
-import { PomodoroInitialState } from "@/types/pomodora";
+import { SettingsType } from "@/types/settings";
 import { createSlice } from "@reduxjs/toolkit";
 
-const initialState: PomodoroInitialState = {
+const initialState: SettingsType = {
   focusDurationTime: 25,
   shortBreakDuration: 5,
   longBreakDuration: 15,
@@ -12,7 +12,7 @@ const initialState: PomodoroInitialState = {
   waterReminderInterval: 20,
 };
 
-const pomodoroSlice = createSlice({
+const settingsSlice = createSlice({
   name: "pomodoro",
   initialState,
   reducers: {
@@ -43,7 +43,7 @@ const pomodoroSlice = createSlice({
   },
 });
 
-export default pomodoroSlice.reducer;
+export default settingsSlice.reducer;
 export const {
   updateFocusDuration,
   updateShortBreakDuration,
@@ -53,4 +53,4 @@ export const {
   updateAutoSwitch,
   updateWaterReminderInterval,
   updateWaterReminder,
-} = pomodoroSlice.actions;
+} = settingsSlice.actions;

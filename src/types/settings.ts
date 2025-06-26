@@ -1,4 +1,4 @@
-export interface PomodoroInitialState {
+export interface SettingsType {
   focusDurationTime: number;
   shortBreakDuration: number;
   longBreakDuration: number;

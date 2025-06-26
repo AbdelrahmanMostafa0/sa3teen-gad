@@ -1,11 +1,11 @@
-import { PomodoroInitialState } from "@/types/pomodora";
 import { useSelector } from "react-redux";
 import Timer from "./Timer";
 import usePomodoro from "@/hooks/usePomodoro";
+import { RootState } from "@/store/store";
 
 const FocusTimer = () => {
   const { focusDurationTime } = useSelector(
-    (state: { Pomodoro: PomodoroInitialState }) => state.Pomodoro
+    (state: RootState) => state.Settings
   );
   const { minutes, seconds, isActive, togglePomodoro } = usePomodoro({
     isBreak: false,

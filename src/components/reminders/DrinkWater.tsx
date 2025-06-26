@@ -2,13 +2,13 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/store/store";
-import { updateWaterReminder } from "@/store/features/pomodoroSlice";
+import { updateWaterReminder } from "@/store/features/settingsSlice";
 import Image from "next/image";
 import { createPortal } from "react-dom";
 
 const DrinkWater = () => {
   const isReminderEnabled = useSelector(
-    (state: RootState) => state.Pomodoro.isWaterReminderOn
+    (state: RootState) => state.Settings.isWaterReminderOn
   );
   const dispatch = useDispatch<AppDispatch>();
 

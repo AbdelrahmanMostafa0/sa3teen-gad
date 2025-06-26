@@ -3,7 +3,7 @@
 import {
   updateAutoSwitch,
   updateDisplayedTimer,
-} from "@/store/features/pomodoroSlice";
+} from "@/store/features/settingsSlice";
 import { RootState } from "@/store/store";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -18,7 +18,7 @@ function usePomodoro({ specificMinutes = 25 }: TimerProps) {
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const alarmRef = useRef<HTMLAudioElement | null>(null);
   const { displayedTimer, shortBreakDuration, focusDurationTime } = useSelector(
-    (state: RootState) => state.Pomodoro
+    (state: RootState) => state.Settings
   );
   const dispatch = useDispatch();
   const isBreak = displayedTimer.toLocaleLowerCase().includes("break");

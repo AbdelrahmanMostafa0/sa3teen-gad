@@ -1,13 +1,13 @@
-import { PomodoroInitialState } from "@/types/pomodora";
 import { useDispatch, useSelector } from "react-redux";
 import Timer from "./Timer";
 import usePomodoro from "@/hooks/usePomodoro";
 import { useEffect } from "react";
-// import { updateAutoSwitch } from "@/store/features/pomodoroSlice";
+import { RootState } from "@/store/store";
+// import { updateAutoSwitch } from "@/store/features/settingsSlice";
 
 const BreakTime = () => {
   const { shortBreakDuration, autoSwitch, autoBreakStart } = useSelector(
-    (state: { Pomodoro: PomodoroInitialState }) => state.Pomodoro
+    (state: RootState) => state.Settings
   );
   const dispatch = useDispatch();
   const { minutes, seconds, isActive, togglePomodoro } = usePomodoro({

@@ -2,6 +2,7 @@
 import { useDispatch, useSelector } from "react-redux";
 import Modal from "./ui/Modal";
 import { useEffect, useState } from "react";
+import { format } from "date-fns";
 import {
   // updateAutoBreakStart,
   updateFocusDuration,
@@ -9,19 +10,23 @@ import {
   // updatePomoSettings,
   updateShortBreakDuration,
   updateWaterReminderInterval,
-} from "@/store/features/pomodoroSlice";
+} from "@/store/features/settingsSlice";
 import { IoMdSettings } from "react-icons/io";
 import { AppDispatch, RootState } from "@/store/store";
+import { useTime } from "@/context/TimeContext";
 // import { LiaToggleOffSolid, LiaToggleOnSolid } from "react-icons/lia";
 
 const Settings = () => {
+  const time = useTime();
+  console.log(time);
+
   const {
     focusDurationTime,
     shortBreakDuration,
     longBreakDuration,
     // autoBreakStart,
     waterReminderInterval,
-  } = useSelector((state: RootState) => state.Pomodoro);
+  } = useSelector((state: RootState) => state.Settings);
   const [isOpen, setIsOpen] = useState(false);
   const dispatch = useDispatch<AppDispatch>();
   // const toggleAutoBreak = () => {
@@ -82,11 +87,11 @@ const Settings = () => {
     }
   };
   return (
-    <>
-      <button
-        onClick={() => setIsOpen(true)}
-        className="fixed top-6 right-8 text-2xl"
-      >
+    <div className="fixed top-6 flex items-center gap-4 justify-between px-8 w-full">
+      <p className=" px-4 py-2 bg-slate-800 rounded-full text-white text-sm">
+        {format(time, "hh:mm:ss a").replace("AM", "ص").replace("PM", "م")}
+      </p>
+      <button onClick={() => setIsOpen(true)} className=" text-2xl">
         <IoMdSettings />
       </button>
 
@@ -157,7 +162,7 @@ const Settings = () => {
           </div>
         </div>
       </Modal>
-    </>
+    </div>
   );
 };
 

@@ -3,6 +3,7 @@ import "./globals.css";
 import ReduxProvider from "@/providers/ReduxProvider";
 import Settings from "@/components/Settings";
 import DrinkWater from "@/components/reminders/DrinkWater";
+import { TimeProvider } from "@/context/TimeContext";
 // import Footer from "@/components/Footer";
 
 export const metadata: Metadata = {
@@ -19,10 +20,12 @@ export default function RootLayout({
     <html lang="ar">
       <ReduxProvider>
         <body dir="rtl">
-          <Settings />
-          <DrinkWater />
-          {children}
-          {/* <Footer /> */}
+          <TimeProvider>
+            <Settings />
+            <DrinkWater />
+            {children}
+            {/* <Footer /> */}
+          </TimeProvider>
         </body>
       </ReduxProvider>
     </html>

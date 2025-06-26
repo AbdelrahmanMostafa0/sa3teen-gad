@@ -13,7 +13,7 @@ const Timer = ({
   togglePomodoro?: () => void;
   isActive?: boolean;
 }) => {
-  const { displayedTimer } = useSelector((state: RootState) => state.Pomodoro);
+  const { displayedTimer } = useSelector((state: RootState) => state.Settings);
   useEffect(() => {
     if (window !== undefined) {
       if (isActive) {

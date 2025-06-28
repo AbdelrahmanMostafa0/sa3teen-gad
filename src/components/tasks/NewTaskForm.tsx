@@ -1,6 +1,7 @@
 import useTasks from "@/hooks/useTasks";
 import detectStartingLang from "@/utils/detectLang";
 import { useState } from "react";
+import { motion } from "motion/react";
 
 const NewTaskForm = () => {
   const { addTaks } = useTasks();
@@ -31,21 +32,28 @@ const NewTaskForm = () => {
     setInputValue("");
   };
   return (
-    <form noValidate onSubmit={handleSubmt} className="w-full space-y-4">
-      <input
-        dir={inputDirection}
-        value={inputValue}
-        onChange={handleInputCange}
-        placeholder="كتبت يبقا هتخلص 👀"
-        type="text"
-        name=""
-        id=""
-        className="w-full border-2 rounded-lg p-3  bg-white outline-none"
-      />
-      <button className="bg-slate-800 text-white py-2 px-4 rounded-lg w-full">
-        ودى
-      </button>
-    </form>
+    <motion.div
+      initial={{ y: 10, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      transition={{ duration: 0.3, ease: "easeOut" }}
+      className="w-full"
+    >
+      <form noValidate onSubmit={handleSubmt} className="w-full space-y-4">
+        <input
+          dir={inputDirection}
+          value={inputValue}
+          onChange={handleInputCange}
+          placeholder="كتبت يبقا هتخلص 👀"
+          type="text"
+          name=""
+          id=""
+          className="w-full border-2 rounded-lg p-3  bg-white outline-none"
+        />
+        <button className="bg-slate-800 text-white py-2 px-4 rounded-lg w-full">
+          ودى
+        </button>
+      </form>
+    </motion.div>
   );
 };
 

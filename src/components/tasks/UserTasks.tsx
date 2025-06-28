@@ -31,6 +31,13 @@ const UserTasks = () => {
             })
           : ""}
       </div>
+      {/* <div className="w-full flex flex-col items-center space-y-2">
+        {completedTasks.length > 0
+          ? completedTasks.map((task) => {
+              return <TaskCard key={task.id} task={task} />;
+            })
+          : ""}
+      </div> */}
     </div>
   );
 };

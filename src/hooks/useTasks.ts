@@ -42,7 +42,15 @@ const useTasks = () => {
     localStorage.setItem("tasks", JSON.stringify(updatedTasks));
     dispatch(setTasks(updatedTasks));
   };
-
-  return { addTaks, deleteTask, updateTask, tasks };
+  const completedTasks = tasks.filter((task) => task.completed);
+  const incompleteTasks = tasks.filter((task) => !task.completed);
+  return {
+    addTaks,
+    deleteTask,
+    updateTask,
+    tasks,
+    completedTasks,
+    incompleteTasks,
+  };
 };
 export default useTasks;

@@ -6,5 +6,7 @@ export interface SettingsType {
   autoBreakStart: boolean;
   autoSwitch: boolean;
   isWaterReminderOn: boolean;
-  waterReminderInterval: number; // in min  utes
+  waterReminderInterval: number;
+  country: string;
+  city: string;
 }

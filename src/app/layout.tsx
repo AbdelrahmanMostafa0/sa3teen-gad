@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import ReduxProvider from "@/providers/ReduxProvider";
-import Settings from "@/components/Settings";
+import Navbar from "@/components/navbar/Navbar";
 import DrinkWater from "@/components/reminders/DrinkWater";
 import { TimeProvider } from "@/context/TimeContext";
 // import Footer from "@/components/Footer";
@@ -19,9 +19,9 @@ export default function RootLayout({
   return (
     <html lang="ar">
       <ReduxProvider>
-        <body dir="rtl">
+        <body dir="rtl" className="bg-[#FEECD2]">
           <TimeProvider>
-            <Settings />
+            <Navbar />
             <DrinkWater />
             {children}
             {/* <Footer /> */}

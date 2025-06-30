@@ -1,5 +1,13 @@
-import { format, parseISO } from "date-fns";
+import { format, isAfter, parse, parseISO } from "date-fns";
 import { ar } from "date-fns/locale";
+type PrayerTimes = {
+  Fajr: string;
+  Sunrise: string;
+  Dhuhr: string;
+  Asr: string;
+  Maghrib: string;
+  Isha: string;
+};
 
 /**
  * Formats an ISO date string to Arabic like "السبت، 17 مايو"
@@ -17,3 +25,51 @@ export function formatArabicDate(isoString: string | undefined): string {
 
   return formatted;
 }
+
+export const formatTime12 = (time24: string): string => {
+  const [hour, minute] = time24.split(":").map(Number);
+  const suffix = hour >= 12 ? "PM" : "AM";
+  const hour12 = hour % 12 || 12;
+  return `${hour12}:${String(minute).padStart(2, "0")} ${suffix}`;
+};
+
+export const getCurrentAndNextPrayer = (
+  prayers: Record<string, string>,
+  now: Date
+): {
+  current: keyof typeof prayers | null;
+  next: keyof typeof prayers | null;
+} => {
+  const entries = Object.entries(prayers) as [keyof typeof prayers, string][];
+
+  for (let i = 0; i < entries.length; i++) {
+    const time = parse(entries[i][1], "HH:mm", new Date());
+    if (isAfter(time, now)) {
+      return {
+        current: i > 0 ? entries[i - 1][0] : null,
+        next: entries[i][0],
+      };
+    }
+  }
+
+  return {
+    current: entries[entries.length - 1][0],
+    next: null,
+  };
+};
+
+// Returns the name of the next prayer
+export const getNextPrayer = (
+  prayers: PrayerTimes
+): keyof PrayerTimes | null => {
+  const now = new Date();
+
+  for (const [key, time] of Object.entries(prayers)) {
+    const parsed = parse(time, "HH:mm", new Date());
+    if (isAfter(parsed, now)) {
+      return key as keyof PrayerTimes;
+    }
+  }
+
+  return null; // All prayers have passed
+};

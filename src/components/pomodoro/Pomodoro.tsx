@@ -16,9 +16,6 @@ const Pomodoro = () => {
         return <BreakTime />;
     }
   }, [displayedTimer]);
-  console.log(
-    "pomooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo"
-  );
 
   return (
     <div className=" w-full flex justify-center items-center flex-col gap-3 md:w-full md:max-w-[400px] mx-auto px-8">

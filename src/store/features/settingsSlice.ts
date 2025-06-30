@@ -10,6 +10,8 @@ const initialState: SettingsType = {
   autoSwitch: false,
   isWaterReminderOn: false,
   waterReminderInterval: 20,
+  country: "EGY",
+  city: "Cairo",
 };
 
 const settingsSlice = createSlice({

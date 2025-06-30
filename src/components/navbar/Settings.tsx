@@ -1,38 +1,24 @@
-"use client";
-import { useDispatch, useSelector } from "react-redux";
-import Modal from "./ui/Modal";
-import { useEffect, useState } from "react";
-import { format } from "date-fns";
 import {
-  // updateAutoBreakStart,
   updateFocusDuration,
   updateLongBreakDuration,
-  // updatePomoSettings,
   updateShortBreakDuration,
   updateWaterReminderInterval,
 } from "@/store/features/settingsSlice";
-import { IoMdSettings } from "react-icons/io";
 import { AppDispatch, RootState } from "@/store/store";
-import { useTime } from "@/context/TimeContext";
-// import { LiaToggleOffSolid, LiaToggleOnSolid } from "react-icons/lia";
+import { useEffect, useState } from "react";
+import { IoMdSettings } from "react-icons/io";
+import { useDispatch, useSelector } from "react-redux";
+import Modal from "../ui/Modal";
 
 const Settings = () => {
-  const time = useTime();
-  console.log(time);
-
   const {
     focusDurationTime,
     shortBreakDuration,
     longBreakDuration,
-    // autoBreakStart,
     waterReminderInterval,
   } = useSelector((state: RootState) => state.Settings);
   const [isOpen, setIsOpen] = useState(false);
   const dispatch = useDispatch<AppDispatch>();
-  // const toggleAutoBreak = () => {
-  //   dispatch(updateAutoBreakStart(!autoBreakStart));
-  // };
-  // Load settings from localStorage on first render
   useEffect(() => {
     if (typeof window !== "undefined") {
       const settings = localStorage.getItem("settings");
@@ -87,14 +73,11 @@ const Settings = () => {
     }
   };
   return (
-    <div className="fixed top-6 flex items-center gap-4 justify-between px-8 w-full">
-      <p className=" px-4 py-2 bg-slate-800 rounded-full text-white text-sm">
-        {format(time, "hh:mm:ss a").replace("AM", "ص").replace("PM", "م")}
-      </p>
+    <>
+      {" "}
       <button onClick={() => setIsOpen(true)} className=" text-2xl">
         <IoMdSettings />
       </button>
-
       <Modal
         className="space-y-8 md:max-w-[500px]"
         isOpen={isOpen}
@@ -162,7 +145,7 @@ const Settings = () => {
           </div>
         </div>
       </Modal>
-    </div>
+    </>
   );
 };
 

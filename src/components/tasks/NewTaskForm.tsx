@@ -2,6 +2,7 @@ import useTasks from "@/hooks/useTasks";
 import detectStartingLang from "@/utils/detectLang";
 import { useState } from "react";
 import { motion } from "motion/react";
+import { FaPlus } from "react-icons/fa6";
 
 const NewTaskForm = () => {
   const { addTaks } = useTasks();
@@ -30,6 +31,7 @@ const NewTaskForm = () => {
     }
     addTaks(inputValue);
     setInputValue("");
+    setInputDirection("rtl");
   };
   return (
     <motion.div
@@ -38,7 +40,11 @@ const NewTaskForm = () => {
       transition={{ duration: 0.3, ease: "easeOut" }}
       className="w-full"
     >
-      <form noValidate onSubmit={handleSubmt} className="w-full space-y-4">
+      <form
+        noValidate
+        onSubmit={handleSubmt}
+        className="w-full  flex items-center justify-center gap-3"
+      >
         <input
           dir={inputDirection}
           value={inputValue}
@@ -49,8 +55,8 @@ const NewTaskForm = () => {
           id=""
           className="w-full border-2 rounded-lg p-3  bg-white outline-none"
         />
-        <button className="bg-slate-800 text-white py-2 px-4 rounded-lg w-full">
-          ودى
+        <button className="bg-slate-800 text-white  rounded-full w-14 aspect-square grid place-content-center text-2xl">
+          <FaPlus />
         </button>
       </form>
     </motion.div>

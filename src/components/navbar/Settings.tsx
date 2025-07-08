@@ -9,7 +9,7 @@ import { useEffect, useState } from "react";
 import { IoMdSettings } from "react-icons/io";
 import { useDispatch, useSelector } from "react-redux";
 import Modal from "../ui/Modal";
-
+import { useForm } from "react-hook-form";
 const Settings = () => {
   const {
     focusDurationTime,
@@ -17,6 +17,19 @@ const Settings = () => {
     longBreakDuration,
     waterReminderInterval,
   } = useSelector((state: RootState) => state.Settings);
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    watch,
+    formState: { errors, isDirty },
+  } = useForm({
+    defaultValues: {
+      waterReminderInterval: waterReminderInterval,
+      foucusDurationTime: focusDurationTime,
+      shortBreakDuration: shortBreakDuration,
+    },
+  });
   const [isOpen, setIsOpen] = useState(false);
   const dispatch = useDispatch<AppDispatch>();
   useEffect(() => {
@@ -25,12 +38,12 @@ const Settings = () => {
       if (settings) {
         const parsed = JSON.parse(settings);
         dispatch(updateFocusDuration(parsed.focusDurationTime));
+        setValue("foucusDurationTime", parsed.focusDurationTime);
         dispatch(updateShortBreakDuration(parsed.shortBreakDuration));
-        dispatch(updateLongBreakDuration(parsed.longBreakDuration));
+        setValue("shortBreakDuration", parsed.shortBreakDuration);
       }
     }
   }, [dispatch]);
-  useEffect(() => {}, [focusDurationTime, shortBreakDuration]);
 
   const updateDuration = (
     duration: number,
@@ -72,6 +85,12 @@ const Settings = () => {
       updateDuration(Number(clean), type);
     }
   };
+  const onSubmit = (data) => {
+    handleInput(data.foucusDurationTime, "focus");
+    handleInput(data.shortBreakDuration, "shortBreak");
+    handleInput(data.longBreakDuration, "longBreak");
+    handleInput(data.waterReminderInterval, "waterReminder");
+  };
   return (
     <>
       {" "}
@@ -84,66 +103,105 @@ const Settings = () => {
         setIsOpen={setIsOpen}
       >
         <h5 className="text-2xl">الإعدادات</h5>
-        <div className="space-y-2 w-full">
-          <p className="font-light">تظبيط الوقت</p>
-          <div className="w-full flex items-center gap-4">
-            {/* Focus Time */}
-            <div className="w-full space-y-2">
-              <p>التركيز</p>
-              <input
-                value={focusDurationTime === 0 ? "" : focusDurationTime}
-                onChange={(e) => handleInput(e.target.value, "focus")}
-                type="number"
-                max={999}
-                className="p-3 rounded bg-gray-100 outline-0 w-full"
-              />
-            </div>
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+          <div className="space-y-2 w-full">
+            <p className="font-light">تظبيط الوقت</p>
+            <div className="w-full flex items-center gap-4">
+              {/* Focus Time */}
+              <div className="w-full space-y-2">
+                <p>التركيز</p>
+                <input
+                  {...register("foucusDurationTime", {
+                    required: {
+                      value: true,
+                      message: "مطلوب",
+                    },
+                    valueAsNumber: true,
+                  })}
+                  type="number"
+                  max={999}
+                  className="p-3 rounded bg-gray-100 outline-0 w-full"
+                />
+              </div>
 
-            {/* Short Break */}
-            <div className="w-full space-y-2">
-              <p>بريك صغنن</p>
-              <input
-                value={shortBreakDuration === 0 ? "" : shortBreakDuration}
-                onChange={(e) => handleInput(e.target.value, "shortBreak")}
-                type="number"
-                max={999}
-                className="p-3 rounded bg-gray-100 outline-0 w-full"
-              />
+              {/* Short Break */}
+              <div className="w-full space-y-2">
+                <p>البريك </p>
+                <input
+                  {...register("shortBreakDuration", {
+                    required: {
+                      value: true,
+                      message: " مطلوب",
+                    },
+                    validate: {
+                      value: (value) => {
+                        if (value === 0) {
+                          return "مطلوب";
+                        }
+                        return true;
+                      },
+                      minValue: (value) => {
+                        if (value < 1) {
+                          return "لا يمكن ان يكون اقل من دقيقة";
+                        }
+                        return true;
+                      },
+                    },
+                  })}
+                  value={shortBreakDuration === 0 ? "" : shortBreakDuration}
+                  onChange={(e) => handleInput(e.target.value, "shortBreak")}
+                  type="number"
+                  max={999}
+                  className="p-3 rounded bg-gray-100 outline-0 w-full"
+                />
+              </div>
             </div>
-
-            {/* Long Break */}
-            {/* <div className="w-full space-y-2">
-              <p>بريك كبير</p>
-              <input
-                value={longBreakDuration === 0 ? "" : longBreakDuration}
-                onChange={(e) => handleInput(e.target.value, "longBreak")}
-                type="number"
-                max={999}
-                min={1}
-                className="p-3 rounded bg-gray-100 outline-0 w-full"
-              />
-            </div> */}
           </div>
-        </div>
+          <div className="space-y-2">
+            <p>تذكيرات</p>
+            <div className="flex items-center gap-4">
+              <p className="w-fit">تذكير بشرب الماء كل</p>
+              <input
+                {...register(`waterReminderInterval`, {
+                  required: {
+                    value: true,
+                    message: " مطلوب",
+                  },
+                  validate: {
+                    value: (value) => {
+                      if (value === 0) {
+                        return "مطلوب";
+                      }
+                      return true;
+                    },
+                    minValue: (value) => {
+                      if (value < 1) {
+                        return "لا يمكن ان يكون اقل من دقيقة";
+                      }
+                      return true;
+                    },
+                  },
+                })}
+                type="number"
+                className="p-3 rounded bg-gray-100 outline-0 w-full text-center"
+              />
+            </div>
+          </div>
+          <button
+            disabled={!isDirty}
+            className="px-4 py-2 rounded-lg bg-slate-800 text-white w-full disabled:opacity-50"
+            type="submit"
+          >
+            تعديل
+          </button>
+        </form>
+
         {/* <div className="flex justify-between items-center ">
           <p>بدأ البريك اوتوماتيكى</p>
           <button className="text-4xl rotate-180" onClick={toggleAutoBreak}>
             {autoBreakStart ? <LiaToggleOnSolid /> : <LiaToggleOffSolid />}
           </button>
         </div> */}
-        <div className="space-y-2">
-          <p>تذكيرات</p>
-          <div className="flex items-center gap-4">
-            <p className="w-">تذكير بشرب الماء كل</p>
-            <input
-              value={waterReminderInterval === 0 ? "" : waterReminderInterval}
-              onChange={(e) => handleInput(e.target.value, "waterReminder")}
-              type="number"
-              max={999}
-              className="p-3 rounded bg-gray-100 outline-0 w-20 text-center"
-            />
-          </div>
-        </div>
       </Modal>
     </>
   );

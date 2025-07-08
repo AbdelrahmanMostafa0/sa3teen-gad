@@ -8,7 +8,7 @@ const initialState: SettingsType = {
   displayedTimer: "focus",
   autoBreakStart: false,
   autoSwitch: false,
-  isWaterReminderOn: false,
+  isWaterReminderOn: true,
   waterReminderInterval: 20,
   country: "EGY",
   city: "Cairo",

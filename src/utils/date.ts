@@ -1,4 +1,12 @@
-import { format, isAfter, parse, parseISO } from "date-fns";
+import {
+  differenceInMinutes,
+  format,
+  isAfter,
+  parse,
+  parseISO,
+  setHours,
+  setMinutes,
+} from "date-fns";
 import { ar } from "date-fns/locale";
 type PrayerTimes = {
   Fajr: string;
@@ -73,3 +81,28 @@ export const getNextPrayer = (
 
   return null; // All prayers have passed
 };
+
+export function getNextTimeAndProgress(times: string[], currentDate: Date) {
+  const toTimeDate = (time: string) => {
+    const [h, m] = time.split(":").map(Number);
+    return setMinutes(setHours(new Date(currentDate), h), m);
+  };
+
+  const parsedTimes = times.map(toTimeDate);
+
+  let nextIndex = parsedTimes.findIndex((t) => isAfter(t, currentDate));
+  if (nextIndex === -1) nextIndex = 0;
+
+  const nextTime = parsedTimes[nextIndex];
+  const prevTime = parsedTimes[(nextIndex - 1 + times.length) % times.length];
+
+  const totalDiff = (differenceInMinutes(nextTime, prevTime) + 1440) % 1440;
+  const elapsed = (differenceInMinutes(currentDate, prevTime) + 1440) % 1440;
+  const percent = (elapsed / totalDiff) * 100;
+
+  return {
+    prevTime: times[(nextIndex - 1 + times.length) % times.length],
+    nextTime: times[nextIndex],
+    percentPassed: percent.toFixed(2) + "%",
+  };
+}

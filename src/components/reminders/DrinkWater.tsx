@@ -28,7 +28,7 @@ const DrinkWater = () => {
 
   useEffect(() => {
     Notification.requestPermission().then((permission) => {
-      if (permission === "granted" && !isWaterReminderOn) {
+      if (permission === "granted" && isWaterReminderOn) {
         const interval = setInterval(() => {
           new Notification("💧 Reminder", {
             body: "Drink some water!",
@@ -39,9 +39,10 @@ const DrinkWater = () => {
       }
     });
   }, [isWaterReminderOn, waterReminderInterval]);
+  console.log(waterReminderInterval);
 
   useEffect(() => {
-    if (!isWaterReminderOn) {
+    if (isWaterReminderOn) {
       const interval = setInterval(() => {
         setShowPopup(true);
         reminderSoundRef.current?.play();

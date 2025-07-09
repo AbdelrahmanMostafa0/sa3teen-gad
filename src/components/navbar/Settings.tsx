@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import Modal from "../ui/Modal";
 import { useForm } from "react-hook-form";
 import useSyncLocalStorageToRedux from "@/hooks/useSyncLocalStorageToRedux";
+import countries from "@/data/countries.json";
 const Settings = () => {
   useSyncLocalStorageToRedux();
   const userSettings = useSelector((state: RootState) => state.Settings);
@@ -30,6 +31,10 @@ const Settings = () => {
     );
     setIsOpen(false);
   };
+  console.log("countriesss", countries);
+  const countryCities = countries.find(
+    (country) => country.iso3 === userSettings.country
+  )?.cities;
   return (
     <>
       <button onClick={() => setIsOpen(true)} className=" text-2xl">
@@ -145,6 +150,29 @@ const Settings = () => {
                 {errors.waterReminderInterval.message}
               </p>
             )}
+          </div>
+          <div className="space-y-2">
+            <p>الموقع لمواقيت الصلاة</p>{" "}
+          </div>
+          <div className="flex gap-2">
+            <select name="country" id="" defaultValue={userSettings.country}>
+              {countries.map((country) => {
+                return (
+                  <option key={country.country} value={country.iso3}>
+                    {country.country}
+                  </option>
+                );
+              })}
+            </select>
+            <select name="country" id="" defaultValue={userSettings.country}>
+              {countryCities?.map((city) => {
+                return (
+                  <option key={city} value={city}>
+                    {city}
+                  </option>
+                );
+              })}
+            </select>
           </div>
           <button
             disabled={!isDirty}

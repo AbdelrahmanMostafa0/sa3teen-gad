@@ -18,6 +18,9 @@ const settingsSlice = createSlice({
   name: "pomodoro",
   initialState,
   reducers: {
+    updateSettings: (state, action) => {
+      Object.assign(state, action.payload);
+    },
     updateFocusDuration: (state, action) => {
       state.focusDurationTime = action.payload;
     },
@@ -55,4 +58,5 @@ export const {
   updateAutoSwitch,
   updateWaterReminderInterval,
   updateWaterReminder,
+  updateSettings,
 } = settingsSlice.actions;

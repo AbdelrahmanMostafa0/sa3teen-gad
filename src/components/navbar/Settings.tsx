@@ -1,99 +1,37 @@
-import {
-  updateFocusDuration,
-  updateLongBreakDuration,
-  updateShortBreakDuration,
-  updateWaterReminderInterval,
-} from "@/store/features/settingsSlice";
+import { updateSettings } from "@/store/features/settingsSlice";
 import { AppDispatch, RootState } from "@/store/store";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { IoMdSettings } from "react-icons/io";
 import { useDispatch, useSelector } from "react-redux";
 import Modal from "../ui/Modal";
 import { useForm } from "react-hook-form";
+import useSyncLocalStorageToRedux from "@/hooks/useSyncLocalStorageToRedux";
 const Settings = () => {
-  const {
-    focusDurationTime,
-    shortBreakDuration,
-    longBreakDuration,
-    waterReminderInterval,
-  } = useSelector((state: RootState) => state.Settings);
+  useSyncLocalStorageToRedux();
+  const userSettings = useSelector((state: RootState) => state.Settings);
   const {
     register,
     handleSubmit,
-    setValue,
-    watch,
     formState: { errors, isDirty },
   } = useForm({
     defaultValues: {
-      waterReminderInterval: waterReminderInterval,
-      foucusDurationTime: focusDurationTime,
-      shortBreakDuration: shortBreakDuration,
+      waterReminderInterval: userSettings.waterReminderInterval,
+      focusDurationTime: userSettings.focusDurationTime,
+      shortBreakDuration: userSettings.shortBreakDuration,
     },
   });
   const [isOpen, setIsOpen] = useState(false);
   const dispatch = useDispatch<AppDispatch>();
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const settings = localStorage.getItem("settings");
-      if (settings) {
-        const parsed = JSON.parse(settings);
-        dispatch(updateFocusDuration(parsed.focusDurationTime));
-        setValue("foucusDurationTime", parsed.focusDurationTime);
-        dispatch(updateShortBreakDuration(parsed.shortBreakDuration));
-        setValue("shortBreakDuration", parsed.shortBreakDuration);
-      }
-    }
-  }, [dispatch]);
-
-  const updateDuration = (
-    duration: number,
-    type: "focus" | "shortBreak" | "longBreak"
-  ) => {
-    let newFocus = focusDurationTime;
-    let newShort = shortBreakDuration;
-    let newLong = longBreakDuration;
-
-    if (type === "focus") {
-      newFocus = duration;
-      dispatch(updateFocusDuration(duration));
-    } else if (type === "shortBreak") {
-      newShort = duration;
-      dispatch(updateShortBreakDuration(duration));
-    } else if (type === "longBreak") {
-      newLong = duration;
-      dispatch(updateLongBreakDuration(duration));
-    }
-
+  const onSubmit = (data: { [key: string]: string | number }) => {
+    dispatch(updateSettings({ ...userSettings, ...data }));
     localStorage.setItem(
       "settings",
-      JSON.stringify({
-        focusDurationTime: newFocus,
-        shortBreakDuration: newShort,
-        longBreakDuration: newLong,
-      })
+      JSON.stringify({ ...userSettings, ...data })
     );
-  };
-  const handleInput = (
-    value: string,
-    type: "focus" | "shortBreak" | "longBreak" | "waterReminder"
-  ) => {
-    // Remove leading zeros (preserves "0" as 0, but "05" becomes 5)
-    const clean = value.startsWith("0") ? value.slice(1) : value;
-    if (type === "waterReminder") {
-      dispatch(updateWaterReminderInterval(Number(clean)));
-    } else {
-      updateDuration(Number(clean), type);
-    }
-  };
-  const onSubmit = (data) => {
-    handleInput(data.foucusDurationTime, "focus");
-    handleInput(data.shortBreakDuration, "shortBreak");
-    handleInput(data.longBreakDuration, "longBreak");
-    handleInput(data.waterReminderInterval, "waterReminder");
+    setIsOpen(false);
   };
   return (
     <>
-      {" "}
       <button onClick={() => setIsOpen(true)} className=" text-2xl">
         <IoMdSettings />
       </button>
@@ -103,15 +41,19 @@ const Settings = () => {
         setIsOpen={setIsOpen}
       >
         <h5 className="text-2xl">الإعدادات</h5>
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        <form
+          noValidate
+          onSubmit={handleSubmit(onSubmit)}
+          className="space-y-4"
+        >
           <div className="space-y-2 w-full">
             <p className="font-light">تظبيط الوقت</p>
-            <div className="w-full flex items-center gap-4">
+            <div className="w-full flex items-start gap-4">
               {/* Focus Time */}
               <div className="w-full space-y-2">
                 <p>التركيز</p>
                 <input
-                  {...register("foucusDurationTime", {
+                  {...register("focusDurationTime", {
                     required: {
                       value: true,
                       message: "مطلوب",
@@ -122,6 +64,11 @@ const Settings = () => {
                   max={999}
                   className="p-3 rounded bg-gray-100 outline-0 w-full"
                 />
+                {errors.focusDurationTime && (
+                  <p className="text-xs text-red-500">
+                    {errors.focusDurationTime.message}
+                  </p>
+                )}
               </div>
 
               {/* Short Break */}
@@ -133,6 +80,7 @@ const Settings = () => {
                       value: true,
                       message: " مطلوب",
                     },
+                    valueAsNumber: true,
                     validate: {
                       value: (value) => {
                         if (value === 0) {
@@ -148,12 +96,17 @@ const Settings = () => {
                       },
                     },
                   })}
-                  value={shortBreakDuration === 0 ? "" : shortBreakDuration}
-                  onChange={(e) => handleInput(e.target.value, "shortBreak")}
+                  // value={shortBreakDuration === 0 ? "" : shortBreakDuration}
+                  // onChange={(e) => handleInput(e.target.value, "shortBreak")}
                   type="number"
                   max={999}
                   className="p-3 rounded bg-gray-100 outline-0 w-full"
                 />
+                {errors.shortBreakDuration && (
+                  <p className="text-xs text-red-500">
+                    {errors.shortBreakDuration.message}
+                  </p>
+                )}
               </div>
             </div>
           </div>
@@ -167,6 +120,7 @@ const Settings = () => {
                     value: true,
                     message: " مطلوب",
                   },
+                  valueAsNumber: true,
                   validate: {
                     value: (value) => {
                       if (value === 0) {
@@ -186,6 +140,11 @@ const Settings = () => {
                 className="p-3 rounded bg-gray-100 outline-0 w-full text-center"
               />
             </div>
+            {errors.waterReminderInterval && (
+              <p className="text-xs text-red-500">
+                {errors.waterReminderInterval.message}
+              </p>
+            )}
           </div>
           <button
             disabled={!isDirty}

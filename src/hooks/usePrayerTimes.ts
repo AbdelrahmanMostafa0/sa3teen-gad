@@ -1,7 +1,10 @@
-import { useTime } from "@/context/TimeContext";
+// import { useTime } from "@/context/TimeContext";
 import { getPrayers } from "@/services/prayerApi";
 import { RootState } from "@/store/store";
-import { formatTime12, getNextTimeAndProgress } from "@/utils/date";
+import {
+  formatTime12,
+  //  getNextTimeAndProgress
+} from "@/utils/date";
 import { format } from "date-fns";
 import { useCallback, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
@@ -21,7 +24,7 @@ const nameMap = {
 type PrayerTimes = PrayerTime[];
 const usePrayerTimes = () => {
   const [prayerTimes, setPrayerTimes] = useState<PrayerTimes | null>();
-  const time = useTime();
+  // const time = useTime();
   const { city, country } = useSelector((state: RootState) => state.Settings);
   const getDayPrayers = useCallback(async () => {
     const formattedDate = format(new Date(), "yyyy-M-d");
@@ -63,7 +66,6 @@ const usePrayerTimes = () => {
       console.log(err);
     }
   }, [city, country]);
-  console.log(prayerTimes);
 
   useEffect(() => {
     getDayPrayers();
@@ -79,12 +81,10 @@ const usePrayerTimes = () => {
 
     return updatedPRayers;
   };
-  const prayerTimesOnly = prayerTimes?.map((prayer) => prayer.time);
-  console.log(prayerTimesOnly);
+  // const prayerTimesOnly = prayerTimes?.map((prayer) => prayer.time);
 
   // const  {prevTime, nextTime,percentPassed} = getNextTimeAndProgress(prayerTimesOnly || [], time
-  const progressData = getNextTimeAndProgress(prayerTimesOnly || [], time);
-  console.log(progressData);
+  // const progressData = getNextTimeAndProgress(prayerTimesOnly || [], time);
 
   return { prayerTimes: paryerTimesInArabic() };
 };

@@ -1,6 +1,6 @@
 import { updateSettings } from "@/store/features/settingsSlice";
 import { AppDispatch, RootState } from "@/store/store";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { IoMdSettings } from "react-icons/io";
 import { useDispatch, useSelector } from "react-redux";
 import Modal from "../ui/Modal";
@@ -14,11 +14,14 @@ const Settings = () => {
     register,
     handleSubmit,
     formState: { errors, isDirty },
+    watch,
   } = useForm({
     defaultValues: {
       waterReminderInterval: userSettings.waterReminderInterval,
       focusDurationTime: userSettings.focusDurationTime,
       shortBreakDuration: userSettings.shortBreakDuration,
+      city: userSettings.city,
+      country: userSettings.country,
     },
   });
   const [isOpen, setIsOpen] = useState(false);
@@ -31,10 +34,11 @@ const Settings = () => {
     );
     setIsOpen(false);
   };
-  console.log("countriesss", countries);
-  const countryCities = countries.find(
-    (country) => country.iso3 === userSettings.country
-  )?.cities;
+  const seletctedCountry = watch("country");
+  const countryCities = useMemo(() => {
+    return countries.find((country) => country.iso3 === seletctedCountry)
+      ?.cities;
+  }, [seletctedCountry]);
   return (
     <>
       <button onClick={() => setIsOpen(true)} className=" text-2xl">
@@ -155,7 +159,12 @@ const Settings = () => {
             <p>الموقع لمواقيت الصلاة</p>{" "}
           </div>
           <div className="flex gap-2">
-            <select name="country" id="" defaultValue={userSettings.country}>
+            <select
+              className="w-full flex-1"
+              {...register("country")}
+              name="country"
+              id=""
+            >
               {countries.map((country) => {
                 return (
                   <option key={country.country} value={country.iso3}>
@@ -164,7 +173,7 @@ const Settings = () => {
                 );
               })}
             </select>
-            <select name="country" id="" defaultValue={userSettings.country}>
+            <select className="w-full flex-1" {...register("city")} id="">
               {countryCities?.map((city) => {
                 return (
                   <option key={city} value={city}>

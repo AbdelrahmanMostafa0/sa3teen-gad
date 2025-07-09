@@ -39,7 +39,6 @@ const DrinkWater = () => {
       }
     });
   }, [isWaterReminderOn, waterReminderInterval]);
-  console.log(waterReminderInterval);
 
   useEffect(() => {
     if (isWaterReminderOn) {

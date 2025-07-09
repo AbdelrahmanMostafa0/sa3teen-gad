@@ -35,10 +35,8 @@ function usePomodoro({ specificMinutes = 25 }: TimerProps) {
       if (finished) {
         dispatch(updateDisplayedTimer(isBreak ? "focus" : "shortBreak"));
       }
-      console.log("outside");
       if (finished && !isBreak) {
         dispatch(updateAutoSwitch(true));
-        console.log("auto switch");
       }
       if (intervalRef.current) {
         clearInterval(intervalRef.current);

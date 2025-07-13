@@ -1,7 +1,7 @@
 import { RootState } from "@/store/store";
 import Image from "next/image";
 import { useMemo, useEffect } from "react";
-import { BiPlay, BiReset } from "react-icons/bi";
+import { BiPlay } from "react-icons/bi";
 import { GrPowerReset } from "react-icons/gr";
 import { PiPause } from "react-icons/pi";
 import { useSelector } from "react-redux";
@@ -62,10 +62,11 @@ const Timer = ({
       <div className="md:w-full mx-auto text-center border-4 p-20 flex items-center justify-center rounded-full aspect-square max-w-[400px] overflow-hidden relative">
         <p
           dir="ltr"
-          className="text-5xl whitespace-nowrap z-10 mix-blend-multiply"
+          className="text-5xl whitespace-nowrap z-10 text-white drop-shadow-lg"
         >
-          <span className="w-10 text-center tracking-widest">{minutes}</span> :{" "}
-          <span className="w-10 text-center tracking-widest">{seconds}</span>
+          <span className="w-10 text-center tracking-widest ">{minutes}</span>{" "}
+          <span className=" ">:</span>{" "}
+          <span className="w-10 text-center tracking-widest ">{seconds}</span>
         </p>
         <Image
           style={{

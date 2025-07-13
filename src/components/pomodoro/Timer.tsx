@@ -1,4 +1,5 @@
 import { RootState } from "@/store/store";
+import Image from "next/image";
 import { useEffect } from "react";
 import { useSelector } from "react-redux";
 
@@ -25,11 +26,25 @@ const Timer = ({
   }, [displayedTimer, minutes, seconds, isActive]);
   return (
     <div className="w-full md:max-w-[400px] space-y-4">
-      <div className="md:w-full mx-auto text-center border-4 p-10 md:py-20 rounded-xl ">
-        <p dir="ltr" className="text-5xl">
+      <div className="md:w-full mx-auto text-center border-4 p-20 flex items-center justify-center rounded-full aspect-square max-w-[400px] overflow-hidden relative">
+        <p dir="ltr" className="text-5xl whitespace-nowrap">
           <span className="w-10 text-center tracking-widest">{minutes}</span> :{" "}
           <span className="w-10 text-center tracking-widest">{seconds}</span>
         </p>
+        <Image
+          className="absolute -bottom-52 scale-x-[2.5] rotate-clockwise"
+          src={"/water-wave-1.svg"}
+          width={400}
+          height={400}
+          alt=""
+        />
+        <Image
+          className="absolute -bottom-52 scale-x-[2.5] rotate-counterclockwise "
+          src={"/water-wave-2.svg"}
+          width={400}
+          height={400}
+          alt=""
+        />
       </div>
       {togglePomodoro && (
         <button

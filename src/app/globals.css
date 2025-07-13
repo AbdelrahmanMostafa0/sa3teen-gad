@@ -30,3 +30,28 @@ body {
   font-family: "IBM Plex Sans Arabic", sans-serif;
   font-optical-sizing: auto;
 }
+.rotate-clockwise {
+  animation: rotate-cw 10s linear infinite;
+}
+
+.rotate-counterclockwise {
+  animation: rotate-ccw 10s linear infinite;
+}
+
+@keyframes rotate-cw {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes rotate-ccw {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(-360deg);
+  }
+}

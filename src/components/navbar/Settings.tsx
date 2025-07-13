@@ -1,6 +1,6 @@
 import { updateSettings } from "@/store/features/settingsSlice";
 import { AppDispatch, RootState } from "@/store/store";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { IoMdSettings } from "react-icons/io";
 import { useDispatch, useSelector } from "react-redux";
 import Modal from "../ui/Modal";
@@ -15,6 +15,7 @@ const Settings = () => {
     handleSubmit,
     formState: { errors, isDirty },
     watch,
+    setValue,
   } = useForm({
     defaultValues: {
       waterReminderInterval: userSettings.waterReminderInterval,
@@ -39,6 +40,13 @@ const Settings = () => {
     return countries.find((country) => country.iso3 === seletctedCountry)
       ?.cities;
   }, [seletctedCountry]);
+  useEffect(() => {
+    setValue("city", userSettings.city);
+    setValue("country", userSettings.country);
+    setValue("waterReminderInterval", userSettings.waterReminderInterval);
+    setValue("focusDurationTime", userSettings.focusDurationTime);
+    setValue("shortBreakDuration", userSettings.shortBreakDuration);
+  }, [userSettings, setValue]);
   return (
     <>
       <button onClick={() => setIsOpen(true)} className=" text-2xl">

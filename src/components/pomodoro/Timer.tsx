@@ -1,6 +1,9 @@
 import { RootState } from "@/store/store";
 import Image from "next/image";
 import { useMemo, useEffect } from "react";
+import { BiPlay, BiReset } from "react-icons/bi";
+import { GrPowerReset } from "react-icons/gr";
+import { PiPause } from "react-icons/pi";
 import { useSelector } from "react-redux";
 
 const Timer = ({
@@ -9,14 +12,23 @@ const Timer = ({
   togglePomodoro,
   duration,
   isActive,
+  resetPomodoro,
 }: {
   minutes: string | number;
   duration: number;
   seconds: string | number;
   togglePomodoro?: () => void;
+  resetPomodoro?: () => void;
   isActive?: boolean;
 }) => {
   console.log("seconds", seconds);
+  const hasStarted = useMemo(() => {
+    if (Number(duration) !== Number(minutes)) {
+      return true;
+    } else {
+      return false;
+    }
+  }, [minutes, duration]);
 
   const intialMinutes = useMemo(() => {
     return Number(duration);
@@ -32,7 +44,7 @@ const Timer = ({
     const percentage = (passedSeconds / totalSeconds) * 100;
     return Math.min(100, Math.max(0, percentage)); // clamp 0–100
   }, [minutes, seconds, duration]);
-
+  const isGoing = hasStarted || isActive;
   useEffect(() => {
     if (window !== undefined) {
       if (isActive) {
@@ -76,14 +88,33 @@ const Timer = ({
           alt=""
         />
       </div>
-      {togglePomodoro && (
+
+      <div className="flex items-center justify-center gap-4">
+        <button
+          onClick={togglePomodoro}
+          className={`text-white  h-12 grid place-items-center duration-75 ${
+            isGoing ? "w-12 rounded-full aspect-square " : "w-[50%] rounded-lg"
+          } ${isActive || hasStarted ? "bg-gray-400" : "bg-green-500"} `}
+        >
+          {isActive ? <PiPause size={25} /> : <BiPlay size={25} />}
+        </button>
+        {(hasStarted || isActive) && (
+          <button
+            onClick={resetPomodoro}
+            className=" rounded-full w-12 h-12 grid place-items-center aspect-square bg-white"
+          >
+            <GrPowerReset size={25} />
+          </button>
+        )}
+      </div>
+      {/* {togglePomodoro && (
         <button
           onClick={togglePomodoro}
           className="text-white bg-slate-900 w-full rounded-xl py-3"
         >
           {isActive ? "وقف" : "أبدأ"}
         </button>
-      )}
+      )} */}
     </div>
   );
 };

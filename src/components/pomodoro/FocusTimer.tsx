@@ -7,10 +7,11 @@ const FocusTimer = () => {
   const { focusDurationTime } = useSelector(
     (state: RootState) => state.Settings
   );
-  const { minutes, seconds, isActive, togglePomodoro } = usePomodoro({
-    isBreak: false,
-    specificMinutes: focusDurationTime,
-  });
+  const { minutes, seconds, isActive, togglePomodoro, resetPomodoro } =
+    usePomodoro({
+      isBreak: false,
+      specificMinutes: focusDurationTime,
+    });
   return (
     <Timer
       duration={focusDurationTime}
@@ -18,6 +19,7 @@ const FocusTimer = () => {
       seconds={seconds}
       togglePomodoro={togglePomodoro}
       isActive={isActive}
+      resetPomodoro={resetPomodoro}
     />
   );
 };

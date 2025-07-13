@@ -10,10 +10,11 @@ const BreakTime = () => {
     (state: RootState) => state.Settings
   );
   const dispatch = useDispatch();
-  const { minutes, seconds, isActive, togglePomodoro } = usePomodoro({
-    isBreak: true,
-    specificMinutes: shortBreakDuration,
-  });
+  const { minutes, seconds, isActive, togglePomodoro, resetPomodoro } =
+    usePomodoro({
+      isBreak: true,
+      specificMinutes: shortBreakDuration,
+    });
   useEffect(() => {
     if (autoBreakStart && autoSwitch && !isActive) {
       // dispatch(updateAutoSwitch(false));
@@ -22,6 +23,7 @@ const BreakTime = () => {
   }, [autoBreakStart, autoSwitch, isActive, togglePomodoro, dispatch]);
   return (
     <Timer
+      resetPomodoro={resetPomodoro}
       duration={shortBreakDuration}
       minutes={minutes}
       seconds={seconds}

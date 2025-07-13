@@ -91,6 +91,11 @@ function usePomodoro({ specificMinutes = 25 }: TimerProps) {
   const stopPomodoro = useCallback((): void => {
     setIsActive(false);
   }, []);
+  const resetPomodoro = useCallback((): void => {
+    setIsActive(false);
+    setTimeLeft(specificMinutes * 60);
+    setFinished(false);
+  }, [specificMinutes]);
   return {
     isActive,
     togglePomodoro,
@@ -100,6 +105,7 @@ function usePomodoro({ specificMinutes = 25 }: TimerProps) {
     finished,
     startPomodoro,
     stopPomodoro,
+    resetPomodoro,
   };
 }
 

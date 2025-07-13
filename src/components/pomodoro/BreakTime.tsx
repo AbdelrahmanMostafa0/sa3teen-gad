@@ -22,6 +22,7 @@ const BreakTime = () => {
   }, [autoBreakStart, autoSwitch, isActive, togglePomodoro, dispatch]);
   return (
     <Timer
+      duration={shortBreakDuration}
       minutes={minutes}
       seconds={seconds}
       togglePomodoro={togglePomodoro}

@@ -31,11 +31,11 @@ body {
   font-optical-sizing: auto;
 }
 .rotate-clockwise {
-  animation: rotate-cw 10s linear infinite;
+  animation: rotate-cw 15s linear infinite;
 }
 
 .rotate-counterclockwise {
-  animation: rotate-ccw 10s linear infinite;
+  animation: rotate-ccw 15s linear infinite;
 }
 
 @keyframes rotate-cw {

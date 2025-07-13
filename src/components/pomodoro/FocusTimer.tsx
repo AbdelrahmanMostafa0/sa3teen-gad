@@ -13,6 +13,7 @@ const FocusTimer = () => {
   });
   return (
     <Timer
+      duration={focusDurationTime}
       minutes={minutes}
       seconds={seconds}
       togglePomodoro={togglePomodoro}

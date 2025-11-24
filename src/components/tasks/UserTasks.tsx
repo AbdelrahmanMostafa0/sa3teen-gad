@@ -12,7 +12,7 @@ const UserTasks = () => {
   return (
     <Card className="w-full max-w-[700px] shadow-lg border-none bg-white/90 backdrop-blur-sm">
       <CardHeader className="pb-2">
-        <CardTitle className="flex items-center gap-3 text-2xl font-bold text-primary mb-2">
+        <CardTitle className="flex items-center gap-3 text-2xl font-bold text-black mb-2">
           <Image
             src={"/list-icon.png"}
             width={32}
@@ -32,7 +32,7 @@ const UserTasks = () => {
               <TaskCard key={task.id} task={task} />
             ))
           ) : (
-            <div className="text-center py-8 text-muted-foreground opacity-60">
+            <div className="text-center py-8 text-black opacity-60">
               <p>مفيش مهام حاليا.. روق بالك ☕</p>
             </div>
           )}

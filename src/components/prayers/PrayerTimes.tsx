@@ -21,7 +21,7 @@ const PrayerTimes = () => {
       <div className="flex items-center justify-start md:justify-center gap-4 overflow-x-auto pb-4 px-2 scrollbar-hide">
         {prayerTimes &&
           prayerTimes.map((prayer) => (
-            <Card key={prayer.name} className="min-w-[100px] flex-shrink-0 hover:shadow-md transition-shadow duration-200 border-none shadow-sm bg-white/80 backdrop-blur-sm">
+            <Card key={prayer.name} className="min-w-[100px] flex-shrink-0 hover:shadow-md transition-shadow duration-200 border-none shadow-sm  backdrop-blur-sm">
               <CardContent className="flex flex-col items-center justify-center p-4 gap-2">
                 {getIcon(prayer.name)}
                 <p className="font-bold text-lg text-primary">{prayer.time}</p>

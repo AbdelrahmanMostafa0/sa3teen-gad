@@ -53,7 +53,7 @@ const TaskCard = ({ task }: { task: TaskType }) => {
 
       <button
         onClick={handleModalToggle}
-        className="text-lg text-start font-semibold w-full relative z-10"
+        className="text-lg text-start font-semibold w-full relative z-10 text-black"
       >
         {task.title}
       </button>

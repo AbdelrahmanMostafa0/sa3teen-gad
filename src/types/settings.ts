@@ -7,6 +7,7 @@ export interface SettingsType {
   autoSwitch: boolean;
   isWaterReminderOn: boolean;
   waterReminderInterval: number;
+  isPrayerReminderOn: boolean;
   country: string;
   city: string;
 }

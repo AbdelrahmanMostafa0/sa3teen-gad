@@ -4,6 +4,7 @@ import ReduxProvider from "@/providers/ReduxProvider";
 import Navbar from "@/components/navbar/Navbar";
 import DrinkWater from "@/components/reminders/DrinkWater";
 import { TimeProvider } from "@/context/TimeContext";
+import { ThemeProvider } from "@/components/theme-provider";
 // import Footer from "@/components/Footer";
 
 export const metadata: Metadata = {
@@ -17,15 +18,22 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ar">
+    <html lang="ar" suppressHydrationWarning>
       <ReduxProvider>
-        <body dir="rtl" className="bg-[#FEECD2]">
-          <TimeProvider>
-            <Navbar />
-            <DrinkWater />
-            {children}
-            {/* <Footer /> */}
-          </TimeProvider>
+        <body dir="rtl" className="bg-background text-foreground transition-colors duration-300">
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <TimeProvider>
+              <Navbar />
+              <DrinkWater />
+              {children}
+              {/* <Footer /> */}
+            </TimeProvider>
+          </ThemeProvider>
         </body>
       </ReduxProvider>
     </html>

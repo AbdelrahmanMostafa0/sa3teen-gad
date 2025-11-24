@@ -10,6 +10,7 @@ const initialState: SettingsType = {
   autoSwitch: false,
   isWaterReminderOn: true,
   waterReminderInterval: 20,
+  isPrayerReminderOn: true,
   country: "EGY",
   city: "Cairo",
 };
@@ -39,6 +40,9 @@ const settingsSlice = createSlice({
     updateAutoSwitch: (state, action) => {
       state.autoSwitch = action.payload;
     },
+    updatePrayerReminder: (state, action) => {
+      state.isPrayerReminderOn = action.payload;
+    },
     updateWaterReminder: (state, action) => {
       state.isWaterReminderOn = action.payload;
     },
@@ -55,6 +59,7 @@ export const {
   updateLongBreakDuration,
   updateDisplayedTimer,
   updateAutoBreakStart,
+  updatePrayerReminder,
   updateAutoSwitch,
   updateWaterReminderInterval,
   updateWaterReminder,

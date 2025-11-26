@@ -10,7 +10,19 @@ const initialState: SettingsType = {
   autoSwitch: false,
   isWaterReminderOn: true,
   waterReminderInterval: 20,
-  isPrayerReminderOn: true,
+  prayerReminderSettings: {
+    isEnabled: true,
+    preReminderMinutes: 10,
+    preReminderEnabled: true,
+    atTimeReminderEnabled: true,
+    individualPrayers: {
+      Fajr: { preReminderEnabled: true, atTimeReminderEnabled: true },
+      Dhuhr: { preReminderEnabled: true, atTimeReminderEnabled: true },
+      Asr: { preReminderEnabled: true, atTimeReminderEnabled: true },
+      Maghrib: { preReminderEnabled: true, atTimeReminderEnabled: true },
+      Isha: { preReminderEnabled: true, atTimeReminderEnabled: true },
+    },
+  },
   country: "EGY",
   city: "Cairo",
 };
@@ -40,8 +52,32 @@ const settingsSlice = createSlice({
     updateAutoSwitch: (state, action) => {
       state.autoSwitch = action.payload;
     },
-    updatePrayerReminder: (state, action) => {
-      state.isPrayerReminderOn = action.payload;
+    updatePrayerReminderSettings: (state, action) => {
+      state.prayerReminderSettings = action.payload;
+    },
+    updatePreReminderMinutes: (state, action) => {
+      state.prayerReminderSettings.preReminderMinutes = action.payload;
+    },
+    toggleGlobalPrayerReminder: (state, action) => {
+      state.prayerReminderSettings.isEnabled = action.payload;
+    },
+    togglePreReminder: (state, action) => {
+      state.prayerReminderSettings.preReminderEnabled = action.payload;
+    },
+    toggleAtTimeReminder: (state, action) => {
+      state.prayerReminderSettings.atTimeReminderEnabled = action.payload;
+    },
+    toggleIndividualPrayerPreReminder: (state, action: { payload: { prayer: string; enabled: boolean } }) => {
+      const { prayer, enabled } = action.payload;
+      if (state.prayerReminderSettings.individualPrayers[prayer as keyof typeof state.prayerReminderSettings.individualPrayers]) {
+        state.prayerReminderSettings.individualPrayers[prayer as keyof typeof state.prayerReminderSettings.individualPrayers].preReminderEnabled = enabled;
+      }
+    },
+    toggleIndividualPrayerAtTimeReminder: (state, action: { payload: { prayer: string; enabled: boolean } }) => {
+      const { prayer, enabled } = action.payload;
+      if (state.prayerReminderSettings.individualPrayers[prayer as keyof typeof state.prayerReminderSettings.individualPrayers]) {
+        state.prayerReminderSettings.individualPrayers[prayer as keyof typeof state.prayerReminderSettings.individualPrayers].atTimeReminderEnabled = enabled;
+      }
     },
     updateWaterReminder: (state, action) => {
       state.isWaterReminderOn = action.payload;
@@ -59,9 +95,15 @@ export const {
   updateLongBreakDuration,
   updateDisplayedTimer,
   updateAutoBreakStart,
-  updatePrayerReminder,
   updateAutoSwitch,
   updateWaterReminderInterval,
   updateWaterReminder,
   updateSettings,
+  updatePrayerReminderSettings,
+  updatePreReminderMinutes,
+  toggleGlobalPrayerReminder,
+  togglePreReminder,
+  toggleAtTimeReminder,
+  toggleIndividualPrayerPreReminder,
+  toggleIndividualPrayerAtTimeReminder,
 } = settingsSlice.actions;

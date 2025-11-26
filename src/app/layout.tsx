@@ -5,6 +5,7 @@ import Navbar from "@/components/navbar/Navbar";
 import DrinkWater from "@/components/reminders/DrinkWater";
 import { TimeProvider } from "@/context/TimeContext";
 import { ThemeProvider } from "@/components/theme-provider";
+import PrayerReminder from "@/components/reminders/PrayerReminder";
 // import Footer from "@/components/Footer";
 
 export const metadata: Metadata = {
@@ -29,6 +30,7 @@ export default function RootLayout({
           >
             <TimeProvider>
               <Navbar />
+              <PrayerReminder />
               <DrinkWater />
               {children}
               {/* <Footer /> */}

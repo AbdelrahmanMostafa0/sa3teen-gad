@@ -11,6 +11,19 @@ const INITIAL_SETTINGS = {
   autoSwitch: false,
   isWaterReminderOn: true,
   waterReminderInterval: 20,
+  prayerReminderSettings: {
+    isEnabled: true,
+    preReminderMinutes: 10,
+    preReminderEnabled: true,
+    atTimeReminderEnabled: true,
+    individualPrayers: {
+      Fajr: { preReminderEnabled: true, atTimeReminderEnabled: true },
+      Dhuhr: { preReminderEnabled: true, atTimeReminderEnabled: true },
+      Asr: { preReminderEnabled: true, atTimeReminderEnabled: true },
+      Maghrib: { preReminderEnabled: true, atTimeReminderEnabled: true },
+      Isha: { preReminderEnabled: true, atTimeReminderEnabled: true },
+    },
+  },
   country: "EGY",
   city: "Cairo",
 };

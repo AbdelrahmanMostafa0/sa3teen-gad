@@ -1,10 +1,11 @@
 "use client";
 import { format } from "date-fns";
 import { useTime } from "@/context/TimeContext";
-import Settings from "./Settings";
 import { ModeToggle } from "../mode-toggle";
 import Image from "next/image";
+import Link from "next/link";
 import { Clock } from "lucide-react";
+import { IoMdSettings } from "react-icons/io";
 
 const Navbar = () => {
   const time = useTime();
@@ -30,7 +31,9 @@ const Navbar = () => {
           <div className="h-6 w-[1px] bg-border/60 mx-1" />
 
           <ModeToggle />
-          <Settings />
+          <Link href="/settings" className="text-2xl hover:text-primary transition-colors">
+            <IoMdSettings />
+          </Link>
         </div>
 
         {/* Right Side: Logo */}

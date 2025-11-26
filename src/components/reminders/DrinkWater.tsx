@@ -66,7 +66,7 @@ const DrinkWater = () => {
         alt="water-cooler"
         className="mr-3"
       />
-      <p className="font-bold">بفكرك تشرب ماية عشان صحتك ياجميل</p>
+      <p className="font-bold text-black">بفكرك تشرب ماية عشان صحتك ياجميل</p>
     </motion.div>
   );
 

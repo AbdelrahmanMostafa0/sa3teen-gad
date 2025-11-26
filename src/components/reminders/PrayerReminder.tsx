@@ -8,52 +8,83 @@ import Image from "next/image";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store/store";
 import usePrayerTimes from "@/hooks/usePrayerTimes";
-
-// Simple pre‑reminder minutes (can be later moved to settings)
-const PRE_REMINDER_MINUTES = 5;
+import { PrayerName } from "@/types/settings";
 
 const PrayerReminder = () => {
   const { rawPrayerTimes } = usePrayerTimes();
-  const { isPrayerReminderOn } = useSelector((state: RootState) => state.Settings);
+  const { prayerReminderSettings } = useSelector((state: RootState) => state.Settings);
   const [showPopup, setShowPopup] = useState(false);
   const [currentPrayer, setCurrentPrayer] = useState<string>("");
+  const [isPreReminder, setIsPreReminder] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
-  // Load sound effect (you can replace with your own sound file)
+  // Load sound effect
   useEffect(() => {
-    audioRef.current = new Audio("/sound/prayer-azan.mp3");
+    audioRef.current = new Audio("/sound/prayer-reminder.mp3");
   }, []);
 
   // Request notification permission once
   useEffect(() => {
-    if (isPrayerReminderOn) {
+    if (prayerReminderSettings.isEnabled) {
       Notification.requestPermission();
     }
-  }, [isPrayerReminderOn]);
+  }, [prayerReminderSettings.isEnabled]);
 
   // Check every minute for upcoming prayers
   useEffect(() => {
-    if (!isPrayerReminderOn || !rawPrayerTimes?.length) return;
+    if (!prayerReminderSettings.isEnabled || !rawPrayerTimes?.length) return;
 
     const interval = setInterval(() => {
       const now = new Date();
       const nowMinutes = now.getHours() * 60 + now.getMinutes();
 
       rawPrayerTimes.forEach((prayer) => {
+        // Skip Sunrise as it's not a prayer time
+        if (prayer.name === "Sunrise") return;
+
+        const prayerName = prayer.name as PrayerName;
+        const individualSettings = prayerReminderSettings.individualPrayers[prayerName];
+
+        if (!individualSettings) return;
+
         const [h, m] = prayer.time24.split(":");
         const prayerMinutes = Number(h) * 60 + Number(m);
         const diff = prayerMinutes - nowMinutes;
-        // Trigger at exact time or pre‑reminder minutes before
-        if (diff === 0 || diff === PRE_REMINDER_MINUTES) {
-          // Show popup
+
+        // Check for pre-reminder
+        if (
+          diff === prayerReminderSettings.preReminderMinutes &&
+          prayerReminderSettings.preReminderEnabled &&
+          individualSettings.preReminderEnabled
+        ) {
           setCurrentPrayer(prayer.name);
+          setIsPreReminder(true);
           setShowPopup(true);
-          // Play sound
           audioRef.current?.play();
-          // Browser notification
+
           if (Notification.permission === "granted") {
-            new Notification("🕌 Prayer Reminder", {
-              body: `${prayer.name} prayer ${diff === 0 ? "now" : `${PRE_REMINDER_MINUTES} minutes` }`,
+            new Notification("🕌 تذكير بالصلاة", {
+              body: `صلاة ${prayer.name} بعد ${prayerReminderSettings.preReminderMinutes} دقيقة`,
+              icon: "/prayer-icon.png",
+            });
+          }
+        }
+
+        // Check for at-time reminder
+        if (
+          diff === 0 &&
+          prayerReminderSettings.atTimeReminderEnabled &&
+          individualSettings.atTimeReminderEnabled
+        ) {
+          setCurrentPrayer(prayer.name);
+          setIsPreReminder(false);
+          setShowPopup(true);
+          audioRef.current?.play();
+
+          if (Notification.permission === "granted") {
+            new Notification("🕌 وقت الصلاة", {
+              body: `حان الآن وقت صلاة ${prayer.name}`,
+              icon: "/prayer-icon.png",
             });
           }
         }
@@ -61,9 +92,9 @@ const PrayerReminder = () => {
     }, 60 * 1000); // every minute
 
     return () => clearInterval(interval);
-  }, [isPrayerReminderOn, rawPrayerTimes]);
+  }, [prayerReminderSettings, rawPrayerTimes]);
 
-  // Auto‑hide popup after 10 seconds
+  // Auto-hide popup after 10 seconds
   useEffect(() => {
     if (showPopup) {
       const timer = setTimeout(() => setShowPopup(false), 10_000);
@@ -77,12 +108,35 @@ const PrayerReminder = () => {
     <motion.div
       initial={{ opacity: 0, y: 100 }}
       animate={{ opacity: 1, y: 0 }}
-      className="fixed bottom-5 left-1/2 transform -translate-x-1/2 w-full max-w-[95vw] bg-white/90 backdrop-blur-sm rounded-xl shadow-lg flex items-center p-4"
+      exit={{ opacity: 0, y: 100 }}
+      className="fixed bottom-5 left-1/2 z-50 transform -translate-x-1/2 w-full max-w-[95vw] md:max-w-md bg-card/95 dark:bg-card/90 backdrop-blur-md rounded-xl shadow-2xl border border-border/50 flex items-center gap-4 p-5"
     >
-      <Image src="/prayer-icon.png" width={40} height={40} alt="prayer" className="mr-3" />
-      <p className="font-bold">
-        {currentPrayer} prayer {PRE_REMINDER_MINUTES} minutes reminder
-      </p>
+      <div className="flex-shrink-0">
+        <Image 
+          src="/prayer-icon.png" 
+          width={50} 
+          height={50} 
+          alt="prayer" 
+          className="drop-shadow-lg" 
+        />
+      </div>
+      <div className="flex-1">
+        <p className="font-bold text-lg text-primary mb-1">
+          {isPreReminder ? "🔔 تذكير بالصلاة" : "🕌 وقت الصلاة"}
+        </p>
+        <p className="text-sm text-primary/90">
+          {isPreReminder
+            ? `صلاة ${currentPrayer} بعد ${prayerReminderSettings.preReminderMinutes} دقيقة`
+            : `حان الآن وقت صلاة ${currentPrayer}`}
+        </p>
+      </div>
+      <button
+        onClick={() => setShowPopup(false)}
+        className="flex-shrink-0 text-muted-foreground hover:text-foreground transition-colors"
+        aria-label="إغلاق"
+      >
+        ✕
+      </button>
     </motion.div>
   );
 
@@ -90,3 +144,4 @@ const PrayerReminder = () => {
 };
 
 export default PrayerReminder;
+

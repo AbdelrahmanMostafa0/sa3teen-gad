@@ -33,7 +33,6 @@ const prayerNameMap: Record<PrayerName, string> = {
 };
 
 export default function SettingsPage() {
-  useSyncLocalStorageToRedux();
   const router = useRouter();
   const userSettings = useSelector((state: RootState) => state.Settings);
   const { rawPrayerTimes } = usePrayerTimes();

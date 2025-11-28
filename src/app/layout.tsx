@@ -6,6 +6,7 @@ import DrinkWater from "@/components/reminders/DrinkWater";
 import { TimeProvider } from "@/context/TimeContext";
 import { ThemeProvider } from "@/components/theme-provider";
 import PrayerReminder from "@/components/reminders/PrayerReminder";
+import SyncLocalstorageDataProvider from "@/providers/SyncLocalstorageDataProvider";
 // import Footer from "@/components/Footer";
 
 export const metadata: Metadata = {
@@ -18,6 +19,7 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  
   return (
     <html lang="ar" suppressHydrationWarning>
       <ReduxProvider>
@@ -28,13 +30,15 @@ export default function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
-            <TimeProvider>
-              <Navbar />
-              <PrayerReminder />
-              <DrinkWater />
-              {children}
-              {/* <Footer /> */}
-            </TimeProvider>
+            <SyncLocalstorageDataProvider>
+              <TimeProvider>
+                <Navbar />
+                <PrayerReminder />
+                <DrinkWater />
+                {children}
+                {/* <Footer /> */}
+              </TimeProvider>
+            </SyncLocalstorageDataProvider>
           </ThemeProvider>
         </body>
       </ReduxProvider>

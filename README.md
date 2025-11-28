@@ -164,43 +164,6 @@ npm start
 
 ---
 
-## 🌍 Localization
-
-The app is built with Arabic speakers in mind:
-- **RTL (Right-to-Left) layout** for natural Arabic reading
-- **Arabic interface** with localized text
-- **Arabic date and time formatting**
-- **IBM Plex Sans Arabic** font for beautiful typography
-
----
-
-## 🤝 Contributing
-
-Contributions are welcome! This project is under active development, and there are many features to implement and improvements to make.
-
-### Areas for Contribution
-- Implementing planned features (Meeting Mode, Analytics, Time Tracker)
-- Adding tests (unit tests, integration tests)
-- Improving accessibility (ARIA labels, keyboard navigation)
-- Enhancing error handling and loading states
-- Adding internationalization (i18n) support
-- Performance optimizations
-
----
-
-## 📝 License
-
-This project is open source and available under the [MIT License](LICENSE).
-
----
-
-## 🙏 Acknowledgments
-
-- Prayer times powered by [Aladhan API](https://aladhan.com/)
-- Icons from [React Icons](https://react-icons.github.io/react-icons/)
-- Fonts from [Google Fonts](https://fonts.google.com/)
-
----
 
 ## 📧 Contact
 

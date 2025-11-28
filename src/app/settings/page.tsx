@@ -6,7 +6,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { useRouter } from "next/navigation";
 import { AppDispatch, RootState } from "@/store/store";
 import { updateSettings } from "@/store/features/settingsSlice";
-import useSyncLocalStorageToRedux from "@/hooks/useSyncLocalStorageToRedux";
 import usePrayerTimes from "@/hooks/usePrayerTimes";
 import countries from "@/data/countries.json";
 import { Input } from "@/components/ui/input";

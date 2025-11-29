@@ -362,7 +362,7 @@ export default function SettingsPage() {
                                     </p>
                                     {prayerTime && (
                                       <p className="text-sm text-muted-foreground">
-                                        {prayerTime.time24}
+                                        {prayerTime.time}
                                       </p>
                                     )}
                                   </div>

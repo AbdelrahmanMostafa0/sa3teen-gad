@@ -57,14 +57,14 @@ const NewTaskForm = () => {
           onChange={handleInputChange}
           placeholder="كتبت يبقا هتخلص 👀"
           type="text"
-          className="w-full"
+          className="flex-1 h-12 border-foreground/20 focus-visible:ring-foreground/20 focus-visible:border-foreground/40 transition-all"
         />
         <Button 
           type="submit"
           size="icon"
-          className="rounded-full  aspect-square text-2xl"
+          className="h-12 w-12 rounded-full shadow-md hover:shadow-lg transition-all hover:scale-105"
         >
-          <FaPlus />
+          <FaPlus className="text-lg" />
         </Button>
       </form>
     </motion.div>

@@ -15,6 +15,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+import { motion } from "motion/react";
 
 const TaskCard = ({ task }: { task: TaskType }) => {
   const {
@@ -22,50 +23,41 @@ const TaskCard = ({ task }: { task: TaskType }) => {
     isOpen,
     handleModalToggle,
     handleCheckboxClick,
-    pathLength,
     taskCompleted,
   } = useTaskCardLogic(task);
 
   return (
-    <div
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, scale: 0.95 }}
+      transition={{ duration: 0.2 }}
       dir={isArabic ? "rtl" : "ltr"}
-      className={`bg-white p-4 rounded-lg shadow-md mb-2 w-full flex items-center justify-between relative ${
-        taskCompleted ? "opacity-50" : ""
+      className={`group relative bg-card border border-foreground/10 rounded-xl p-4 transition-all duration-300 hover:shadow-md hover:border-foreground/20 ${
+        taskCompleted ? "opacity-60" : ""
       }`}
     >
-      <svg
-        width="804"
-        height="21"
-        viewBox="0 0 804 21"
-        fill="none"
-        className="absolute left-1/2 top-0 -translate-x-1/2 w-[103%] h-full opacity-70"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path
-          d="M799.687 6.07037C798.09 6.07037 782.493 6.07037 754.719 7.26821C741.676 7.83075 730.938 10.8617 719.595 12.0958C696.774 14.5787 683.545 12.9307 681.53 11.7268C680.546 11.1387 680.314 9.72438 679.51 8.90767C677.866 7.23879 667.489 9.2767 634.615 12.9005C610.616 15.5459 571.396 15.7257 550.64 16.1431C529.883 16.5605 528.685 16.1612 491.335 15.7559C453.984 15.3506 380.517 14.9513 341.272 14.546C299.228 14.1117 295.156 13.33 292.742 12.9307C291.479 12.7218 290.328 11.7329 274.938 11.3215C259.547 10.9101 230.001 10.9101 213.183 10.7105C184.673 10.372 170.956 8.90162 161.682 8.68988C151.176 8.45002 135.868 8.10306 123.399 5.27181C110.892 2.43169 101.566 5.25972 99.1524 6.06432C96.7386 6.86893 75.5405 7.28031 44.4936 6.88103C24.578 4.86044 11.6317 5.65899 8.61295 6.86893C7.19128 7.28031 5.99344 7.28031 4.75931 7.28031"
-          stroke="black"
-          strokeWidth="8"
-          strokeLinecap="round"
-          strokeDasharray="1000"
-          strokeDashoffset={1000 - (1000 * pathLength) / 100}
-        />
-      </svg>
-
-      <button
-        onClick={handleModalToggle}
-        className="text-lg text-start font-semibold w-full relative z-10 text-black"
-      >
-        {task.title}
-      </button>
-      <div className="flex items-center gap-2 relative">
+      <div className="relative flex items-center justify-between gap-4">
+        <button
+          onClick={handleModalToggle}
+          className={`text-lg font-semibold flex-1 text-start transition-all duration-200 ${
+            taskCompleted
+              ? "line-through text-foreground/50"
+              : "text-foreground group-hover:text-foreground/80"
+          }`}
+        >
+          {task.title}
+        </button>
+        
         <Checkbox
           checked={taskCompleted}
           onCheckedChange={handleCheckboxClick}
-          className="h-7 w-7"
+          className="h-6 w-6 transition-transform duration-200 hover:scale-110"
         />
       </div>
+      
       <TaskModal task={task} isOpen={isOpen} setIsOpen={handleModalToggle} />
-    </div>
+    </motion.div>
   );
 };
 
@@ -87,7 +79,7 @@ const TaskModal = ({ task, isOpen, setIsOpen }: TaskModalProps) => {
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogContent className="max-w-[95vw] md:max-w-[700px]">
+      <DialogContent className="max-w-[95vw] md:max-w-[700px] border-foreground/20">
         <DialogHeader>
           <div dir={isArabic ? "rtl" : "ltr"} className="flex items-center gap-3">
             <Checkbox
@@ -98,14 +90,14 @@ const TaskModal = ({ task, isOpen, setIsOpen }: TaskModalProps) => {
             <Input
               onChange={(e) => updateTask(task.id, { title: e.target.value })}
               defaultValue={task.title}
-              className="border-b border-gray-200 rounded-none border-x-0 border-t-0 px-0"
+              className="text-lg font-semibold border-0 border-b-2 border-foreground/20 rounded-none px-0 focus-visible:ring-0 focus-visible:border-foreground/50"
             />
           </div>
         </DialogHeader>
         
-        <div className="space-y-4">
+        <div className="space-y-4 mt-4">
           <div className="space-y-2">
-            <Label htmlFor="description" className="font-bold">
+            <Label htmlFor="description" className="text-sm font-semibold text-foreground/70">
               الوصف
             </Label>
             <textarea
@@ -114,16 +106,18 @@ const TaskModal = ({ task, isOpen, setIsOpen }: TaskModalProps) => {
               onChange={(e) =>
                 updateTask(task.id, { description: e.target.value })
               }
-              className="h-[120px] resize-none rounded-lg border w-full border-gray-200 p-3 outline-none"
+              className="h-[120px] resize-none rounded-lg border border-foreground/20 w-full p-3 outline-none focus:border-foreground/40 focus:ring-2 focus:ring-foreground/10 bg-background transition-all"
+              placeholder="أضف وصف للمهمة..."
             />
           </div>
           
-          <div className="bg-gray-200 p-4 -mx-6 -mb-6 flex items-center justify-between rounded-b-lg">
-            <p>{formatArabicDate(task.createdAt)}</p>
+          <div className="bg-muted/50 p-4 -mx-6 -mb-6 flex items-center justify-between rounded-b-lg border-t border-foreground/10">
+            <p className="text-sm text-foreground/60">{formatArabicDate(task.createdAt)}</p>
             <Button
               onClick={() => deleteTask(task.id || "")}
               variant="destructive"
               size="icon"
+              className="hover:scale-105 transition-transform"
             >
               <TbTrash size={20} />
             </Button>

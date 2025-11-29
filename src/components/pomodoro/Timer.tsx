@@ -92,15 +92,15 @@ const Timer = ({
         <Button
           onClick={togglePomodoro}
           size="icon"
-          className={`h-14 transition-all shadow-lg ${
-            isGoing ? "w-14 rounded-full" : "w-[55%] rounded-xl"
+          className={`h-14 transition-all shadow-lg rounded-full ${
+            isGoing ? "w-14 " : "w-[55%] "
           } ${
             isActive || hasStarted
               ? "bg-zinc-300 hover:bg-zinc-400 text-black"
               : "bg-green-500 hover:bg-green-600 text-white"
           }`}
         >
-          {isActive ? <PiPause size={28} /> : <BiPlay size={28} />}
+          {isActive ? <PiPause size={28} /> :hasStarted ? <BiPlay size={28} /> : <span className="text-xl font-bold">أبدأ</span>}
         </Button>
 
         {/* RESET BUTTON */}

@@ -18,7 +18,7 @@ export default function Home() {
         </section>
 
         {/* Divider */}
-        <div className="w-full max-w-[200px] h-1 bg-primary/10 rounded-full" />
+        {/* <div className="w-full max-w-[200px] h-1 bg-primary/10 rounded-full" /> */}
 
         {/* Tasks Section */}
         <section className="w-full flex justify-center">

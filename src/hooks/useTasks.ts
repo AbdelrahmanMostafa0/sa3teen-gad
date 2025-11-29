@@ -44,10 +44,25 @@ const useTasks = () => {
   };
   const completedTasks = tasks.filter((task) => task.completed);
   const incompleteTasks = tasks.filter((task) => !task.completed);
+
+  const clearCompleted = () => {
+    const activeTasks = tasks.filter((task) => !task.completed);
+    localStorage.setItem("tasks", JSON.stringify(activeTasks));
+    dispatch(setTasks(activeTasks));
+  };
+
+  const markAllCompleted = () => {
+    const updatedTasks = tasks.map((task) => ({ ...task, completed: true }));
+    localStorage.setItem("tasks", JSON.stringify(updatedTasks));
+    dispatch(setTasks(updatedTasks));
+  };
+
   return {
     addTaks,
     deleteTask,
     updateTask,
+    clearCompleted,
+    markAllCompleted,
     tasks,
     completedTasks,
     incompleteTasks,

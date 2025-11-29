@@ -23,7 +23,7 @@ export default function RootLayout({
   return (
     <html lang="ar" suppressHydrationWarning>
       <ReduxProvider>
-        <body dir="rtl" className="bg-background text-foreground transition-colors duration-300">
+        <body dir="rtl" className="bg-background text-foreground transition-colors duration-300 md:pb-0 pb-16">
           <ThemeProvider
             attribute="class"
             defaultTheme="system"

@@ -39,7 +39,7 @@ const UserTasks = () => {
             <TaskCard key={task.id} task={task} />
           ))
         ) : (
-          <div className="text-center py-16 px-4">
+          <div className="text-center py-16 px-4  border-2 border-dashed border-foreground/10">
             <div className="mb-4 flex justify-center">
               <div className="p-4 rounded-full bg-foreground/5">
                 <FiCheckCircle className="text-5xl text-foreground/30" />

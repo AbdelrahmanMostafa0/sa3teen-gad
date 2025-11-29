@@ -17,6 +17,7 @@ const Pomodoro = () => {
   return (
     <div className="w-full flex justify-center items-center flex-col gap-6 md:w-full md:max-w-[400px] mx-auto px-8">
       <Tabs
+      variant={"primary"}
         value={displayedTimer}
         onValueChange={handleTabChange}
         className="w-full"

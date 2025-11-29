@@ -81,7 +81,7 @@ const TaskModal = ({ task, isOpen, setIsOpen }: TaskModalProps) => {
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogContent className="max-w-[95vw] md:max-w-[700px] border-foreground/20">
         <DialogHeader>
-          <div dir={isArabic ? "rtl" : "ltr"} className="flex items-center gap-3">
+          <div dir={isArabic ? "rtl" : "ltr"} className="flex items-center gap-3 mt-6">
             <Checkbox
               checked={task.completed}
               onCheckedChange={handleCheckboxClick}
@@ -90,7 +90,7 @@ const TaskModal = ({ task, isOpen, setIsOpen }: TaskModalProps) => {
             <Input
               onChange={(e) => updateTask(task.id, { title: e.target.value })}
               defaultValue={task.title}
-              className="text-lg font-semibold border-0 border-b-2 border-foreground/20 rounded-none px-0 focus-visible:ring-0 focus-visible:border-foreground/50"
+              // className="text-lg font-semibold border-0 border-b-2 border-foreground/20 rounded-none px-0 focus-visible:ring-0 focus-visible:border-foreground/50"
             />
           </div>
         </DialogHeader>
@@ -106,7 +106,7 @@ const TaskModal = ({ task, isOpen, setIsOpen }: TaskModalProps) => {
               onChange={(e) =>
                 updateTask(task.id, { description: e.target.value })
               }
-              className="h-[120px] resize-none rounded-lg border border-foreground/20 w-full p-3 outline-none focus:border-foreground/40 focus:ring-2 focus:ring-foreground/10 bg-background transition-all"
+              className="h-[120px] mt-4 resize-none rounded-lg border border-foreground/20 w-full p-3 outline-none focus:border-foreground/40 focus:ring-2 focus:ring-foreground/10 bg-background transition-all"
               placeholder="أضف وصف للمهمة..."
             />
           </div>

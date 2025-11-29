@@ -1,7 +1,6 @@
 "use client";
 
 import { Heart, Github, Mail, Globe } from "lucide-react";
-import Link from "next/link";
 
 const Footer = () => {
   return (

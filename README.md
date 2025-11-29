@@ -20,6 +20,7 @@
 ## ✨ Current Features
 
 ### 🍅 Pomodoro Timer
+
 - **Focus sessions** with customizable duration (default: 25 minutes)
 - **Short breaks** to recharge (default: 5 minutes)
 - Audio notifications when timers complete
@@ -27,6 +28,7 @@
 - Visual timer display with start/pause/reset controls
 
 ### ✅ Task Management
+
 - Create, edit, and delete tasks
 - Mark tasks as completed
 - Persistent storage using localStorage
@@ -34,13 +36,15 @@
 - Support for task descriptions and timestamps
 
 ### 🕌 Prayer Times
+
 - Automatic Islamic prayer times based on your location
-- Displays all 6 prayer times: Fajr, Sunrise, Dhuhr, Asr, Maghrib, Isha
+- Displays all 5 prayer times: Fajr, Dhuhr, Asr, Maghrib, Isha
 - Powered by [Aladhan Prayer Times API](https://aladhan.com/prayer-times-api)
 - Localized in Arabic with 12-hour format
 - Configurable city and country settings
 
 ### 💧 Water Reminder
+
 - Configurable reminder intervals (default: 20 minutes)
 - Browser notifications and visual popups
 - Audio alerts to keep you hydrated
@@ -48,6 +52,7 @@
 - Beautiful animated popup with custom graphics
 
 ### ⚙️ Settings
+
 - Customize Pomodoro and break durations
 - Configure water reminder intervals
 - Set your location for accurate prayer times
@@ -69,18 +74,21 @@
 ## 🛠️ Technology Stack
 
 ### Core
+
 - **[Next.js 15.3.3](https://nextjs.org/)** - React framework with App Router
 - **[React 19](https://react.dev/)** - UI library
 - **[TypeScript](https://www.typescriptlang.org/)** - Type safety
 - **[Redux Toolkit](https://redux-toolkit.js.org/)** - State management
 
 ### Styling & UI
+
 - **[Tailwind CSS 4](https://tailwindcss.com/)** - Utility-first CSS framework
 - **[Motion](https://motion.dev/)** - Animation library
 - **[React Icons](https://react-icons.github.io/react-icons/)** - Icon library
 - **IBM Plex Sans Arabic** - Beautiful Arabic typography
 
 ### Utilities
+
 - **[date-fns](https://date-fns.org/)** - Date manipulation and formatting
 - **[Axios](https://axios-http.com/)** - HTTP client for API requests
 - **[nanoid](https://github.com/ai/nanoid)** - Unique ID generation
@@ -125,6 +133,7 @@ sa3teen-gad/
 ## 🚀 Getting Started
 
 ### Prerequisites
+
 - **Node.js** 20.x or higher
 - **npm** or **yarn** package manager
 
@@ -167,7 +176,6 @@ npm start
 5. **Track Prayer Times**: View all daily prayer times at the top of the page
 
 ---
-
 
 ## 📧 Contact
 

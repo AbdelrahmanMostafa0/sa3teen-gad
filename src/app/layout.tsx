@@ -7,11 +7,31 @@ import { TimeProvider } from "@/context/TimeContext";
 import { ThemeProvider } from "@/components/theme-provider";
 import PrayerReminder from "@/components/reminders/PrayerReminder";
 import SyncLocalstorageDataProvider from "@/providers/SyncLocalstorageDataProvider";
-// import Footer from "@/components/Footer";
+import Footer from "@/components/Footer";
 
 export const metadata: Metadata = {
   title: "ساعتين جد",
   description: "ساعتين شاى وكوباية جد وكله هيبقا تمام",
+  openGraph: {
+    title: "ساعتين جد",
+    description: "ساعتين شاى وكوباية جد وكله هيبقا تمام",
+    images: [
+      {
+        url: "/banners/readme-banner.png",
+        width: 1200,
+        height: 630,
+        alt: "ساعتين جد - Pomodoro Timer & Prayer Times",
+      },
+    ],
+    locale: "ar_EG",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "ساعتين جد",
+    description: "ساعتين شاى وكوباية جد وكله هيبقا تمام",
+    images: ["/banners/readme-banner.png"],
+  },
 };
 
 export default function RootLayout({
@@ -36,7 +56,7 @@ export default function RootLayout({
                 <PrayerReminder />
                 <DrinkWater />
                 {children}
-                {/* <Footer /> */}
+                <Footer />
               </TimeProvider>
             </SyncLocalstorageDataProvider>
           </ThemeProvider>

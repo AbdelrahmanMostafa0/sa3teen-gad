@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="public/banners/readme-banner.png" alt="Sa3teen Gad Banner" width="100%">
+</p>
+
 # Sa3teen Gad (ساعتين جد) 🚀
 
 > **Your personal productivity companion for focused work, prayer times, and healthy habits.**

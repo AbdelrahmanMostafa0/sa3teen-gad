@@ -8,6 +8,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import PrayerReminder from "@/components/reminders/PrayerReminder";
 import SyncLocalstorageDataProvider from "@/providers/SyncLocalstorageDataProvider";
 import Footer from "@/components/Footer";
+import Head from "next/head";
 
 export const metadata: Metadata = {
   title: "ساعتين جد",
@@ -43,6 +44,16 @@ export default function RootLayout({
   
   return (
     <html lang="ar" suppressHydrationWarning>
+      
+    <Head>
+
+      <meta property="og:title" content="ساعتين جد" />
+      <meta property="og:description" content="ساعتين شاى وكوباية جد وكله هيبقا تمام" />
+      <meta property="og:image" content="/banners/readme-banner.png" />
+      <meta property="og:url" content="https://sa3teen-gad.vercel.app" />
+      <meta property="og:type" content="website" />
+      <meta property="og:locale" content="ar_EG" />
+    </Head>
       <ReduxProvider>
         <body dir="rtl" className="bg-background text-foreground transition-colors duration-300 md:pb-0 pb-16">
           <ThemeProvider

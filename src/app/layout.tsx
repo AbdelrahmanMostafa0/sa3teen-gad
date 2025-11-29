@@ -11,6 +11,7 @@ import Footer from "@/components/Footer";
 
 export const metadata: Metadata = {
   title: "ساعتين جد",
+  metadataBase: new URL("https://sa3teen-gad.vercel.app"),
   description: "ساعتين شاى وكوباية جد وكله هيبقا تمام",
   openGraph: {
     title: "ساعتين جد",

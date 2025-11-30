@@ -25,6 +25,7 @@ const initialState: SettingsType = {
   },
   country: "EGY",
   city: "Cairo",
+  prayerTimesPosition: "top",
 };
 
 const settingsSlice = createSlice({
@@ -85,6 +86,9 @@ const settingsSlice = createSlice({
     updateWaterReminderInterval: (state, action) => {
       state.waterReminderInterval = action.payload;
     },
+    updatePrayerTimesPosition: (state, action) => {
+      state.prayerTimesPosition = action.payload;
+    },
   },
 });
 
@@ -106,4 +110,5 @@ export const {
   toggleAtTimeReminder,
   toggleIndividualPrayerPreReminder,
   toggleIndividualPrayerAtTimeReminder,
+  updatePrayerTimesPosition,
 } = settingsSlice.actions;

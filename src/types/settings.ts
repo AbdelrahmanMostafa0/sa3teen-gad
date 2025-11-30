@@ -1,5 +1,7 @@
 export type PrayerName = "Fajr" | "Dhuhr" | "Asr" | "Maghrib" | "Isha";
 
+export type PrayerTimesPosition = "top" | "left" | "right";
+
 export interface PrayerReminderSettings {
   isEnabled: boolean; // Global toggle for all prayer reminders
   preReminderMinutes: number; // Default 10 minutes before prayer
@@ -25,4 +27,5 @@ export interface SettingsType {
   prayerReminderSettings: PrayerReminderSettings;
   country: string;
   city: string;
+  prayerTimesPosition: PrayerTimesPosition;
 }

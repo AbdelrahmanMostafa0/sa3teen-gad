@@ -1,5 +1,4 @@
 import Pomodoro from "@/components/pomodoro/Pomodoro";
-import PrayerTimes from "@/components/prayers/PrayerTimes";
 import UserTasks from "@/components/tasks/UserTasks";
 import { Metadata } from "next";
 export const metadata: Metadata = {
@@ -31,11 +30,6 @@ export const metadata: Metadata = {
 export default function Home() {
   return (
     <div className="min-h-screen w-full flex flex-col items-center py-8 px-4 space-y-10 font-bold bg-gradient-to-b from-background to-background/50">
-      {/* Prayer Times Section - Top Strip */}
-      <section className="w-full">
-        <PrayerTimes />
-      </section>
-
       {/* Main Content Area */}
       <div className="w-full max-w-4xl flex flex-col items-center gap-12">
         {/* Pomodoro Timer - Central Focus */}

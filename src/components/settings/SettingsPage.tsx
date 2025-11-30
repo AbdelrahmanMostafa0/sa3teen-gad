@@ -20,7 +20,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
-import { ArrowRight, Bell, Clock, Droplets, Timer } from "lucide-react";
+import { ArrowRight, Bell, Clock, Droplets, Timer, Layout } from "lucide-react";
 import { PrayerName } from "@/types/settings";
 
 const prayerNameMap: Record<PrayerName, string> = {
@@ -50,18 +50,23 @@ export default function SettingsPage() {
             shortBreakDuration: userSettings.shortBreakDuration,
             city: userSettings.city,
             country: userSettings.country,
-            preReminderMinutes: userSettings.prayerReminderSettings.preReminderMinutes,
+            preReminderMinutes:
+                userSettings.prayerReminderSettings.preReminderMinutes,
             isWaterReminderOn: userSettings.isWaterReminderOn,
             prayerReminderEnabled: userSettings.prayerReminderSettings.isEnabled,
-            preReminderEnabled: userSettings.prayerReminderSettings.preReminderEnabled,
-            atTimeReminderEnabled: userSettings.prayerReminderSettings.atTimeReminderEnabled,
+            preReminderEnabled:
+                userSettings.prayerReminderSettings.preReminderEnabled,
+            atTimeReminderEnabled:
+                userSettings.prayerReminderSettings.atTimeReminderEnabled,
             individualPrayers: userSettings.prayerReminderSettings.individualPrayers,
+            prayerTimesPosition: userSettings.prayerTimesPosition,
         },
     });
 
     const selectedCountry = watch("country");
     const countryCities = useMemo(() => {
-        return countries.find((country) => country.iso3 === selectedCountry)?.cities;
+        return countries.find((country) => country.iso3 === selectedCountry)
+            ?.cities;
     }, [selectedCountry]);
 
     const prayerReminderEnabled = watch("prayerReminderEnabled");
@@ -75,12 +80,28 @@ export default function SettingsPage() {
         setValue("waterReminderInterval", userSettings.waterReminderInterval);
         setValue("focusDurationTime", userSettings.focusDurationTime);
         setValue("shortBreakDuration", userSettings.shortBreakDuration);
-        setValue("preReminderMinutes", userSettings.prayerReminderSettings.preReminderMinutes);
+        setValue(
+            "preReminderMinutes",
+            userSettings.prayerReminderSettings.preReminderMinutes
+        );
         setValue("isWaterReminderOn", userSettings.isWaterReminderOn);
-        setValue("prayerReminderEnabled", userSettings.prayerReminderSettings.isEnabled);
-        setValue("preReminderEnabled", userSettings.prayerReminderSettings.preReminderEnabled);
-        setValue("atTimeReminderEnabled", userSettings.prayerReminderSettings.atTimeReminderEnabled);
-        setValue("individualPrayers", userSettings.prayerReminderSettings.individualPrayers);
+        setValue(
+            "prayerReminderEnabled",
+            userSettings.prayerReminderSettings.isEnabled
+        );
+        setValue(
+            "preReminderEnabled",
+            userSettings.prayerReminderSettings.preReminderEnabled
+        );
+        setValue(
+            "atTimeReminderEnabled",
+            userSettings.prayerReminderSettings.atTimeReminderEnabled
+        );
+        setValue(
+            "individualPrayers",
+            userSettings.prayerReminderSettings.individualPrayers
+        );
+        setValue("prayerTimesPosition", userSettings.prayerTimesPosition);
     }, [userSettings, setValue]);
 
     interface FormData {
@@ -100,6 +121,7 @@ export default function SettingsPage() {
                 atTimeReminderEnabled: boolean;
             };
         };
+        prayerTimesPosition: "top" | "left" | "right";
     }
 
     const onSubmit = (data: FormData) => {
@@ -118,13 +140,13 @@ export default function SettingsPage() {
                 atTimeReminderEnabled: data.atTimeReminderEnabled,
                 individualPrayers: data.individualPrayers,
             },
+            prayerTimesPosition: data.prayerTimesPosition,
         };
 
         dispatch(updateSettings(updatedSettings));
         localStorage.setItem("settings", JSON.stringify(updatedSettings));
         router.push("/");
     };
-
 
     return (
         <div className="min-h-screen w-full bg-gradient-to-b from-background to-background/50 py-8 px-4">
@@ -166,7 +188,6 @@ export default function SettingsPage() {
                                         })}
                                         type="number"
                                         max={999}
-
                                     />
                                     {errors.focusDurationTime && (
                                         <p className="text-xs text-red-500">
@@ -193,7 +214,6 @@ export default function SettingsPage() {
                                         })}
                                         type="number"
                                         max={999}
-
                                     />
                                     {errors.shortBreakDuration && (
                                         <p className="text-xs text-red-500">
@@ -223,7 +243,9 @@ export default function SettingsPage() {
                                     id="isWaterReminderOn"
                                     checked={watch("isWaterReminderOn")}
                                     onCheckedChange={(checked: boolean) =>
-                                        setValue("isWaterReminderOn", checked, { shouldDirty: true })
+                                        setValue("isWaterReminderOn", checked, {
+                                            shouldDirty: true,
+                                        })
                                     }
                                 />
                             </div>
@@ -266,7 +288,10 @@ export default function SettingsPage() {
                         <CardContent className="space-y-6">
                             {/* Global Toggle */}
                             <div className="flex items-center justify-between p-4 bg-secondary/20 rounded-lg">
-                                <Label htmlFor="prayerReminderEnabled" className="font-bold text-lg">
+                                <Label
+                                    htmlFor="prayerReminderEnabled"
+                                    className="font-bold text-lg"
+                                >
                                     تفعيل تذكير الصلاة
                                 </Label>
                                 <Switch
@@ -274,7 +299,9 @@ export default function SettingsPage() {
                                     id="prayerReminderEnabled"
                                     checked={prayerReminderEnabled}
                                     onCheckedChange={(checked: boolean) =>
-                                        setValue("prayerReminderEnabled", checked, { shouldDirty: true })
+                                        setValue("prayerReminderEnabled", checked, {
+                                            shouldDirty: true,
+                                        })
                                     }
                                 />
                             </div>
@@ -313,7 +340,10 @@ export default function SettingsPage() {
                                     {/* Global Reminder Types */}
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                         <div className="flex items-center justify-between p-3 bg-secondary/40 rounded-lg">
-                                            <Label htmlFor="preReminderEnabled" className="font-medium">
+                                            <Label
+                                                htmlFor="preReminderEnabled"
+                                                className="font-medium"
+                                            >
                                                 تذكير مسبق
                                             </Label>
                                             <Switch
@@ -321,12 +351,17 @@ export default function SettingsPage() {
                                                 id="preReminderEnabled"
                                                 checked={preReminderEnabled}
                                                 onCheckedChange={(checked: boolean) =>
-                                                    setValue("preReminderEnabled", checked, { shouldDirty: true })
+                                                    setValue("preReminderEnabled", checked, {
+                                                        shouldDirty: true,
+                                                    })
                                                 }
                                             />
                                         </div>
                                         <div className="flex items-center justify-between p-3 bg-secondary/40 rounded-lg">
-                                            <Label htmlFor="atTimeReminderEnabled" className="font-medium">
+                                            <Label
+                                                htmlFor="atTimeReminderEnabled"
+                                                className="font-medium"
+                                            >
                                                 تذكير عند الوقت
                                             </Label>
                                             <Switch
@@ -334,7 +369,9 @@ export default function SettingsPage() {
                                                 id="atTimeReminderEnabled"
                                                 checked={atTimeReminderEnabled}
                                                 onCheckedChange={(checked: boolean) =>
-                                                    setValue("atTimeReminderEnabled", checked, { shouldDirty: true })
+                                                    setValue("atTimeReminderEnabled", checked, {
+                                                        shouldDirty: true,
+                                                    })
                                                 }
                                             />
                                         </div>
@@ -344,72 +381,78 @@ export default function SettingsPage() {
                                     <div className="space-y-3">
                                         <Label className="font-bold text-base">تخصيص كل صلاة</Label>
                                         <div className="grid grid-cols-1 gap-3">
-                                            {(["Fajr", "Dhuhr", "Asr", "Maghrib", "Isha"] as PrayerName[]).map(
-                                                (prayer) => {
-                                                    const prayerTime = rawPrayerTimes.find(
-                                                        (p) => p.name === prayer
-                                                    );
-                                                    return (
-                                                        <Card
-                                                            key={prayer}
-                                                            className="border-border/30 bg-card/50 backdrop-blur-sm"
-                                                        >
-                                                            <CardContent className="p-4">
-                                                                <div className="flex items-center justify-between mb-3">
-                                                                    <div>
-                                                                        <p className="font-bold text-lg">
-                                                                            {prayerNameMap[prayer]}
+                                            {(
+                                                [
+                                                    "Fajr",
+                                                    "Dhuhr",
+                                                    "Asr",
+                                                    "Maghrib",
+                                                    "Isha",
+                                                ] as PrayerName[]
+                                            ).map((prayer) => {
+                                                const prayerTime = rawPrayerTimes.find(
+                                                    (p) => p.name === prayer
+                                                );
+                                                return (
+                                                    <Card
+                                                        key={prayer}
+                                                        className="border-border/30 bg-card/50 backdrop-blur-sm"
+                                                    >
+                                                        <CardContent className="p-4">
+                                                            <div className="flex items-center justify-between mb-3">
+                                                                <div>
+                                                                    <p className="font-bold text-lg">
+                                                                        {prayerNameMap[prayer]}
+                                                                    </p>
+                                                                    {prayerTime && (
+                                                                        <p className="text-sm text-muted-foreground">
+                                                                            {prayerTime.time}
                                                                         </p>
-                                                                        {prayerTime && (
-                                                                            <p className="text-sm text-muted-foreground">
-                                                                                {prayerTime.time}
-                                                                            </p>
-                                                                        )}
-                                                                    </div>
+                                                                    )}
                                                                 </div>
-                                                                <div className="grid sm:grid-cols-2 gap-3">
-                                                                    <div className="flex items-center justify-between p-2 bg-secondary/40 rounded">
-                                                                        <Label className="text-sm">تذكير مسبق</Label>
-                                                                        <Switch
-                                                                            dir="ltr"
-                                                                            checked={
-                                                                                individualPrayers?.[prayer]
-                                                                                    ?.preReminderEnabled ?? true
-                                                                            }
-                                                                            onCheckedChange={(checked: boolean) =>
-                                                                                setValue(
-                                                                                    `individualPrayers.${prayer}.preReminderEnabled`,
-                                                                                    checked,
-                                                                                    { shouldDirty: true }
-                                                                                )
-                                                                            }
-                                                                            disabled={!preReminderEnabled}
-                                                                        />
-                                                                    </div>
-                                                                    <div className="flex items-center justify-between p-2 bg-secondary/40 rounded">
-                                                                        <Label className="text-sm">عند الوقت</Label>
-                                                                        <Switch
-                                                                            dir="ltr"
-                                                                            checked={
-                                                                                individualPrayers?.[prayer]
-                                                                                    ?.atTimeReminderEnabled ?? true
-                                                                            }
-                                                                            onCheckedChange={(checked: boolean) =>
-                                                                                setValue(
-                                                                                    `individualPrayers.${prayer}.atTimeReminderEnabled`,
-                                                                                    checked,
-                                                                                    { shouldDirty: true }
-                                                                                )
-                                                                            }
-                                                                            disabled={!atTimeReminderEnabled}
-                                                                        />
-                                                                    </div>
+                                                            </div>
+                                                            <div className="grid sm:grid-cols-2 gap-3">
+                                                                <div className="flex items-center justify-between p-2 bg-secondary/40 rounded">
+                                                                    <Label className="text-sm">تذكير مسبق</Label>
+                                                                    <Switch
+                                                                        dir="ltr"
+                                                                        checked={
+                                                                            individualPrayers?.[prayer]
+                                                                                ?.preReminderEnabled ?? true
+                                                                        }
+                                                                        onCheckedChange={(checked: boolean) =>
+                                                                            setValue(
+                                                                                `individualPrayers.${prayer}.preReminderEnabled`,
+                                                                                checked,
+                                                                                { shouldDirty: true }
+                                                                            )
+                                                                        }
+                                                                        disabled={!preReminderEnabled}
+                                                                    />
                                                                 </div>
-                                                            </CardContent>
-                                                        </Card>
-                                                    );
-                                                }
-                                            )}
+                                                                <div className="flex items-center justify-between p-2 bg-secondary/40 rounded">
+                                                                    <Label className="text-sm">عند الوقت</Label>
+                                                                    <Switch
+                                                                        dir="ltr"
+                                                                        checked={
+                                                                            individualPrayers?.[prayer]
+                                                                                ?.atTimeReminderEnabled ?? true
+                                                                        }
+                                                                        onCheckedChange={(checked: boolean) =>
+                                                                            setValue(
+                                                                                `individualPrayers.${prayer}.atTimeReminderEnabled`,
+                                                                                checked,
+                                                                                { shouldDirty: true }
+                                                                            )
+                                                                        }
+                                                                        disabled={!atTimeReminderEnabled}
+                                                                    />
+                                                                </div>
+                                                            </div>
+                                                        </CardContent>
+                                                    </Card>
+                                                );
+                                            })}
                                         </div>
                                     </div>
                                 </>
@@ -465,6 +508,100 @@ export default function SettingsPage() {
                                         </SelectContent>
                                     </Select>
                                 </div>
+                            </div>
+                        </CardContent>
+                    </Card>
+
+                    {/* Prayer Times Position Settings */}
+                    <Card className="border-border/40 shadow-sm backdrop-blur-sm">
+                        <CardHeader>
+                            <CardTitle className="flex items-center gap-2 text-xl">
+                                <Layout className="w-5 h-5 text-primary" />
+                                موضع مواقيت الصلاة (للشاشات الكبيرة)
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent className="space-y-4">
+                            <p className="text-sm text-muted-foreground">
+                                اختر مكان عرض مواقيت الصلاة على الشاشة الكبيرة
+                            </p>
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                {/* Top Position */}
+                                <button
+                                    type="button"
+                                    onClick={() =>
+                                        setValue("prayerTimesPosition", "top", {
+                                            shouldDirty: true,
+                                        })
+                                    }
+                                    className={`relative p-4 rounded-lg border-2 transition-all duration-300 hover:scale-105 ${watch("prayerTimesPosition") === "top"
+                                        ? "border-primary bg-primary/10 shadow-lg"
+                                        : "border-border bg-card hover:border-primary/50"
+                                        }`}
+                                >
+                                    <div className="flex flex-col items-center gap-3">
+                                        <div className="w-full h-16 border-2 border-dashed border-current rounded flex items-start justify-center p-2">
+                                            <div className="w-3/4 h-2 bg-current rounded" />
+                                        </div>
+                                        <p className="font-bold text-sm">أعلى الصفحة</p>
+                                        {watch("prayerTimesPosition") === "top" && (
+                                            <div className="absolute top-2 left-2 w-5 h-5 bg-primary rounded-full flex items-center justify-center">
+                                                <div className="w-2 h-2 bg-primary-foreground rounded-full" />
+                                            </div>
+                                        )}
+                                    </div>
+                                </button>
+
+                                {/* Right Position */}
+                                <button
+                                    type="button"
+                                    onClick={() =>
+                                        setValue("prayerTimesPosition", "right", {
+                                            shouldDirty: true,
+                                        })
+                                    }
+                                    className={`relative p-4 rounded-lg border-2 transition-all duration-300 hover:scale-105 ${watch("prayerTimesPosition") === "right"
+                                        ? "border-primary bg-primary/10 shadow-lg"
+                                        : "border-border bg-card hover:border-primary/50"
+                                        }`}
+                                >
+                                    <div className="flex flex-col items-center gap-3">
+                                        <div className="w-full h-16 border-2 border-dashed border-current rounded flex items-center justify-start p-2">
+                                            <div className="w-1/4 h-full bg-current rounded" />
+                                        </div>
+                                        <p className="font-bold text-sm">الجانب الأيمن</p>
+                                        {watch("prayerTimesPosition") === "right" && (
+                                            <div className="absolute top-2 left-2 w-5 h-5 bg-primary rounded-full flex items-center justify-center">
+                                                <div className="w-2 h-2 bg-primary-foreground rounded-full" />
+                                            </div>
+                                        )}
+                                    </div>
+                                </button>
+
+                                {/* Left Position */}
+                                <button
+                                    type="button"
+                                    onClick={() =>
+                                        setValue("prayerTimesPosition", "left", {
+                                            shouldDirty: true,
+                                        })
+                                    }
+                                    className={`relative p-4 rounded-lg border-2 transition-all duration-300 hover:scale-105 ${watch("prayerTimesPosition") === "left"
+                                        ? "border-primary bg-primary/10 shadow-lg"
+                                        : "border-border bg-card hover:border-primary/50"
+                                        }`}
+                                >
+                                    <div className="flex flex-col items-center gap-3">
+                                        <div className="w-full h-16 border-2 border-dashed border-current rounded flex items-center justify-end p-2">
+                                            <div className="w-1/4 h-full bg-current rounded" />
+                                        </div>
+                                        <p className="font-bold text-sm">الجانب الأيسر</p>
+                                        {watch("prayerTimesPosition") === "left" && (
+                                            <div className="absolute top-2 left-2 w-5 h-5 bg-primary rounded-full flex items-center justify-center">
+                                                <div className="w-2 h-2 bg-primary-foreground rounded-full" />
+                                            </div>
+                                        )}
+                                    </div>
+                                </button>
                             </div>
                         </CardContent>
                     </Card>

@@ -8,7 +8,6 @@ import { ThemeProvider } from "@/components/theme-provider";
 import PrayerReminder from "@/components/reminders/PrayerReminder";
 import SyncLocalstorageDataProvider from "@/providers/SyncLocalstorageDataProvider";
 import Footer from "@/components/Footer";
-import Head from "next/head";
 
 export const metadata: Metadata = {
   title: "ساعتين جد",

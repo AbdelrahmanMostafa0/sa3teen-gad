@@ -8,7 +8,33 @@ import TaskFilters, { FilterType } from "@/components/tasks/TaskFilters";
 import BulkActions from "@/components/tasks/BulkActions";
 import { FiCheckCircle } from "react-icons/fi";
 import { motion, AnimatePresence } from "motion/react";
-
+import { Metadata } from "next";
+export const metadata: Metadata = {
+  title: "ساعتين جد - المهام",
+  metadataBase: new URL("https://sa3teen-gad.vercel.app"),
+  description: "ساعتين شاى وكوباية جد وكله هيبقا تمام",
+  openGraph: {
+    title: "ساعتين جد - المهام",
+    description: "ساعتين شاى وكوباية جد وكله هيبقا تمام",
+    images: [
+      {
+        url: "https://sa3teen-gad.vercel.app/banners/readme-banner.png", // Full URL
+        width: 1200,
+        height: 630,
+        alt: "ساعتين جد - Pomodoro Timer & Prayer Times",
+      },
+    ],
+    locale: "ar_EG",
+    type: "website",
+    url: "https://sa3teen-gad.vercel.app", // Add this
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "ساعتين جد - المهام",
+    description: "ساعتين شاى وكوباية جد وكله هيبقا تمام",
+    images: ["https://sa3teen-gad.vercel.app/banners/readme-banner.png"], // Full URL
+  },
+};
 export default function TasksPage() {
   const { tasks, clearCompleted, markAllCompleted } = useTasks();
   const [filter, setFilter] = useState<FilterType>("all");
@@ -32,8 +58,8 @@ export default function TasksPage() {
           <h1 className="text-3xl font-bold mb-2">المهام</h1>
           <p className="text-muted-foreground">نظم وقتك وشوف وراك إيه النهاردة</p>
         </div>
-        
-        <BulkActions 
+
+        <BulkActions
           onClearCompleted={clearCompleted}
           onMarkAllCompleted={markAllCompleted}
           hasCompletedTasks={counts.completed > 0}
@@ -54,8 +80,8 @@ export default function TasksPage() {
         {/* Filters & List Section */}
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <TaskFilters 
-              currentFilter={filter} 
+            <TaskFilters
+              currentFilter={filter}
               onFilterChange={setFilter}
               counts={counts}
             />
@@ -68,7 +94,7 @@ export default function TasksPage() {
                   <TaskCard key={task.id} task={task} />
                 ))
               ) : (
-                <motion.div 
+                <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, scale: 0.95 }}
@@ -80,15 +106,15 @@ export default function TasksPage() {
                     </div>
                   </div>
                   <h3 className="text-lg font-semibold text-foreground/70 mb-2">
-                    {filter === "all" 
-                      ? "مفيش مهام حاليا" 
-                      : filter === "active" 
-                        ? "مفيش مهام نشطة" 
+                    {filter === "all"
+                      ? "مفيش مهام حاليا"
+                      : filter === "active"
+                        ? "مفيش مهام نشطة"
                         : "مفيش مهام مكتملة"}
                   </h3>
                   <p className="text-sm text-foreground/50">
-                    {filter === "all" 
-                      ? "ابدأ بإضافة مهمة جديدة عشان تبدأ تنظم وقتك ☕" 
+                    {filter === "all"
+                      ? "ابدأ بإضافة مهمة جديدة عشان تبدأ تنظم وقتك ☕"
                       : filter === "active"
                         ? "عاش يا بطل! خلصت كل اللي وراك 💪"
                         : "لسه مخلصتش حاجة؟ شد حيلك 😉"}

@@ -22,7 +22,33 @@ import {
 } from "@/components/ui/select";
 import { ArrowRight, Bell, Clock, Droplets, Timer } from "lucide-react";
 import { PrayerName } from "@/types/settings";
-
+import { Metadata } from "next";
+export const metadata: Metadata = {
+  title: "ساعتين جد - الإعدادات",
+  metadataBase: new URL("https://sa3teen-gad.vercel.app"),
+  description: "ساعتين شاى وكوباية جد وكله هيبقا تمام",
+  openGraph: {
+    title: "ساعتين جد - الإعدادات",
+    description: "ساعتين شاى وكوباية جد وكله هيبقا تمام",
+    images: [
+      {
+        url: "https://sa3teen-gad.vercel.app/banners/readme-banner.png", // Full URL
+        width: 1200,
+        height: 630,
+        alt: "ساعتين جد - Pomodoro Timer & Prayer Times",
+      },
+    ],
+    locale: "ar_EG",
+    type: "website",
+    url: "https://sa3teen-gad.vercel.app", // Add this
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "ساعتين جد - الإعدادات",
+    description: "ساعتين شاى وكوباية جد وكله هيبقا تمام",
+    images: ["https://sa3teen-gad.vercel.app/banners/readme-banner.png"], // Full URL
+  },
+};
 const prayerNameMap: Record<PrayerName, string> = {
   Fajr: "الفجر",
   Dhuhr: "الظهر",
@@ -166,7 +192,7 @@ export default function SettingsPage() {
                     })}
                     type="number"
                     max={999}
-                    
+
                   />
                   {errors.focusDurationTime && (
                     <p className="text-xs text-red-500">
@@ -193,7 +219,7 @@ export default function SettingsPage() {
                     })}
                     type="number"
                     max={999}
-                    
+
                   />
                   {errors.shortBreakDuration && (
                     <p className="text-xs text-red-500">
@@ -219,7 +245,7 @@ export default function SettingsPage() {
                   تفعيل التذكير
                 </Label>
                 <Switch
-                dir="ltr"
+                  dir="ltr"
                   id="isWaterReminderOn"
                   checked={watch("isWaterReminderOn")}
                   onCheckedChange={(checked: boolean) =>
@@ -227,7 +253,7 @@ export default function SettingsPage() {
                   }
                 />
               </div>
-              
+
               {watch("isWaterReminderOn") && (
                 <div className="flex items-center gap-4">
                   <Label className="whitespace-nowrap">تذكير كل</Label>
@@ -270,7 +296,7 @@ export default function SettingsPage() {
                   تفعيل تذكير الصلاة
                 </Label>
                 <Switch
-                dir="ltr"
+                  dir="ltr"
                   id="prayerReminderEnabled"
                   checked={prayerReminderEnabled}
                   onCheckedChange={(checked: boolean) =>
@@ -317,7 +343,7 @@ export default function SettingsPage() {
                         تذكير مسبق
                       </Label>
                       <Switch
-                      dir="ltr"
+                        dir="ltr"
                         id="preReminderEnabled"
                         checked={preReminderEnabled}
                         onCheckedChange={(checked: boolean) =>
@@ -330,7 +356,7 @@ export default function SettingsPage() {
                         تذكير عند الوقت
                       </Label>
                       <Switch
-                      dir="ltr"
+                        dir="ltr"
                         id="atTimeReminderEnabled"
                         checked={atTimeReminderEnabled}
                         onCheckedChange={(checked: boolean) =>
@@ -371,7 +397,7 @@ export default function SettingsPage() {
                                   <div className="flex items-center justify-between p-2 bg-secondary/40 rounded">
                                     <Label className="text-sm">تذكير مسبق</Label>
                                     <Switch
-                                    dir="ltr"
+                                      dir="ltr"
                                       checked={
                                         individualPrayers?.[prayer]
                                           ?.preReminderEnabled ?? true
@@ -389,7 +415,7 @@ export default function SettingsPage() {
                                   <div className="flex items-center justify-between p-2 bg-secondary/40 rounded">
                                     <Label className="text-sm">عند الوقت</Label>
                                     <Switch
-                                    dir="ltr"
+                                      dir="ltr"
                                       checked={
                                         individualPrayers?.[prayer]
                                           ?.atTimeReminderEnabled ?? true

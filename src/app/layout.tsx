@@ -8,7 +8,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import PrayerReminder from "@/components/reminders/PrayerReminder";
 import SyncLocalstorageDataProvider from "@/providers/SyncLocalstorageDataProvider";
 import Footer from "@/components/Footer";
-
+import { GoogleOAuthProvider } from "@react-oauth/google";
 export const metadata: Metadata = {
   title: "ساعتين جد",
   metadataBase: new URL("https://sa3teen-gad.vercel.app"),
@@ -41,31 +41,35 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-
   return (
     <html lang="ar" suppressHydrationWarning>
-
-
-      <ReduxProvider>
-        <body dir="rtl" className="bg-background text-foreground transition-colors duration-300 md:pb-0 pb-16">
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            enableSystem
-            disableTransitionOnChange
-          >
-            <SyncLocalstorageDataProvider>
-              <TimeProvider>
-                <Navbar />
-                <PrayerReminder />
-                <DrinkWater />
-                {children}
-                <Footer />
-              </TimeProvider>
-            </SyncLocalstorageDataProvider>
-          </ThemeProvider>
-        </body>
-      </ReduxProvider>
+      <body
+        dir="rtl"
+        className="bg-background text-foreground transition-colors duration-300 md:pb-0 pb-16"
+      >
+        <GoogleOAuthProvider
+          clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID!}
+        >
+          <ReduxProvider>
+            <ThemeProvider
+              attribute="class"
+              defaultTheme="system"
+              enableSystem
+              disableTransitionOnChange
+            >
+              <SyncLocalstorageDataProvider>
+                <TimeProvider>
+                  <Navbar />
+                  <PrayerReminder />
+                  <DrinkWater />
+                  {children}
+                  <Footer />
+                </TimeProvider>
+              </SyncLocalstorageDataProvider>
+            </ThemeProvider>
+          </ReduxProvider>
+        </GoogleOAuthProvider>
+      </body>
     </html>
   );
 }

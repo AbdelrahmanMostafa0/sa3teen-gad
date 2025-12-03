@@ -1,0 +1,72 @@
+"use client";
+
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useGoogleLogin } from "@react-oauth/google";
+import axios from "axios";
+import Cookies from "js-cookie";
+import { Button } from "@/components/ui/button";
+import { FcGoogle } from "react-icons/fc";
+import { Loader2 } from "lucide-react";
+
+interface GoogleLoginButtonProps {
+  onError?: (error: string) => void;
+}
+
+export default function GoogleLoginButton({ onError }: GoogleLoginButtonProps) {
+  const router = useRouter();
+  const [loading, setLoading] = useState(false);
+
+  const login = useGoogleLogin({
+    onSuccess: async (tokenResponse) => {
+      setLoading(true);
+      try {
+        const res = await axios.post("/api/auth/google", {
+          access_token: tokenResponse.access_token,
+        });
+
+        if (res.data.success) {
+          Cookies.set("token", res.data.token);
+          router.push("/");
+          router.refresh();
+        }
+      } catch (error) {
+        console.error("Google login error:", error);
+        if (onError) {
+          onError("حدث خطأ أثناء تسجيل الدخول بجوجل");
+        }
+      } finally {
+        setLoading(false);
+      }
+    },
+    onError: () => {
+      console.log("Login Failed");
+      setLoading(false);
+      if (onError) {
+        onError("فشل تسجيل الدخول بجوجل");
+      }
+    },
+  });
+
+  return (
+    <Button
+      type="button"
+      variant="outline"
+      className="w-full bg-white dark:bg-white hover:bg-white dark:hover:bg-white"
+      onClick={() => login()}
+      disabled={loading}
+    >
+      {loading ? (
+        <>
+          <Loader2 className="ml-2 h-4 w-4 animate-spin" />
+          جاري تسجيل الدخول...
+        </>
+      ) : (
+        <>
+          <FcGoogle className="ml-2 h-5 w-5" />
+          تسجيل الدخول بجوجل
+        </>
+      )}
+    </Button>
+  );
+}

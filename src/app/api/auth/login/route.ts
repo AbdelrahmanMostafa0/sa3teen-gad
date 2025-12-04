@@ -74,17 +74,6 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    if (!user.isActive) {
-      return NextResponse.json(
-        {
-          status: 403,
-          success: false,
-          message: "تم تعطيل حسابك. يرجى التواصل مع الدعم الفني",
-        },
-        { status: 403 }
-      );
-    }
-
     user.lastLoginAt = new Date();
     await user.save();
 

@@ -8,6 +8,7 @@ import Cookies from "js-cookie";
 import { Button } from "@/components/ui/button";
 import { FcGoogle } from "react-icons/fc";
 import { Loader2 } from "lucide-react";
+import { useUser } from "@/hooks/useUser";
 
 interface GoogleLoginButtonProps {
   onError?: (error: string) => void;
@@ -16,7 +17,7 @@ interface GoogleLoginButtonProps {
 export default function GoogleLoginButton({ onError }: GoogleLoginButtonProps) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
-
+  const { refetchUser } = useUser()
   const login = useGoogleLogin({
     onSuccess: async (tokenResponse) => {
       setLoading(true);
@@ -29,6 +30,7 @@ export default function GoogleLoginButton({ onError }: GoogleLoginButtonProps) {
           Cookies.set("token", res.data.token);
           router.push("/");
           router.refresh();
+          refetchUser()
         }
       } catch (error) {
         console.error("Google login error:", error);

@@ -1,64 +1,64 @@
 @import "tailwindcss";
-@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@100;200;300;400;500;600;700&display=swap");
+/* @import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wccght@100;200;300;400;500;600;700&display=swap"); */
 
 @layer base {
   :root {
     --background: hsl(39, 54%, 93%); /* #FEECD2 - Warm Beige */
     --foreground: hsl(215, 28%, 17%); /* Dark Slate */
-    
+
     --card: hsl(0, 0%, 100%);
     --card-foreground: hsl(215, 28%, 17%);
-    
+
     --popover: hsl(0, 0%, 100%);
     --popover-foreground: hsl(215, 28%, 17%);
-    
+
     --primary: hsl(215, 28%, 17%); /* Dark Slate */
     --primary-foreground: hsl(0, 0%, 98%);
-    
+
     --secondary: hsl(39, 30%, 85%); /* Lighter Beige */
     --secondary-foreground: hsl(215, 28%, 17%);
-    
+
     --muted: hsl(39, 30%, 85%);
     --muted-foreground: hsl(215, 16%, 47%);
-    
+
     --accent: hsl(39, 30%, 85%);
     --accent-foreground: hsl(215, 28%, 17%);
-    
+
     --destructive: hsl(0, 84%, 60%);
     --destructive-foreground: hsl(0, 0%, 98%);
-    
+
     --border: hsl(215, 14%, 85%);
     --input: hsl(215, 14%, 85%);
     --ring: hsl(215, 28%, 17%);
-    
+
     --radius: 0.5rem;
   }
 
   .dark {
     --background: hsl(222, 47%, 11%); /* Deep Blue/Slate */
     --foreground: hsl(210, 40%, 98%);
-    
+
     --card: hsl(222, 47%, 13%); /* Slightly lighter than bg */
     --card-foreground: hsl(210, 40%, 98%);
-    
+
     --popover: hsl(222, 47%, 13%);
     --popover-foreground: hsl(210, 40%, 98%);
-    
+
     --primary: hsl(210, 40%, 98%);
     --primary-foreground: hsl(222, 47%, 11%);
-    
+
     --secondary: hsl(217, 32%, 17%);
     --secondary-foreground: hsl(210, 40%, 98%);
-    
+
     --muted: hsl(217, 32%, 17%);
     --muted-foreground: hsl(215, 20%, 65%);
-    
+
     --accent: hsl(217, 32%, 17%);
     --accent-foreground: hsl(210, 40%, 98%);
-    
+
     --destructive: hsl(0, 62%, 30%);
     --destructive-foreground: hsl(210, 40%, 98%);
-    
+
     --border: hsl(217, 32%, 17%);
     --input: hsl(217, 32%, 17%);
     --ring: hsl(212, 26%, 83%);

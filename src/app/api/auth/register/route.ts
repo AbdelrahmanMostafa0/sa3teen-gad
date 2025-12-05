@@ -4,6 +4,7 @@ import bcrypt from "bcryptjs";
 import connect from "@/lib/db";
 import User from "@/lib/models/user";
 import { generateToken } from "@/lib/jwt";
+import { defaultSettings } from "@/types/user";
 
 // Validation schema
 const registerSchema = z.object({
@@ -63,6 +64,9 @@ export async function POST(req: NextRequest) {
       email,
       password: hashedPassword,
       provider: "email",
+      profilePicture: "",
+      settings: defaultSettings,
+      lastLoginAt: new Date(),
     });
 
     const userResponse = {
@@ -71,6 +75,8 @@ export async function POST(req: NextRequest) {
       email: newUser.email,
       profilePicture: newUser.profilePicture,
       provider: newUser.provider,
+      settings: newUser.settings,
+      lastLoginAt: newUser.lastLoginAt,
     };
 
     const token = generateToken({

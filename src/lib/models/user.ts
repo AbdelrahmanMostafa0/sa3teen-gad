@@ -1,17 +1,45 @@
+import { SettingsType } from "@/types/settings";
+import { defaultSettings, IUser } from "@/types/user";
 import { Schema, model, models } from "mongoose";
-
-export interface IUser {
-  _id: string;
-  fullName: string;
-  email: string;
-  password?: string; // Optional for OAuth users
-  provider: string;
-  profilePicture?: string;
-  googleId?: string;
-  createdAt: Date;
-  updatedAt: Date;
-  lastLoginAt?: Date;
-}
+// export const settingsDefault: SettingsType = {
+//   focusDurationTime: 25,
+//   shortBreakDuration: 5,
+//   longBreakDuration: 15,
+//   displayedTimer: "focus",
+//   autoBreakStart: false,
+//   autoSwitch: false,
+//   isWaterReminderOn: true,
+//   waterReminderInterval: 20,
+//   prayerReminderSettings: {
+//     isEnabled: true,
+//     preReminderMinutes: 10,
+//     preReminderEnabled: true,
+//     atTimeReminderEnabled: true,
+//     individualPrayers: {
+//       Fajr: { preReminderEnabled: true, atTimeReminderEnabled: true },
+//       Dhuhr: { preReminderEnabled: true, atTimeReminderEnabled: true },
+//       Asr: { preReminderEnabled: true, atTimeReminderEnabled: true },
+//       Maghrib: { preReminderEnabled: true, atTimeReminderEnabled: true },
+//       Isha: { preReminderEnabled: true, atTimeReminderEnabled: true },
+//     },
+//   },
+//   country: "EGY",
+//   city: "Cairo",
+//   prayerTimesPosition: "top",
+// };
+// export interface IUser {
+//   _id: string;
+//   fullName: string;
+//   email: string;
+//   password?: string; // Optional for OAuth users
+//   provider: string;
+//   profilePicture?: string;
+//   googleId?: string;
+//   settings?: SettingsType;
+//   createdAt: Date;
+//   updatedAt: Date;
+//   lastLoginAt?: Date;
+// }
 
 export const UserSchema = new Schema<IUser>(
   {
@@ -54,7 +82,10 @@ export const UserSchema = new Schema<IUser>(
       sparse: true,
       unique: true,
     },
-
+    settings: {
+      type: Schema.Types.Mixed,
+      default: defaultSettings,
+    },
     lastLoginAt: {
       type: Date,
       default: null,

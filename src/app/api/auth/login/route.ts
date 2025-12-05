@@ -82,11 +82,9 @@ export async function POST(req: NextRequest) {
       fullName: user.fullName,
       email: user.email,
       profilePicture: user.profilePicture,
-      emailVerified: user.emailVerified,
-      preferences: user.preferences,
-      stats: user.stats,
-      isPremium: user.isPremium,
+      settings: user.settings,
       createdAt: user.createdAt,
+      updatedAt: user.updatedAt,
       lastLoginAt: user.lastLoginAt,
     };
 

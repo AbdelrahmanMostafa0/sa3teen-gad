@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import connect from "@/lib/db";
 import User from "@/lib/models/user";
 import { generateToken } from "@/lib/jwt";
+import { defaultSettings } from "@/types/user";
 
 export async function POST(req: NextRequest) {
   try {
@@ -67,6 +68,10 @@ export async function POST(req: NextRequest) {
         provider: "google",
         profilePicture: picture || null,
         password: null,
+        settings: defaultSettings,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        lastLoginAt: new Date(),
       });
     }
 
@@ -82,7 +87,9 @@ export async function POST(req: NextRequest) {
       email: user.email,
       profilePicture: user.profilePicture,
       provider: user.provider,
+      settings: user.settings,
       createdAt: user.createdAt,
+      updatedAt: user.updatedAt,
       lastLoginAt: user.lastLoginAt,
     };
 

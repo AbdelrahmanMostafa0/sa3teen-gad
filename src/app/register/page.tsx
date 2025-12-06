@@ -88,7 +88,7 @@ export default function RegisterPage() {
                 value={formData.fullName}
                 onChange={handleChange}
                 disabled={isLoading}
-                className={fieldErrors.fullName ? "border-destructive" : ""}
+                className={` mt-2 ${fieldErrors.fullName ? "border-destructive" : ""}`}
               />
               {fieldErrors.fullName && (
                 <p className="text-sm text-destructive">
@@ -107,7 +107,7 @@ export default function RegisterPage() {
                 value={formData.email}
                 onChange={handleChange}
                 disabled={isLoading}
-                className={fieldErrors.email ? "border-destructive" : ""}
+                className={` mt-2 ${fieldErrors.email ? "border-destructive" : ""}`}
               />
               {fieldErrors.email && (
                 <p className="text-sm text-destructive">
@@ -126,7 +126,7 @@ export default function RegisterPage() {
                 value={formData.password}
                 onChange={handleChange}
                 disabled={isLoading}
-                className={fieldErrors.password ? "border-destructive" : ""}
+                className={` mt-2 ${fieldErrors.password ? "border-destructive" : ""}`}
               />
               {fieldErrors.password && (
                 <p className="text-sm text-destructive">
@@ -141,7 +141,7 @@ export default function RegisterPage() {
               </div>
             )}
 
-            <Button type="submit" className="w-full" disabled={isLoading}>
+            <Button type="submit" className="w-full mt-4" variant={"default"} disabled={isLoading}>
               {isLoading ? (
                 <>
                   <Loader2 className="ml-2 h-4 w-4 animate-spin" />

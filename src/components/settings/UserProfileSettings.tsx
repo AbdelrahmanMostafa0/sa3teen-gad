@@ -12,17 +12,18 @@ import WaterReminderSection from './profile/WaterReminderSection';
 import PrayerReminderSection from './profile/PrayerReminderSection';
 import LocationSection from './profile/LocationSection';
 import UIPreferencesSection from './profile/UIPreferencesSection';
+import { useUser } from '@/hooks/useUser';
 
 export default function UserProfileSettings() {
     const router = useRouter();
-    const { user, loading: fetchLoading, error: fetchError, refetch } = useUserProfile();
+    const { user, loading: fetchLoading, error: fetchError, refetchUser } = useUser();
     const { updateUser, loading: updateLoading, error: updateError } = useUpdateUser();
     const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
     const handleUpdate = async (data: any) => {
         try {
             await updateUser(data);
-            await refetch(); // Refresh user data after update
+            await refetchUser(); // Refresh user data after update
             setSuccessMessage('تم حفظ التغييرات بنجاح');
             setTimeout(() => setSuccessMessage(null), 3000);
         } catch (error) {
@@ -49,7 +50,7 @@ export default function UserProfileSettings() {
                     <h2 className="text-2xl font-bold">حدث خطأ</h2>
                     <p className="text-muted-foreground">{fetchError || 'فشل تحميل البيانات'}</p>
                     <div className="flex gap-4 justify-center">
-                        <Button onClick={() => refetch()}>إعادة المحاولة</Button>
+                        <Button onClick={() => refetchUser()}>إعادة المحاولة</Button>
                         <Button variant="outline" onClick={() => router.push('/')}>
                             العودة للرئيسية
                         </Button>

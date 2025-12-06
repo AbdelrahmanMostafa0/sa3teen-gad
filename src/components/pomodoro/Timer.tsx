@@ -1,12 +1,9 @@
 "use client";
-
-import { RootState } from "@/store/store";
 import Image from "next/image";
 import { useMemo, useEffect } from "react";
 import { BiPlay } from "react-icons/bi";
 import { GrPowerReset } from "react-icons/gr";
 import { PiPause } from "react-icons/pi";
-import { useSelector } from "react-redux";
 import { Button } from "@/components/ui/button";
 
 const Timer = ({
@@ -29,7 +26,6 @@ const Timer = ({
     duration,
   ]);
 
-  const { displayedTimer } = useSelector((state: RootState) => state.Settings);
 
   const progress = useMemo(() => {
     const total = Number(duration) * 60;
@@ -45,7 +41,7 @@ const Timer = ({
     if (typeof window !== "undefined") {
       document.title = isActive ? `${minutes}:${seconds}` : "ساعتين جد";
     }
-  }, [displayedTimer, minutes, seconds, isActive]);
+  }, [minutes, seconds, isActive]);
 
   return (
     <div className="w-full md:max-w-[420px] space-y-6 mx-auto">
@@ -65,8 +61,7 @@ const Timer = ({
         {/* WATER WAVE 1 */}
         <Image
           style={{ top: `${progress}%` }}
-          className="absolute scale-x-[2.8] scale-y-[1.4] rotate-clockwise 
-                     transition-all duration-300 opacity-40"
+          className="absolute scale-x-[2.8] scale-y-[1.4] rotate-clockwise transition-all duration-300 opacity-40"
           src={"/water-wave-1.svg"}
           width={450}
           height={450}
@@ -75,9 +70,8 @@ const Timer = ({
 
         {/* WATER WAVE 2 */}
         <Image
-          style={{ top: `${progress + 4}%` }}
-          className="absolute scale-x-[2.8] scale-y-[1.4] rotate-counterclockwise 
-                     transition-all duration-300 opacity-40"
+          style={{ top: `${progress}%` }}
+          className="absolute scale-x-[2.8] scale-y-[1.4] rotate-counterclockwise transition-all duration-300 opacity-40"
           src={"/water-wave-2.svg"}
           width={450}
           height={450}
@@ -92,15 +86,13 @@ const Timer = ({
         <Button
           onClick={togglePomodoro}
           size="icon"
-          className={`h-14 transition-all shadow-lg rounded-full ${
-            isGoing ? "w-14 " : "w-[55%] "
-          } ${
-            isActive || hasStarted
+          className={`h-14 transition-all shadow-lg rounded-full ${isGoing ? "w-14 " : "w-[55%] "
+            } ${isActive || hasStarted
               ? "bg-zinc-300 hover:bg-zinc-400 text-black"
               : "bg-green-500 hover:bg-green-600 text-white"
-          }`}
+            }`}
         >
-          {isActive ? <PiPause size={28} /> :hasStarted ? <BiPlay size={28} /> : <span className="text-xl font-bold">أبدأ</span>}
+          {isActive ? <PiPause size={28} /> : hasStarted ? <BiPlay size={28} /> : <span className="text-xl font-bold">أبدأ</span>}
         </Button>
 
         {/* RESET BUTTON */}

@@ -1,4 +1,3 @@
-// src/hooks/usePrayerTimes.ts
 "use client";
 
 import { getPrayers } from "@/services/prayerApi";
@@ -7,6 +6,7 @@ import { formatTime12 } from "@/utils/date";
 import { format } from "date-fns";
 import { useCallback, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
+import { useUser } from "./useUser";
 
 type PrayerTime = {
   name: "Fajr" | "Sunrise" | "Dhuhr" | "Asr" | "Maghrib" | "Isha";
@@ -26,41 +26,59 @@ const nameMap: Record<PrayerTime["name"], string> = {
 const usePrayerTimes = () => {
   const [prayerTimes, setPrayerTimes] = useState<PrayerTime[] | null>(null);
   const { city, country } = useSelector((state: RootState) => state.Settings);
-
+  const { user } = useUser();
+  const profileCity = user?.settings?.location?.city || city;
+  const profileCountry = user?.settings?.location?.country || country;
   const fetchPrayerTimes = useCallback(async () => {
     const formattedDate = format(new Date(), "yyyy-M-d");
     try {
-      const res = await getPrayers({ city, country, date: formattedDate });
+      const res = await getPrayers({
+        city: profileCity,
+        country: profileCountry,
+        date: formattedDate,
+      });
       const raw = res.data?.timings;
       const times: PrayerTime[] = [
         {
           name: "Fajr",
-          time: formatTime12(raw?.Fajr || "").replace("AM", "ص").replace("PM", "م"),
+          time: formatTime12(raw?.Fajr || "")
+            .replace("AM", "ص")
+            .replace("PM", "م"),
           time24: raw?.Fajr || "",
         },
         {
           name: "Sunrise",
-          time: formatTime12(raw?.Sunrise || "").replace("AM", "ص").replace("PM", "م"),
+          time: formatTime12(raw?.Sunrise || "")
+            .replace("AM", "ص")
+            .replace("PM", "م"),
           time24: raw?.Sunrise || "",
         },
         {
           name: "Dhuhr",
-          time: formatTime12(raw?.Dhuhr || "").replace("AM", "ص").replace("PM", "م"),
+          time: formatTime12(raw?.Dhuhr || "")
+            .replace("AM", "ص")
+            .replace("PM", "م"),
           time24: raw?.Dhuhr || "",
         },
         {
           name: "Asr",
-          time: formatTime12(raw?.Asr || "").replace("AM", "ص").replace("PM", "م"),
+          time: formatTime12(raw?.Asr || "")
+            .replace("AM", "ص")
+            .replace("PM", "م"),
           time24: raw?.Asr || "",
         },
         {
           name: "Maghrib",
-          time: formatTime12(raw?.Maghrib || "").replace("AM", "ص").replace("PM", "م"),
+          time: formatTime12(raw?.Maghrib || "")
+            .replace("AM", "ص")
+            .replace("PM", "م"),
           time24: raw?.Maghrib || "",
         },
         {
           name: "Isha",
-          time: formatTime12(raw?.Isha || "").replace("AM", "ص").replace("PM", "م"),
+          time: formatTime12(raw?.Isha || "")
+            .replace("AM", "ص")
+            .replace("PM", "م"),
           time24: raw?.Isha || "",
         },
       ];
@@ -75,7 +93,10 @@ const usePrayerTimes = () => {
   }, [fetchPrayerTimes]);
 
   // Return formatted Arabic times for UI and raw 24‑hour times for reminder logic
-  const formatted = prayerTimes?.map(({ name, time }) => ({ name: nameMap[name], time }));
+  const formatted = prayerTimes?.map(({ name, time }) => ({
+    name: nameMap[name],
+    time,
+  }));
   return { prayerTimes: formatted || [], rawPrayerTimes: prayerTimes || [] };
 };
 

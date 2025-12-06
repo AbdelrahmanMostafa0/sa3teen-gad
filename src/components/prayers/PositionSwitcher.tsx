@@ -16,13 +16,15 @@ import {
     TooltipProvider,
     TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { useUser } from "@/hooks/useUser";
 
 const PositionSwitcher = () => {
     const dispatch = useDispatch();
     const currentPosition = useSelector(
         (state: RootState) => state.Settings.prayerTimesPosition
     );
-
+    const { user, updateProfile, isAuthenticated } = useUser();
+    const position = user?.settings?.ui?.prayerTimesPosition || currentPosition
     const positions = [
         { value: "right", icon: PanelRight, label: "يمين" },
         { value: "top", icon: AlignHorizontalSpaceAround, label: "أعلى" },
@@ -33,12 +35,21 @@ const PositionSwitcher = () => {
         const settings = localStorage.getItem("settings") || "{}";
         const parsedSettings = JSON.parse(settings);
         parsedSettings.prayerTimesPosition = position;
+        if (isAuthenticated) {
+            updateProfile({
+                settings: {
+                    ui: {
+                        prayerTimesPosition: position,
+                    },
+                },
+            });
+        }
         localStorage.setItem("settings", JSON.stringify(parsedSettings));
         dispatch(updatePrayerTimesPosition(position));
     };
 
     // Show dropdown menu when position is "top"
-    if (currentPosition === "top") {
+    if (position === "top") {
         return (
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -74,10 +85,10 @@ const PositionSwitcher = () => {
                     <Tooltip key={value}>
                         <TooltipTrigger asChild>
                             <Button
-                                variant={currentPosition === value ? "default" : "ghost"}
+                                variant={position === value ? "default" : "ghost"}
                                 size="sm"
                                 onClick={() => handlePositionChange(value)}
-                                className={`h-8 w-8 p-0 transition-all duration-200 ${currentPosition === value
+                                className={`h-8 w-8 p-0 transition-all duration-200 ${position === value
                                     ? "shadow-md scale-105"
                                     : "hover:scale-105 opacity-60 hover:opacity-100"
                                     }`}

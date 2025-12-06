@@ -5,7 +5,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { updateDisplayedTimer } from "@/store/features/settingsSlice";
 import { RootState } from "@/store/store";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-
+import { RiZzzLine } from "react-icons/ri";
+import { Coffee, Target } from "lucide-react";
 const Pomodoro = () => {
   const dispatch = useDispatch();
   const { displayedTimer } = useSelector((state: RootState) => state.Settings);
@@ -15,28 +16,38 @@ const Pomodoro = () => {
   };
 
   return (
-    <div className="w-full flex justify-center items-center flex-col gap-6 md:w-full md:max-w-[400px] mx-auto px-8">
+    <div className="w-full flex justify-center items-center flex-col gap-6 md:w-full md:max-w-[500px] mx-auto px-4">
       <Tabs
-      variant={"primary"}
+        variant={"primary"}
         value={displayedTimer}
         onValueChange={handleTabChange}
         className="w-full"
       >
-        <TabsList className="w-full grid grid-cols-2 rounded-full">
-          <TabsTrigger value="shortBreak" className="text-sm font-semibold rounded-full">
-            بريك ☕
+        <TabsList className="w-full grid grid-cols-3 rounded-full">
+          <TabsTrigger value="longBreak" className="text-sm font-semibold rounded-full flex items-center gap-2">
+            <span className="md:block hidden">بريك طويل</span>
+            <RiZzzLine size={18} />
           </TabsTrigger>
-          <TabsTrigger value="focus" className="text-sm font-semibold rounded-full">
-            تركيز 🎯
+          <TabsTrigger value="shortBreak" className="text-sm font-semibold rounded-full flex items-center gap-2">
+            <span className="md:block hidden">بريك قصير</span>
+            <Coffee size={18} />
+          </TabsTrigger>
+          <TabsTrigger value="focus" className="text-sm font-semibold rounded-full flex items-center gap-2">
+            <span className="md:block hidden">تركيز</span>
+            <Target size={18} />
           </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="focus" className="mt-6">
+        <TabsContent value="focus" className="mt-6 md:max-w-[400px] mx-auto">
           <FocusTimer />
         </TabsContent>
+        <TabsContent value="longBreak" className="mt-6 md:max-w-[400px] mx-auto">
+          <BreakTime breakType="longBreak" />
 
-        <TabsContent value="shortBreak" className="mt-6">
-          <BreakTime />
+        </TabsContent>
+
+        <TabsContent value="shortBreak" className="mt-6 md:max-w-[400px] mx-auto">
+          <BreakTime breakType="shortBreak" />
         </TabsContent>
       </Tabs>
     </div>

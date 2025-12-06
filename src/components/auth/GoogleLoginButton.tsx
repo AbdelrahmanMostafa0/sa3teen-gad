@@ -54,7 +54,8 @@ export default function GoogleLoginButton({ onError }: GoogleLoginButtonProps) {
     <Button
       type="button"
       variant="outline"
-      className="w-full bg-white dark:bg-white hover:bg-white dark:hover:bg-white"
+      // className=
+      className="w-full bg-white dark:bg-white cursor-pointer hover:bg-white dark:hover:bg-white hover:text-black  dark:text-black drop-shadow-md"
       onClick={() => login()}
       disabled={loading}
     >

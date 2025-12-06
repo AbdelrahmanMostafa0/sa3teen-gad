@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { RootState, AppDispatch } from "@/store/store";
 import { fetchUser, logout } from "@/store/features/userSlice";
 import { useRouter } from "next/navigation";
+import { updateProfile } from "@/services/profile";
 
 export const useUser = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -22,6 +23,15 @@ export const useUser = () => {
     dispatch(logout());
     router.push("/login");
   };
+  const handleUpdateProfile = async (data: any) => {
+    try {
+      await updateProfile(data);
+      dispatch(fetchUser());
+    } catch (error) {
+      console.error("Error updating profile:", error);
+      throw error;
+    }
+  };
 
   return {
     user,
@@ -30,5 +40,6 @@ export const useUser = () => {
     isAuthenticated,
     logout: handleLogout,
     refetchUser: () => dispatch(fetchUser()),
+    updateProfile: handleUpdateProfile,
   };
 };

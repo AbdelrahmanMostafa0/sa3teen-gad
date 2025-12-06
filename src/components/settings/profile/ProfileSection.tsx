@@ -53,10 +53,11 @@ export default function ProfileSection({ user, onUpdate, loading }: ProfileSecti
             <CardContent className="space-y-4">
                 {/* Full Name */}
                 <div className="space-y-2">
-                    <Label htmlFor="fullName" className="font-bold">
+                    <Label htmlFor="fullName" className="font-bold ">
                         الاسم الكامل
                     </Label>
                     <Input
+                        className='mt-2'
                         id="fullName"
                         value={fullName}
                         onChange={(e) => {
@@ -68,24 +69,6 @@ export default function ProfileSection({ user, onUpdate, loading }: ProfileSecti
                     />
                 </div>
 
-                {/* Profile Picture */}
-                <div className="space-y-2">
-                    <Label htmlFor="profilePicture" className="font-bold">
-                        رابط الصورة الشخصية
-                    </Label>
-                    <Input
-                        id="profilePicture"
-                        value={profilePicture}
-                        onChange={(e) => {
-                            setProfilePicture(e.target.value);
-                            setIsEditing(true);
-                        }}
-                        disabled={loading}
-                        placeholder="https://example.com/avatar.jpg"
-                        type="url"
-                    />
-                </div>
-
                 {/* Read-only fields */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t">
                     <div className="space-y-2">
@@ -93,7 +76,7 @@ export default function ProfileSection({ user, onUpdate, loading }: ProfileSecti
                             <Mail className="w-4 h-4" />
                             البريد الإلكتروني
                         </Label>
-                        <p className="text-sm font-medium">{user.email}</p>
+                        <p className="text-sm font-medium mt-2">{user.email}</p>
                     </div>
 
                     <div className="space-y-2">
@@ -101,7 +84,7 @@ export default function ProfileSection({ user, onUpdate, loading }: ProfileSecti
                             <Shield className="w-4 h-4" />
                             طريقة التسجيل
                         </Label>
-                        <p className="text-sm font-medium">
+                        <p className="text-sm font-medium mt-2">
                             {user.provider === 'email' ? 'البريد الإلكتروني' : 'Google'}
                         </p>
                     </div>
@@ -111,7 +94,7 @@ export default function ProfileSection({ user, onUpdate, loading }: ProfileSecti
                             <Calendar className="w-4 h-4" />
                             تاريخ الإنشاء
                         </Label>
-                        <p className="text-sm font-medium">
+                        <p className="text-sm font-medium mt-2">
                             {new Date(user.createdAt).toLocaleDateString('ar-EG')}
                         </p>
                     </div>
@@ -121,7 +104,7 @@ export default function ProfileSection({ user, onUpdate, loading }: ProfileSecti
                             <Calendar className="w-4 h-4" />
                             آخر تحديث
                         </Label>
-                        <p className="text-sm font-medium">
+                        <p className="text-sm font-medium mt-2">
                             {new Date(user.updatedAt).toLocaleDateString('ar-EG')}
                         </p>
                     </div>

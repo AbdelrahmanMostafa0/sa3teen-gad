@@ -57,7 +57,7 @@ const DrinkWater = () => {
     <motion.div
       initial={{ opacity: 0, y: 100 }}
       animate={{ opacity: 1, y: 0 }}
-      className="fixed bottom-5 left-1/2 sm:left-auto sm:right-5 transform -translate-x-1/2 sm:translate-x-0 p-4 px-7 sm:w-fit w-full max-w-[95vw] pl-9 rounded-xl mx-auto bg-white z-10 flex items-center sm:justify-start justify-center shadow-lg"
+      className="fixed bottom-5 left-1/2 sm:left-auto sm:right-5 transform -translate-x-1/2 sm:translate-x-0 p-4 px-7 sm:w-fit w-full max-w-[95vw] pl-9 rounded-xl mx-auto bg-white z-20 flex items-center sm:justify-start justify-center shadow-lg"
     >
       <Image
         src={"/water-cooler.png"}

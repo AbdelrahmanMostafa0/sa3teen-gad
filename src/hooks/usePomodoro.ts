@@ -1,27 +1,22 @@
 "use client";
-
 import {
   updateAutoSwitch,
   updateDisplayedTimer,
 } from "@/store/features/settingsSlice";
-import { RootState } from "@/store/store";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 interface TimerProps {
-  specificMinutes?: number;
+  specificMinutes: number;
   isBreak?: boolean;
 }
-function usePomodoro({ specificMinutes = 25 }: TimerProps) {
+function usePomodoro({ specificMinutes = 25, isBreak = false }: TimerProps) {
   const [isActive, setIsActive] = useState<boolean>(false);
   const [timeLeft, setTimeLeft] = useState<number>(specificMinutes * 60);
   const [finished, setFinished] = useState<boolean>(false);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const alarmRef = useRef<HTMLAudioElement | null>(null);
-  const { displayedTimer, shortBreakDuration, focusDurationTime } = useSelector(
-    (state: RootState) => state.Settings
-  );
+
   const dispatch = useDispatch();
-  const isBreak = displayedTimer.toLocaleLowerCase().includes("break");
   useEffect(() => {
     if (typeof window !== "undefined") {
       alarmRef.current = isBreak
@@ -29,7 +24,6 @@ function usePomodoro({ specificMinutes = 25 }: TimerProps) {
         : new Audio("/sound/4tbna.mp3");
     }
   }, [isBreak]);
-  useEffect(() => {}, [isBreak]);
   useEffect(() => {
     if (!isActive || finished) {
       if (finished) {
@@ -65,7 +59,7 @@ function usePomodoro({ specificMinutes = 25 }: TimerProps) {
   }, [isActive, finished, dispatch, isBreak]);
   useEffect(() => {
     setTimeLeft(specificMinutes * 60);
-  }, [, shortBreakDuration, focusDurationTime, specificMinutes]);
+  }, [specificMinutes]);
 
   const minutes = useMemo(() => Math.floor(timeLeft / 60), [timeLeft]);
   const seconds = useMemo(() => timeLeft % 60, [timeLeft]);

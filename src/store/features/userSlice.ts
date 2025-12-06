@@ -1,29 +1,10 @@
+import { IUser } from "@/types/user";
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import axios from "axios";
 import Cookies from "js-cookie";
 
-interface UserData {
-  id: string;
-  fullName: string;
-  email: string;
-  profilePicture?: string;
-  provider: string;
-  emailVerified: boolean;
-  preferences?: {
-    language: string;
-    notifications: boolean;
-  };
-  stats?: {
-    totalBookings: number;
-    totalSpent: number;
-  };
-  isPremium: boolean;
-  createdAt: string;
-  lastLoginAt?: string;
-}
-
 interface UserState {
-  user: UserData | null;
+  user: IUser | null;
   loading: boolean;
   error: string | null;
   isAuthenticated: boolean;
@@ -61,7 +42,7 @@ const userSlice = createSlice({
       state.error = null;
       Cookies.remove("token");
     },
-    setUser: (state, action: PayloadAction<UserData>) => {
+    setUser: (state, action: PayloadAction<IUser>) => {
       state.user = action.payload;
       state.isAuthenticated = true;
       state.loading = false;
@@ -74,15 +55,12 @@ const userSlice = createSlice({
         state.loading = true;
         state.error = null;
       })
-      .addCase(
-        fetchUser.fulfilled,
-        (state, action: PayloadAction<UserData>) => {
-          state.user = action.payload;
-          state.isAuthenticated = true;
-          state.loading = false;
-          state.error = null;
-        }
-      )
+      .addCase(fetchUser.fulfilled, (state, action: PayloadAction<IUser>) => {
+        state.user = action.payload;
+        state.isAuthenticated = true;
+        state.loading = false;
+        state.error = null;
+      })
       .addCase(fetchUser.rejected, (state, action) => {
         state.user = null;
         state.isAuthenticated = false;

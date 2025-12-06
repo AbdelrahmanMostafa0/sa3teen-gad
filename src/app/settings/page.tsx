@@ -1,3 +1,4 @@
+import RenderSettings from "@/components/settings/RenderSettings";
 import SettingsPage from "@/components/settings/SettingsPage";
 import { Metadata } from "next";
 export const metadata: Metadata = {
@@ -27,7 +28,7 @@ export const metadata: Metadata = {
   },
 };
 const page = () => {
-  return <SettingsPage />;
+  return <RenderSettings />;
 };
 
 export default page;

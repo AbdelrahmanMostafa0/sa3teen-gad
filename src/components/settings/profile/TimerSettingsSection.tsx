@@ -66,7 +66,7 @@ export default function TimerSettingsSection({ timers, onUpdate, loading }: Time
                             type="number"
                             min={1}
                             max={120}
-                            value={focusDuration}
+                            value={focusDuration === 0 ? '' : focusDuration}
                             onChange={(e) => {
                                 setFocusDuration(Number(e.target.value));
                                 setIsEditing(true);
@@ -85,7 +85,7 @@ export default function TimerSettingsSection({ timers, onUpdate, loading }: Time
                             type="number"
                             min={1}
                             max={60}
-                            value={shortBreak}
+                            value={shortBreak === 0 ? '' : shortBreak}
                             onChange={(e) => {
                                 setShortBreak(Number(e.target.value));
                                 setIsEditing(true);
@@ -104,7 +104,7 @@ export default function TimerSettingsSection({ timers, onUpdate, loading }: Time
                             type="number"
                             min={1}
                             max={120}
-                            value={longBreak}
+                            value={longBreak === 0 ? '' : longBreak}
                             onChange={(e) => {
                                 setLongBreak(Number(e.target.value));
                                 setIsEditing(true);

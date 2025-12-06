@@ -16,6 +16,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "motion/react";
+import { DialogClose, DialogTitle } from "@radix-ui/react-dialog";
 
 const TaskCard = ({ task }: { task: TaskType }) => {
   const {
@@ -39,7 +40,7 @@ const TaskCard = ({ task }: { task: TaskType }) => {
       <div className="relative flex items-center justify-between gap-4">
         <button
           onClick={handleModalToggle}
-          className={`text-lg font-semibold flex-1 text-start transition-all duration-200 ${taskCompleted
+          className={`text-lg font-semibold flex-1  w-full text-start transition-all duration-200 ${taskCompleted
             ? "line-through text-foreground/50"
             : "text-foreground group-hover:text-foreground/80"
             }`}
@@ -77,10 +78,11 @@ const TaskModal = ({ task, isOpen, setIsOpen }: TaskModalProps) => {
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogContent className="max-w-[95vw] md:max-w-[700px] border-0 p-0 gap-0 bg-white dark:bg-background/95 backdrop-blur-xl shadow-2xl">
+      <DialogContent closeBtn={false} className="max-w-[95vw] md:max-w-[700px] border-0 p-0 gap-0 bg-white dark:bg-background/95 backdrop-blur-xl shadow-2xl">
         {/* Header with gradient background */}
         <div className="relative bg-gradient-to-br from-slate-50 to-slate-100 dark:from-foreground/5 dark:to-foreground/10 border-b border-slate-200 dark:border-foreground/10">
           <DialogHeader>
+            <DialogTitle className="sr-only">تعديل المهمة</DialogTitle>
             <div dir={isArabic ? "rtl" : "ltr"} className="p-6 pb-5">
               <div className="flex items-center gap-3">
                 {/* Custom checkbox with animation */}
@@ -116,17 +118,22 @@ const TaskModal = ({ task, isOpen, setIsOpen }: TaskModalProps) => {
                     placeholder="عنوان المهمة"
                   />
                 </div>
+                <DialogClose asChild>
+                  <button className=" top-4 right-4 rounded-full p-2 hover:bg-slate-200 dark:hover:bg-foreground/10 transition-colors">
+                    <TbX size={20} className="text-slate-600 dark:text-foreground/60" />
+                  </button>
+                </DialogClose>
               </div>
             </div>
           </DialogHeader>
 
           {/* Close button */}
-          <button
+          {/* <button
             onClick={setIsOpen}
             className="absolute top-4 right-4 rounded-full p-2 hover:bg-slate-200 dark:hover:bg-foreground/10 transition-colors"
           >
             <TbX size={20} className="text-slate-600 dark:text-foreground/60" />
-          </button>
+          </button> */}
         </div>
 
         {/* Content area */}

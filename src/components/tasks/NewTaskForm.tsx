@@ -1,12 +1,13 @@
 "use client";
 
-import useTasks from "@/hooks/useTasks";
+// import useTasks from "@/hooks/";
 import detectStartingLang from "@/utils/detectLang";
 import { useState } from "react";
 import { motion } from "motion/react";
 import { FaPlus } from "react-icons/fa6";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import useTasks from "@/hooks/useTasks";
 
 const NewTaskForm = () => {
   const { addTaks } = useTasks();
@@ -28,7 +29,7 @@ const NewTaskForm = () => {
 
     setInputValue(e.target.value);
   };
-  
+
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (inputValue.trim() === "") {
@@ -38,7 +39,7 @@ const NewTaskForm = () => {
     setInputValue("");
     setInputDirection("rtl");
   };
-  
+
   return (
     <motion.div
       initial={{ y: 10, opacity: 0 }}
@@ -59,7 +60,7 @@ const NewTaskForm = () => {
           type="text"
           className="flex-1 h-12 border-foreground/20 focus-visible:ring-foreground/20 focus-visible:border-foreground/40 transition-all"
         />
-        <Button 
+        <Button
           type="submit"
           size="icon"
           className="h-12 w-12 rounded-full shadow-md hover:shadow-lg transition-all hover:scale-105"

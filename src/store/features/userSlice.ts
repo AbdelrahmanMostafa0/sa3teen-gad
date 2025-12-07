@@ -8,13 +8,15 @@ interface UserState {
   loading: boolean;
   error: string | null;
   isAuthenticated: boolean;
+  hasFetched: boolean; // Track if we've already attempted to fetch
 }
 
 const initialState: UserState = {
   user: null,
-  loading: true, // Start loading to check auth on mount
+  loading: false,
   error: null,
   isAuthenticated: false,
+  hasFetched: false,
 };
 
 export const fetchUser = createAsyncThunk(
@@ -40,6 +42,7 @@ const userSlice = createSlice({
       state.user = null;
       state.isAuthenticated = false;
       state.error = null;
+      state.hasFetched = false; // Reset on logout
       Cookies.remove("token");
     },
     setUser: (state, action: PayloadAction<IUser>) => {
@@ -47,6 +50,7 @@ const userSlice = createSlice({
       state.isAuthenticated = true;
       state.loading = false;
       state.error = null;
+      state.hasFetched = true; // Mark as fetched
     },
   },
   extraReducers: (builder) => {
@@ -60,12 +64,14 @@ const userSlice = createSlice({
         state.isAuthenticated = true;
         state.loading = false;
         state.error = null;
+        state.hasFetched = true; // Mark as fetched
       })
       .addCase(fetchUser.rejected, (state, action) => {
         state.user = null;
         state.isAuthenticated = false;
         state.loading = false;
         state.error = action.payload as string;
+        state.hasFetched = true; // Mark as fetched even on error
       });
   },
 });

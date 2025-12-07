@@ -8,16 +8,15 @@ import { updateProfile } from "@/services/profile";
 export const useUser = () => {
   const dispatch = useDispatch<AppDispatch>();
   const router = useRouter();
-  const { user, loading, error, isAuthenticated } = useSelector(
+  const { user, loading, error, isAuthenticated, hasFetched } = useSelector(
     (state: RootState) => state.User
   );
 
   useEffect(() => {
-    // Only fetch user if not already loaded and no error (to avoid infinite loops on 401)
-    if (!user && !loading && !error && isAuthenticated === false) {
+    if (!hasFetched && !loading) {
       dispatch(fetchUser());
     }
-  }, [dispatch, user, loading, error, isAuthenticated]);
+  }, [hasFetched, loading, dispatch]);
 
   const handleLogout = () => {
     dispatch(logout());

@@ -13,13 +13,13 @@ import { Home, Settings2 } from "lucide-react";
 import { useUser } from "@/hooks/useUser";
 import { UserDropdown } from "./UserDropdown";
 import { BiTask } from "react-icons/bi";
+import { useEffect } from "react";
 // import { Button } from "../ui/button";
 
 const Navbar = () => {
   const pathname = usePathname();
   // const time = useTime();
   const { user } = useUser();
-  console.log(user);
 
   return (
     <>

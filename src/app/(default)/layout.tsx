@@ -5,6 +5,7 @@ import PrayerTimes from "@/components/prayers/PrayerTimes";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store/store";
 import { useUser } from "@/hooks/useUser";
+import WelcomeModalProvider from "@/components/providers/WelcomeModalProvider";
 
 function LayoutContent({ children }: { children: React.ReactNode }) {
     const prayerTimesPosition = useSelector(
@@ -15,6 +16,9 @@ function LayoutContent({ children }: { children: React.ReactNode }) {
     return (
 
         <>
+            {/* Welcome Modal for Unauthenticated Users */}
+            <WelcomeModalProvider />
+
             {/* Desktop Layout with Positioning */}
             <div className="hidden md:block">
                 {position === "top" && (

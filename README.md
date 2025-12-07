@@ -6,11 +6,6 @@
 
 > **Your personal productivity companion for focused work, prayer times, and healthy habits.**
 
-![Next.js](https://img.shields.io/badge/Next.js-15.3.3-black?style=flat-square&logo=next.js)
-![React](https://img.shields.io/badge/React-19.0.0-61dafb?style=flat-square&logo=react)
-![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?style=flat-square&logo=typescript)
-![Tailwind CSS](https://img.shields.io/badge/Tailwind-4-38bdf8?style=flat-square&logo=tailwind-css)
-
 **Sa3teen Gad** (ساعتين جد - "Two Hours of Serious Work") is a productivity web application designed to help you stay focused and balanced throughout your workday. Built with Arabic speakers in mind, it combines the Pomodoro technique, task management, Islamic prayer times, and wellness reminders in a beautiful RTL interface.
 
 > ⚠️ **Status**: This app is currently under active development. Some features are planned but not yet implemented.
@@ -59,6 +54,20 @@
 - Toggle auto-start features
 - Persistent settings storage
 
+### 🌙 Long Break Timer
+
+- Extended breaks after multiple Pomodoro sessions
+- Configurable long break duration
+- Helps prevent burnout with scheduled longer rest periods
+
+### 🔔 Prayer Notifications
+
+- Get notified before prayer times
+- Customizable reminder intervals (5, 10, 15 minutes before)
+- Individual toggles for each prayer
+- Audio and visual notifications
+- Dedicated settings page for prayer reminders
+
 ---
 
 ## 🔮 Planned Features
@@ -66,8 +75,6 @@
 - 📅 **Meeting Mode** - Pause all timers with one click
 - ⏱ **Time Worked Tracker** - Track your daily work hours
 - 📊 **Analytics Dashboard** - Visual breakdown of productivity stats
-- 🌙 **Long Break Timer** - Extended breaks after multiple Pomodoro sessions
-- 🔔 **Prayer Notifications** - Get notified before prayer times
 
 ---
 
@@ -75,7 +82,7 @@
 
 ### Core
 
-- **[Next.js 15.3.3](https://nextjs.org/)** - React framework with App Router
+- **[Next.js 16.0.7](https://nextjs.org/)** - React framework with App Router
 - **[React 19](https://react.dev/)** - UI library
 - **[TypeScript](https://www.typescriptlang.org/)** - Type safety
 - **[Redux Toolkit](https://redux-toolkit.js.org/)** - State management
@@ -84,8 +91,6 @@
 
 - **[Tailwind CSS 4](https://tailwindcss.com/)** - Utility-first CSS framework
 - **[Motion](https://motion.dev/)** - Animation library
-- **[React Icons](https://react-icons.github.io/react-icons/)** - Icon library
-- **IBM Plex Sans Arabic** - Beautiful Arabic typography
 
 ### Utilities
 

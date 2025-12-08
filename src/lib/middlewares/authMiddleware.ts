@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { verifyToken } from "../jwt";
 
-// Extend NextRequest to include user data
+// authMiddleware.ts
 export interface AuthenticatedRequest extends NextRequest {
   user: {
     userId: string;
@@ -9,10 +9,13 @@ export interface AuthenticatedRequest extends NextRequest {
   };
 }
 
-type AuthHandler = (req: AuthenticatedRequest) => Promise<NextResponse>;
+type AuthHandler<T = any> = (
+  req: AuthenticatedRequest,
+  context?: T
+) => Promise<NextResponse>;
 
-export default function authMiddleware(handler: AuthHandler) {
-  return async (req: NextRequest) => {
+export default function authMiddleware<T = any>(handler: AuthHandler<T>) {
+  return async (req: NextRequest, context?: T) => {
     const token = req.cookies.get("token")?.value;
 
     if (!token) {
@@ -31,13 +34,12 @@ export default function authMiddleware(handler: AuthHandler) {
       );
     }
 
-    // Attach decoded user data to the request
     const authenticatedReq = req as AuthenticatedRequest;
     authenticatedReq.user = {
       userId: decoded.userId,
       email: decoded.email,
     };
 
-    return handler(authenticatedReq);
+    return handler(authenticatedReq, context);
   };
 }

@@ -65,7 +65,7 @@ export default function TasksPage() {
                         <AnimatePresence mode="popLayout">
                             {filteredTasks.length > 0 ? (
                                 filteredTasks.map((task) => (
-                                    <TaskCard key={task.id} task={task} />
+                                    <TaskCard key={task._id} task={task} />
                                 ))
                             ) : (
                                 <motion.div

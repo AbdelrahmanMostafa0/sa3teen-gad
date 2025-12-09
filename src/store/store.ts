@@ -3,6 +3,7 @@ import settingsReducer from "./features/settingsSlice";
 import tasksReducer from "./features/tasksSlice";
 import prayerReducer from "./features/prayerSlice";
 import userReducer from "./features/userSlice";
+import allTasksReducer from "./features/allTasksSlice";
 
 const store = configureStore({
   reducer: {
@@ -10,6 +11,7 @@ const store = configureStore({
     Tasks: tasksReducer,
     Prayers: prayerReducer,
     User: userReducer,
+    AllTasks: allTasksReducer,
   },
 });
 

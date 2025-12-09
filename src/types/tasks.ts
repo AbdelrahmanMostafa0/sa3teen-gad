@@ -1,5 +1,5 @@
 export interface TaskType {
-  id: string;
+  _id: string;
   title: string;
   description?: string;
   completed?: boolean;
@@ -8,4 +8,21 @@ export interface TaskType {
   dueDate?: string; // Optional due date
   priority?: "low" | "medium" | "high"; // Optional priority level
   tags?: string[]; // Optional tags for categorization
+}
+
+export interface ISubtask {
+  _id?: string;
+  title: string;
+  done: boolean;
+}
+
+export interface ITask {
+  id?: string;
+  title: string;
+  description?: string;
+  subtasks?: ISubtask[];
+  userId?: string;
+  completed?: boolean;
+  createdAt?: Date;
+  updatedAt?: Date;
 }

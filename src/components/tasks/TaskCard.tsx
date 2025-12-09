@@ -1,7 +1,7 @@
 "use client";
 
 import detectStartingLang from "@/utils/detectLang";
-import { TaskType } from "@/types/tasks";
+import { ITask, TaskType } from "@/types/tasks";
 import { TbTrash, TbX, TbCalendar, TbCheck } from "react-icons/tb";
 import useTasks from "@/hooks/useTasks";
 import { formatArabicDate } from "@/utils/date";
@@ -18,7 +18,7 @@ import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "motion/react";
 import { DialogClose, DialogTitle } from "@radix-ui/react-dialog";
 
-const TaskCard = ({ task }: { task: TaskType }) => {
+const TaskCard = ({ task }: { task: ITask }) => {
   const {
     isArabic,
     isOpen,
@@ -63,7 +63,7 @@ const TaskCard = ({ task }: { task: TaskType }) => {
 export default TaskCard;
 
 type TaskModalProps = {
-  task: TaskType;
+  task: ITask;
   isOpen: boolean;
   setIsOpen: () => void;
 };
@@ -73,7 +73,7 @@ const TaskModal = ({ task, isOpen, setIsOpen }: TaskModalProps) => {
   const isArabic = detectStartingLang(task.title) === "arabic";
 
   const handleCheckboxClick = (checked: boolean) => {
-    updateTask(task.id, { completed: checked });
+    updateTask(task.id!, { completed: checked });
   };
 
   return (
@@ -111,7 +111,7 @@ const TaskModal = ({ task, isOpen, setIsOpen }: TaskModalProps) => {
                 {/* Title input with clean styling */}
                 <div className="flex-1 min-w-0">
                   <Input
-                    onChange={(e) => updateTask(task.id, { title: e.target.value })}
+                    onChange={(e) => updateTask(task.id!, { title: e.target.value })}
                     defaultValue={task.title}
                     // className={`text-lg md:text-xl font-bold border-0 bg-transparent px-0 focus-visible:ring-0 h-auto py-1 transition-opacity text-slate-900 dark:text-foreground placeholder:text-slate-400 dark:placeholder:text-foreground/40 ${task.completed ? "line-through opacity-50" : ""
                     //   }`}
@@ -152,7 +152,7 @@ const TaskModal = ({ task, isOpen, setIsOpen }: TaskModalProps) => {
                 id="description"
                 defaultValue={task.description}
                 onChange={(e) =>
-                  updateTask(task.id, { description: e.target.value })
+                  updateTask(task.id!, { description: e.target.value })
                 }
                 className="min-h-[140px] resize-none rounded-xl border border-slate-200 dark:border-foreground/10 w-full p-4 outline-none focus:border-slate-400 dark:focus:border-foreground/30 focus:ring-4 focus:ring-slate-100 dark:focus:ring-foreground/5 bg-slate-50 dark:bg-muted/30 transition-all placeholder:text-slate-400 dark:placeholder:text-foreground/40 text-slate-900 dark:text-foreground"
                 placeholder="أضف وصف للمهمة..."

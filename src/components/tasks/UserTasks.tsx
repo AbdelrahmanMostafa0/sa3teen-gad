@@ -4,9 +4,12 @@ import useTasks from "@/hooks/useTasks";
 import TaskCard from "./TaskCard";
 import NewTaskForm from "./NewTaskForm";
 import { FiCheckCircle } from "react-icons/fi";
+import useTasksActions from "@/hooks/useTasksActions";
 
 const UserTasks = () => {
   const { tasks } = useTasks();
+  const { tasks: allTasks } = useTasksActions()
+  console.log(allTasks);
 
   return (
     <div className="w-full max-w-[700px]">
@@ -36,7 +39,7 @@ const UserTasks = () => {
       <div className="space-y-3">
         {tasks.length > 0 ? (
           tasks.map((task) => (
-            <TaskCard key={task.id} task={task} />
+            <TaskCard key={task._id} task={task} />
           ))
         ) : (
           <div className="text-center py-16 px-4  border-2 border-dashed border-foreground/10">

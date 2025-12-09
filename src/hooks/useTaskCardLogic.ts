@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 import useTasks from "@/hooks/useTasks";
 import detectStartingLang from "@/utils/detectLang";
-import { TaskType } from "@/types/tasks";
+import { ITask } from "@/types/tasks";
 
-export const useTaskCardLogic = (task: TaskType) => {
+export const useTaskCardLogic = (task: ITask) => {
   const pencilRef = useRef<HTMLAudioElement | null>(null);
   const [pathLength, setPathLength] = useState(0);
   const [isOpen, setIsOpen] = useState(false);
@@ -51,7 +51,7 @@ export const useTaskCardLogic = (task: TaskType) => {
 
   const handleCheckboxClick = () => {
     if (!hasInteracted) setHasInteracted(true);
-    updateTask(task.id, { completed: !task.completed });
+    updateTask(task._id!, { completed: !task.completed });
   };
 
   const handleModalToggle = () => {

@@ -1,4 +1,5 @@
 import Pomodoro from "@/components/pomodoro/Pomodoro";
+import LoggedInTasks from "@/components/tasks/LoggedInTasks";
 import UserTasks from "@/components/tasks/UserTasks";
 import { Metadata } from "next";
 export const metadata: Metadata = {
@@ -42,7 +43,8 @@ export default function Home() {
 
         {/* Tasks Section */}
         <section className="w-full flex justify-center">
-          <UserTasks />
+          {/* <UserTasks /> */}
+          <LoggedInTasks />
         </section>
       </div>
 

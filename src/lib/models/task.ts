@@ -1,21 +1,5 @@
+import { ISubtask, ITask } from "@/types/tasks";
 import { Schema, model, models } from "mongoose";
-
-export interface ISubtask {
-  _id: string;
-  title: string;
-  done: boolean;
-}
-
-export interface ITask {
-  _id: string;
-  title: string;
-  description?: string;
-  subtasks: ISubtask[];
-  userId: string;
-  completed: boolean;
-  createdAt: Date;
-  updatedAt: Date;
-}
 
 const SubtaskSchema = new Schema<ISubtask>(
   {

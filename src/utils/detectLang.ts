@@ -1,6 +1,7 @@
 type Script = "arabic" | "english" | "other";
 
 const detectStartingLang = (text: string): Script => {
+  if (!text) return "other";
   const firstChar = text.trim().charAt(0);
 
   if (!firstChar) return "other";

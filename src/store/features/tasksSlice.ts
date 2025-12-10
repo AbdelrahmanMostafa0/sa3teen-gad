@@ -1,8 +1,8 @@
-import { TaskType } from "@/types/tasks";
+import { ITask } from "@/types/tasks";
 import { createSlice } from "@reduxjs/toolkit";
 
 interface InitialState {
-  tasks: TaskType[]; // Replace 'any' with your specific task type
+  tasks: ITask[]; // Replace 'any' with your specific task type
   currentTask: string | null; // Replace 'any' with your specific task type
   isLoading: boolean;
   error: string | null;

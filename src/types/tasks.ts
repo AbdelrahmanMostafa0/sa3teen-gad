@@ -23,6 +23,6 @@ export interface ITask {
   subtasks?: ISubtask[];
   userId?: string;
   completed?: boolean;
-  createdAt?: Date;
-  updatedAt?: Date;
+  createdAt?: Date | string;
+  updatedAt?: Date | string;
 }

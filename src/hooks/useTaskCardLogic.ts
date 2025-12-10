@@ -51,7 +51,7 @@ export const useTaskCardLogic = (task: ITask) => {
 
   const handleCheckboxClick = () => {
     if (!hasInteracted) setHasInteracted(true);
-    updateTask(task._id!, { completed: !task.completed });
+    updateTask(task.id!, { completed: !task.completed });
   };
 
   const handleModalToggle = () => {

@@ -18,12 +18,17 @@ type PrayerTimes = {
 };
 
 /**
- * Formats an ISO date string to Arabic like "السبت، 17 مايو"
- * @param isoString - ISO 8601 date string (e.g. "2025-06-25T18:57:21.417Z")
+ * Formats an ISO date string or Date object to Arabic like "السبت، 17 مايو"
+ * @param dateInput - ISO 8601 date string, Date object, or undefined
  * @returns Formatted Arabic date string
  */
-export function formatArabicDate(isoString: string | undefined): string {
-  if (!isoString) return "";
+export function formatArabicDate(dateInput: Date | string | undefined): string {
+  if (!dateInput) return "";
+
+  // Convert Date object to ISO string if needed
+  const isoString =
+    dateInput instanceof Date ? dateInput.toISOString() : dateInput;
+
   const date = parseISO(isoString);
   // Format with placeholder AM/PM
   let formatted = format(date, "EEEE، d MMMM 'الساعة' hh:mm a", { locale: ar });

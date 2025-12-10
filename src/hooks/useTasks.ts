@@ -1,6 +1,6 @@
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "./../store/store";
-import { TaskType } from "@/types/tasks";
+import { ITask } from "@/types/tasks";
 import { setTasks } from "@/store/features/tasksSlice";
 import { nanoid } from "nanoid";
 import { useEffect } from "react";
@@ -16,8 +16,8 @@ const useTasks = () => {
     }
   }, [dispatch]);
   const addTaks = (task: string) => {
-    const newTask: TaskType = {
-      _id: nanoid(),
+    const newTask: ITask = {
+      id: nanoid(),
       title: task,
       description: "",
       completed: false,
@@ -31,13 +31,13 @@ const useTasks = () => {
     dispatch(setTasks([newTask, ...tasks]));
   };
   const deleteTask = (taskId: string) => {
-    const updatedTasks = tasks.filter((task) => task._id !== taskId);
+    const updatedTasks = tasks.filter((task) => task.id !== taskId);
     localStorage.setItem("tasks", JSON.stringify(updatedTasks));
     dispatch(setTasks(updatedTasks));
   };
-  const updateTask = (id: string, changes: Partial<TaskType>) => {
+  const updateTask = (id: string, changes: Partial<ITask>) => {
     const updatedTasks = tasks.map((task) =>
-      task._id === id ? { ...task, ...changes } : task
+      task.id === id ? { ...task, ...changes } : task
     );
     localStorage.setItem("tasks", JSON.stringify(updatedTasks));
     dispatch(setTasks(updatedTasks));

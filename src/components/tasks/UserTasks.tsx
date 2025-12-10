@@ -39,7 +39,7 @@ const UserTasks = () => {
       <div className="space-y-3">
         {tasks.length > 0 ? (
           tasks.map((task) => (
-            <TaskCard key={task._id} task={task} />
+            <TaskCard key={task.id} task={task} />
           ))
         ) : (
           <div className="text-center py-16 px-4  border-2 border-dashed border-foreground/10">

@@ -73,7 +73,7 @@ const allTasksSlice = createSlice({
         state.loading = true;
       })
       .addCase(postTask.fulfilled, (state, action) => {
-        const filteredTasks = state.tasks.filter((task) => !!task._id);
+        const filteredTasks = state.tasks.filter((task) => !!task.id);
         state.loading = false;
         state.tasks.push(...filteredTasks, action.payload);
       })

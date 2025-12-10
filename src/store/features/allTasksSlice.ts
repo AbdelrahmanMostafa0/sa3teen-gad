@@ -39,6 +39,30 @@ export const postTask = createAsyncThunk(
   }
 );
 
+export const updateTask = createAsyncThunk(
+  "allTasks/updateTask",
+  async ({ id, changes }: { id: string; changes: Partial<ITask> }) => {
+    try {
+      const response = await axios.patch(`/api/tasks/${id}`, changes);
+      return response.data.task;
+    } catch (err) {
+      throw err;
+    }
+  }
+);
+
+export const deleteTask = createAsyncThunk(
+  "allTasks/deleteTask",
+  async (id: string) => {
+    try {
+      await axios.delete(`/api/tasks/${id}`);
+      return id;
+    } catch (err) {
+      throw err;
+    }
+  }
+);
+
 const allTasksSlice = createSlice({
   name: "allTasks",
   initialState,
@@ -75,9 +99,38 @@ const allTasksSlice = createSlice({
       .addCase(postTask.fulfilled, (state, action) => {
         const filteredTasks = state.tasks.filter((task) => !!task.id);
         state.loading = false;
-        state.tasks.push(...filteredTasks, action.payload);
+        state.tasks.unshift(action.payload);
       })
       .addCase(postTask.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message ?? null;
+      })
+      .addCase(updateTask.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(updateTask.fulfilled, (state, action) => {
+        state.loading = false;
+        // Update the task in the array
+        const index = state.tasks.findIndex(
+          (task) => task.id === action.payload.id
+        );
+        if (index !== -1) {
+          state.tasks[index] = action.payload;
+        }
+      })
+      .addCase(updateTask.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message ?? null;
+      })
+      .addCase(deleteTask.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(deleteTask.fulfilled, (state, action) => {
+        state.loading = false;
+        // Remove the task from the array
+        state.tasks = state.tasks.filter((task) => task.id !== action.payload);
+      })
+      .addCase(deleteTask.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message ?? null;
       });

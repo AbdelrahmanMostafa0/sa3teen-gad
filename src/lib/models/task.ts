@@ -1,19 +1,16 @@
 import { ISubtask, ITask } from "@/types/tasks";
 import { Schema, model, models } from "mongoose";
 
-const SubtaskSchema = new Schema<ISubtask>(
-  {
-    title: {
-      type: String,
-      required: true,
-    },
-    done: {
-      type: Boolean,
-      default: false,
-    },
+const SubtaskSchema = new Schema<ISubtask>({
+  title: {
+    type: String,
+    required: true,
   },
-  { _id: false }
-);
+  done: {
+    type: Boolean,
+    default: false,
+  },
+});
 
 const TaskSchema = new Schema<ITask>(
   {
@@ -56,7 +53,6 @@ export const tasksResponse = (task: any) => ({
   createdAt: task.createdAt,
   updatedAt: task.updatedAt,
 });
-// Compound index for efficient user-specific queries
 TaskSchema.index({ userId: 1, createdAt: -1 });
 
 const Task = models.Task || model<ITask>("Task", TaskSchema);

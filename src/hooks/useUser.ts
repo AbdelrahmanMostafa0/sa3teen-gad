@@ -4,6 +4,7 @@ import { RootState, AppDispatch } from "@/store/store";
 import { fetchUser, logout } from "@/store/features/userSlice";
 import { useRouter } from "next/navigation";
 import { updateProfile } from "@/services/profile";
+import Cookies from "js-cookie";
 
 export const useUser = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -11,12 +12,13 @@ export const useUser = () => {
   const { user, loading, error, isAuthenticated, hasFetched } = useSelector(
     (state: RootState) => state.User
   );
+  const token = Cookies.get("token");
 
   useEffect(() => {
-    if (!hasFetched && !loading) {
+    if (!hasFetched && !loading && token) {
       dispatch(fetchUser());
     }
-  }, [hasFetched, loading, dispatch]);
+  }, [hasFetched, loading, dispatch, token]);
 
   const handleLogout = () => {
     dispatch(logout());

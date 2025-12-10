@@ -1,26 +1,23 @@
-
 "use client";
+
 import useTasksActions from "@/hooks/useTasksActions";
-import React, { useState } from "react";
-import { Input } from "../ui/input";
-import { Button } from "../ui/button";
 import TaskCard from "./TaskCard";
+import LoggedInTaskForm from "./LoggedInTaskForm";
+import { FiCheckCircle } from "react-icons/fi";
+import RenderTasks from "./RenderTasks";
+import TasksHeader from "./TasksHeader";
 
 const LoggedInTasks = () => {
-  const { tasks, createTask } = useTasksActions()
-  const [inputText, setInputText] = useState("")
-  const addTask = (task: string) => {
-    createTask({ title: task });
-  }
-  console.log(tasks);
+  const { tasks } = useTasksActions();
 
-  return <div>
-    <Input onChange={(e) => setInputText(e.target.value)} value={inputText} />
-    <Button onClick={() => addTask(inputText)}>Add Task</Button>
-    {tasks.map((task) => (
-      <TaskCard key={task.id} task={task} />
-    ))}
-  </div>;
+  return (
+    <div className="w-full space-y-6 max-w-[700px]">
+      <TasksHeader />
+      <LoggedInTaskForm />
+      <RenderTasks tasks={tasks} />
+    </div>
+  );
 };
 
 export default LoggedInTasks;
+

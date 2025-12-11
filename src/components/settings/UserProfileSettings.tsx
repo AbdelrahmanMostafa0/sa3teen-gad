@@ -13,17 +13,19 @@ import PrayerReminderSection from './profile/PrayerReminderSection';
 import LocationSection from './profile/LocationSection';
 import UIPreferencesSection from './profile/UIPreferencesSection';
 import { useUser } from '@/hooks/useUser';
+import { RootState } from '@/store/store';
+import { useSelector } from 'react-redux';
+import { isAuthenticated } from '@/lib/auth-middleware';
 
 export default function UserProfileSettings() {
     const router = useRouter();
     const { user, loading: fetchLoading, error: fetchError, refetchUser } = useUser();
     const { updateUser, loading: updateLoading, error: updateError } = useUpdateUser();
     const [successMessage, setSuccessMessage] = useState<string | null>(null);
-
+    const settings = useSelector((state: RootState) => state.Settings);
     const handleUpdate = async (data: any) => {
         try {
             await updateUser(data);
-            await refetchUser(); // Refresh user data after update
             setSuccessMessage('تم حفظ التغييرات بنجاح');
             setTimeout(() => setSuccessMessage(null), 3000);
         } catch (error) {
@@ -31,34 +33,7 @@ export default function UserProfileSettings() {
         }
     };
 
-    if (fetchLoading) {
-        return (
-            <div className="min-h-screen w-full bg-gradient-to-b from-background to-background/50 flex items-center justify-center">
-                <div className="text-center space-y-4">
-                    <div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto" />
-                    <p className="text-lg text-muted-foreground">جاري تحميل البيانات...</p>
-                </div>
-            </div>
-        );
-    }
 
-    if (fetchError || !user) {
-        return (
-            <div className="min-h-screen w-full bg-gradient-to-b from-background to-background/50 flex items-center justify-center">
-                <div className="text-center space-y-4 max-w-md">
-                    <XCircle className="w-16 h-16 text-destructive mx-auto" />
-                    <h2 className="text-2xl font-bold">حدث خطأ</h2>
-                    <p className="text-muted-foreground">{fetchError || 'فشل تحميل البيانات'}</p>
-                    <div className="flex gap-4 justify-center">
-                        <Button onClick={() => refetchUser()}>إعادة المحاولة</Button>
-                        <Button variant="outline" onClick={() => router.push('/')}>
-                            العودة للرئيسية
-                        </Button>
-                    </div>
-                </div>
-            </div>
-        );
-    }
 
     return (
         <div className="min-h-screen w-full bg-gradient-to-b from-background to-background/50 py-8 px-4">
@@ -94,38 +69,39 @@ export default function UserProfileSettings() {
 
                 {/* Settings Sections */}
                 <div className="space-y-6">
-                    <ProfileSection
-                        user={user}
-                        onUpdate={handleUpdate}
-                        loading={updateLoading}
-                    />
-
+                    {user && (
+                        <ProfileSection
+                            user={user}
+                            onUpdate={handleUpdate}
+                            loading={updateLoading}
+                        />
+                    )}
                     <TimerSettingsSection
-                        timers={user.settings.timers}
+                        timers={settings.timers}
                         onUpdate={handleUpdate}
                         loading={updateLoading}
                     />
 
                     <WaterReminderSection
-                        waterReminder={user.settings.waterReminder}
+                        waterReminder={settings.waterReminder}
                         onUpdate={handleUpdate}
                         loading={updateLoading}
                     />
 
                     <PrayerReminderSection
-                        prayerReminder={user.settings.prayerReminder}
+                        prayerReminder={settings.prayerReminder}
                         onUpdate={handleUpdate}
                         loading={updateLoading}
                     />
 
                     <LocationSection
-                        location={user.settings.location}
+                        location={settings.location}
                         onUpdate={handleUpdate}
                         loading={updateLoading}
                     />
 
                     <UIPreferencesSection
-                        ui={user.settings.ui}
+                        ui={settings.ui}
                         onUpdate={handleUpdate}
                         loading={updateLoading}
                     />

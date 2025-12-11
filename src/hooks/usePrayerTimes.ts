@@ -25,16 +25,26 @@ const nameMap: Record<PrayerTime["name"], string> = {
 
 const usePrayerTimes = () => {
   const [prayerTimes, setPrayerTimes] = useState<PrayerTime[] | null>(null);
-  const { city, country } = useSelector((state: RootState) => state.Settings);
+  const { city, country } = useSelector(
+    (state: RootState) => state.Settings.location
+  );
   const { user } = useUser();
   const profileCity = user?.settings?.location?.city || city;
   const profileCountry = user?.settings?.location?.country || country;
   const fetchPrayerTimes = useCallback(async () => {
+    // Don't fetch if location is not set
+    let city = profileCity;
+    let country = profileCountry;
+    if (!city || !country) {
+      city = "Cairo";
+      country = "Egypt";
+    }
+
     const formattedDate = format(new Date(), "yyyy-M-d");
     try {
       const res = await getPrayers({
-        city: profileCity,
-        country: profileCountry,
+        city,
+        country,
         date: formattedDate,
       });
       const raw = res.data?.timings;
@@ -86,7 +96,7 @@ const usePrayerTimes = () => {
     } catch (err) {
       console.error(err);
     }
-  }, [city, country]);
+  }, [profileCity, profileCountry]);
 
   useEffect(() => {
     fetchPrayerTimes();

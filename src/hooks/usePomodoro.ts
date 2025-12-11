@@ -1,8 +1,8 @@
 "use client";
-import {
-  updateAutoSwitch,
-  updateDisplayedTimer,
-} from "@/store/features/settingsSlice";
+// import {
+//   updateAutoSwitch,
+//   updateDisplayedTimer,
+// } from "@/store/features/settingsSlice";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
 interface TimerProps {
@@ -26,12 +26,12 @@ function usePomodoro({ specificMinutes = 25, isBreak = false }: TimerProps) {
   }, [isBreak]);
   useEffect(() => {
     if (!isActive || finished) {
-      if (finished) {
-        dispatch(updateDisplayedTimer(isBreak ? "focus" : "shortBreak"));
-      }
-      if (finished && !isBreak) {
-        dispatch(updateAutoSwitch(true));
-      }
+      // if (finished) {
+      //   dispatch(updateDisplayedTimer(isBreak ? "focus" : "shortBreak"));
+      // }
+      // if (finished && !isBreak) {
+      //   dispatch(updateAutoSwitch(true));
+      // }
       if (intervalRef.current) {
         clearInterval(intervalRef.current);
         intervalRef.current = null;

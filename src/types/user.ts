@@ -1,9 +1,10 @@
-const PRAYER_NAMES = ["Fajr", "Dhuhr", "Asr", "Maghrib", "Isha"] as const;
-type PrayerName = (typeof PRAYER_NAMES)[number];
+// Export prayer name type for use across the app
+export type PrayerName = "Fajr" | "Dhuhr" | "Asr" | "Maghrib" | "Isha";
+
 export const defaultSettings: SettingsType = {
   timers: {
     focusDurationTime: 25,
-    shotBreakDuration: 5,
+    shortBreakDuration: 5, // Fixed typo: was "shotBreakDuration"
     longBreakDuration: 15,
   },
   waterReminder: {
@@ -24,8 +25,8 @@ export const defaultSettings: SettingsType = {
     },
   },
   location: {
-    country: "",
-    city: "",
+    country: "Egypt",
+    city: "Cairo",
   },
   ui: {
     prayerTimesPosition: "top",
@@ -34,7 +35,7 @@ export const defaultSettings: SettingsType = {
 export interface SettingsType {
   timers: {
     focusDurationTime: number;
-    shotBreakDuration: number;
+    shortBreakDuration: number; // Fixed typo: was "shotBreakDuration"
     longBreakDuration: number;
   };
   waterReminder: {

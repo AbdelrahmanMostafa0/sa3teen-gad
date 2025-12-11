@@ -20,7 +20,7 @@ const PrayerTimes = ({ variant = "horizontal" }: PrayerTimesProps) => {
     if (name.includes("العشاء")) return <Moon className="w-6 h-6 text-blue-800" />;
     return <Sun className="w-6 h-6" />;
   };
-
+  if (!prayerTimes) return
   if (variant === "vertical") {
     return (
       <div className="w-full space-y-3 sticky top-24">

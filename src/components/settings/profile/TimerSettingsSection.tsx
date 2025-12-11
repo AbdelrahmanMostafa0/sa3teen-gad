@@ -16,7 +16,7 @@ interface TimerSettingsSectionProps {
 
 export default function TimerSettingsSection({ timers, onUpdate, loading }: TimerSettingsSectionProps) {
     const [focusDuration, setFocusDuration] = useState(timers.focusDurationTime);
-    const [shortBreak, setShortBreak] = useState(timers.shotBreakDuration);
+    const [shortBreak, setShortBreak] = useState(timers.shortBreakDuration);
     const [longBreak, setLongBreak] = useState(timers.longBreakDuration);
     const [isEditing, setIsEditing] = useState(false);
 
@@ -26,8 +26,8 @@ export default function TimerSettingsSection({ timers, onUpdate, loading }: Time
         if (focusDuration !== timers.focusDurationTime) {
             updates.focusDurationTime = focusDuration;
         }
-        if (shortBreak !== timers.shotBreakDuration) {
-            updates.shotBreakDuration = shortBreak;
+        if (shortBreak !== timers.shortBreakDuration) {
+            updates.shortBreakDuration = shortBreak;
         }
         if (longBreak !== timers.longBreakDuration) {
             updates.longBreakDuration = longBreak;
@@ -41,7 +41,7 @@ export default function TimerSettingsSection({ timers, onUpdate, loading }: Time
 
     const handleCancel = () => {
         setFocusDuration(timers.focusDurationTime);
-        setShortBreak(timers.shotBreakDuration);
+        setShortBreak(timers.shortBreakDuration);
         setLongBreak(timers.longBreakDuration);
         setIsEditing(false);
     };

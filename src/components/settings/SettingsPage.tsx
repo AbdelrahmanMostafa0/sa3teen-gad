@@ -21,7 +21,7 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 import { ArrowRight, Bell, Clock, Droplets, Timer, Layout } from "lucide-react";
-import { PrayerName } from "@/types/settings";
+import { PrayerName } from "@/types/user";
 
 const prayerNameMap: Record<PrayerName, string> = {
     Fajr: "الفجر",
@@ -45,21 +45,21 @@ export default function SettingsPage() {
         setValue,
     } = useForm({
         defaultValues: {
-            waterReminderInterval: userSettings.waterReminderInterval,
-            focusDurationTime: userSettings.focusDurationTime,
-            shortBreakDuration: userSettings.shortBreakDuration,
-            city: userSettings.city,
-            country: userSettings.country,
+            waterReminderInterval: userSettings.waterReminder.interval,
+            focusDurationTime: userSettings.timers.focusDurationTime,
+            shortBreakDuration: userSettings.timers.shortBreakDuration,
+            city: userSettings.location.city,
+            country: userSettings.location.country,
             preReminderMinutes:
-                userSettings.prayerReminderSettings.preReminderMinutes,
-            isWaterReminderOn: userSettings.isWaterReminderOn,
-            prayerReminderEnabled: userSettings.prayerReminderSettings.isEnabled,
+                userSettings.prayerReminder.preReminderMinutes,
+            isWaterReminderOn: userSettings.waterReminder.enabled,
+            prayerReminderEnabled: userSettings.prayerReminder.enabled,
             preReminderEnabled:
-                userSettings.prayerReminderSettings.preReminderEnabled,
+                userSettings.prayerReminder.preReminderEnabled,
             atTimeReminderEnabled:
-                userSettings.prayerReminderSettings.atTimeReminderEnabled,
-            individualPrayers: userSettings.prayerReminderSettings.individualPrayers,
-            prayerTimesPosition: userSettings.prayerTimesPosition,
+                userSettings.prayerReminder.atTimeReminderEnabled,
+            individualPrayers: userSettings.prayerReminder.perPrayer,
+            prayerTimesPosition: userSettings.ui.prayerTimesPosition,
         },
     });
 
@@ -74,35 +74,6 @@ export default function SettingsPage() {
     const atTimeReminderEnabled = watch("atTimeReminderEnabled");
     const individualPrayers = watch("individualPrayers");
 
-    useEffect(() => {
-        setValue("city", userSettings.city);
-        setValue("country", userSettings.country);
-        setValue("waterReminderInterval", userSettings.waterReminderInterval);
-        setValue("focusDurationTime", userSettings.focusDurationTime);
-        setValue("shortBreakDuration", userSettings.shortBreakDuration);
-        setValue(
-            "preReminderMinutes",
-            userSettings.prayerReminderSettings.preReminderMinutes
-        );
-        setValue("isWaterReminderOn", userSettings.isWaterReminderOn);
-        setValue(
-            "prayerReminderEnabled",
-            userSettings.prayerReminderSettings.isEnabled
-        );
-        setValue(
-            "preReminderEnabled",
-            userSettings.prayerReminderSettings.preReminderEnabled
-        );
-        setValue(
-            "atTimeReminderEnabled",
-            userSettings.prayerReminderSettings.atTimeReminderEnabled
-        );
-        setValue(
-            "individualPrayers",
-            userSettings.prayerReminderSettings.individualPrayers
-        );
-        setValue("prayerTimesPosition", userSettings.prayerTimesPosition);
-    }, [userSettings, setValue]);
 
     interface FormData {
         waterReminderInterval: number;
@@ -164,8 +135,7 @@ export default function SettingsPage() {
                     </Button>
                 </div>
 
-                <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-                    {/* Pomodoro Settings */}
+                {/* <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                     <Card className="border-border/40 shadow-sm backdrop-blur-sm">
                         <CardHeader>
                             <CardTitle className="flex items-center gap-2 text-xl">
@@ -175,7 +145,6 @@ export default function SettingsPage() {
                         </CardHeader>
                         <CardContent className="space-y-4">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                {/* Focus Time */}
                                 <div className="space-y-2">
                                     <Label htmlFor="focusDurationTime" className="font-bold">
                                         التركيز (دقيقة)
@@ -196,7 +165,6 @@ export default function SettingsPage() {
                                     )}
                                 </div>
 
-                                {/* Short Break */}
                                 <div className="space-y-2">
                                     <Label htmlFor="shortBreakDuration" className="font-bold">
                                         البريك (دقيقة)
@@ -225,7 +193,6 @@ export default function SettingsPage() {
                         </CardContent>
                     </Card>
 
-                    {/* Water Reminder Settings */}
                     <Card className="border-border/40 shadow-sm backdrop-blur-sm">
                         <CardHeader>
                             <CardTitle className="flex items-center gap-2 text-xl">
@@ -277,7 +244,6 @@ export default function SettingsPage() {
                         </CardContent>
                     </Card>
 
-                    {/* Prayer Reminder Settings */}
                     <Card className="border-border/40 shadow-sm backdrop-blur-sm">
                         <CardHeader>
                             <CardTitle className="flex items-center gap-2 text-xl">
@@ -286,7 +252,6 @@ export default function SettingsPage() {
                             </CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-6">
-                            {/* Global Toggle */}
                             <div className="flex items-center justify-between p-4 bg-secondary/20 rounded-lg">
                                 <Label
                                     htmlFor="prayerReminderEnabled"
@@ -308,7 +273,6 @@ export default function SettingsPage() {
 
                             {prayerReminderEnabled && (
                                 <>
-                                    {/* Pre-reminder Time */}
                                     <div className="space-y-2">
                                         <Label className="font-bold flex items-center gap-2">
                                             <Clock className="w-4 h-4" />
@@ -337,7 +301,6 @@ export default function SettingsPage() {
                                         )}
                                     </div>
 
-                                    {/* Global Reminder Types */}
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                         <div className="flex items-center justify-between p-3 bg-secondary/40 rounded-lg">
                                             <Label
@@ -377,7 +340,6 @@ export default function SettingsPage() {
                                         </div>
                                     </div>
 
-                                    {/* Individual Prayer Controls */}
                                     <div className="space-y-3">
                                         <Label className="font-bold text-base">تخصيص كل صلاة</Label>
                                         <div className="grid grid-cols-1 gap-3">
@@ -460,7 +422,6 @@ export default function SettingsPage() {
                         </CardContent>
                     </Card>
 
-                    {/* Location Settings */}
                     <Card className="border-border/40 shadow-sm backdrop-blur-sm">
                         <CardHeader>
                             <CardTitle className="text-xl">الموقع لمواقيت الصلاة</CardTitle>
@@ -512,7 +473,6 @@ export default function SettingsPage() {
                         </CardContent>
                     </Card>
 
-                    {/* Prayer Times Position Settings */}
                     <Card className="border-border/40 shadow-sm backdrop-blur-sm">
                         <CardHeader>
                             <CardTitle className="flex items-center gap-2 text-xl">
@@ -525,7 +485,6 @@ export default function SettingsPage() {
                                 اختر مكان عرض مواقيت الصلاة على الشاشة الكبيرة
                             </p>
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                {/* Top Position */}
                                 <button
                                     type="button"
                                     onClick={() =>
@@ -551,7 +510,6 @@ export default function SettingsPage() {
                                     </div>
                                 </button>
 
-                                {/* Right Position */}
                                 <button
                                     type="button"
                                     onClick={() =>
@@ -577,7 +535,6 @@ export default function SettingsPage() {
                                     </div>
                                 </button>
 
-                                {/* Left Position */}
                                 <button
                                     type="button"
                                     onClick={() =>
@@ -606,7 +563,6 @@ export default function SettingsPage() {
                         </CardContent>
                     </Card>
 
-                    {/* Submit Button */}
                     <div className="flex gap-4">
                         <Button
                             disabled={!isDirty}
@@ -625,7 +581,7 @@ export default function SettingsPage() {
                             إلغاء
                         </Button>
                     </div>
-                </form>
+                </form> */}
             </div>
         </div>
     );

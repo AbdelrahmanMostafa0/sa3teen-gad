@@ -2,17 +2,19 @@
 import FocusTimer from "./FocusTimer";
 import BreakTime from "./BreakTime";
 import { useDispatch, useSelector } from "react-redux";
-import { updateDisplayedTimer } from "@/store/features/settingsSlice";
-import { RootState } from "@/store/store";
+// import { updateDisplayedTimer } from "@/store/features/settingsSlice";
+// import { RootState } from "@/store/store";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { RiZzzLine } from "react-icons/ri";
 import { Coffee, Target } from "lucide-react";
+import { useState } from "react";
 const Pomodoro = () => {
   const dispatch = useDispatch();
-  const { displayedTimer } = useSelector((state: RootState) => state.Settings);
+  const [displayedTimer, setDisplayedTimer] = useState("focus");
 
   const handleTabChange = (value: string) => {
-    dispatch(updateDisplayedTimer(value as "focus" | "shortBreak"));
+    setDisplayedTimer(value);
+    // dispatch(updateDisplayedTimer(value as "focus" | "shortBreak"));
   };
 
   return (

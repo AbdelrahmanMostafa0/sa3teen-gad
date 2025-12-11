@@ -1,5 +1,10 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "@/store/store";
+import { updateSettings } from "@/store/features/settingsSlice";
 import { SettingsType } from "@/types/user";
+import { useUser } from "./useUser";
+import axios from "axios";
 
 interface UpdateUserData {
   fullName?: string;
@@ -15,6 +20,7 @@ interface UpdateUserData {
 
 interface UseUpdateUserReturn {
   updateUser: (data: UpdateUserData) => Promise<any>;
+  updateUserSettings: (settings: Partial<SettingsType>) => Promise<void>;
   loading: boolean;
   error: string | null;
 }
@@ -22,22 +28,15 @@ interface UseUpdateUserReturn {
 export function useUpdateUser(): UseUpdateUserReturn {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
+  const dispatch = useDispatch<AppDispatch>();
+  const { isAuthenticated, user } = useUser();
   const updateUser = async (data: UpdateUserData) => {
     setLoading(true);
     setError(null);
 
     try {
-      const response = await fetch("/api/auth/me", {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-        credentials: "include",
-      });
-
-      const result = await response.json();
+      const response = await axios.patch("/api/auth/me", data);
+      const result = await response.data;
 
       if (!result.success) {
         throw new Error(result.message || "فشل التحديث");
@@ -53,6 +52,74 @@ export function useUpdateUser(): UseUpdateUserReturn {
       setLoading(false);
     }
   };
+  useEffect(() => {
+    if (isAuthenticated) {
+      dispatch(updateSettings(user.settings));
+    }
+  }, [isAuthenticated]);
+  const updateUserSettings = async (settingsUpdate: Partial<SettingsType>) => {
+    setLoading(true);
+    setError(null);
 
-  return { updateUser, loading, error };
+    try {
+      dispatch(updateSettings(settingsUpdate));
+
+      if (isAuthenticated) {
+        const response = await axios.put("/api/auth/me", {
+          settings: settingsUpdate,
+        });
+
+        const result = await response.data;
+
+        if (!result.success) {
+          throw new Error(result.message || "فشل تحديث الإعدادات");
+        }
+      } else {
+        const currentSettings = localStorage.getItem("settings");
+        const parsedSettings = currentSettings
+          ? JSON.parse(currentSettings)
+          : {};
+        const updatedSettings = {
+          ...parsedSettings,
+          ...settingsUpdate,
+          timers: {
+            ...parsedSettings.timers,
+            ...settingsUpdate.timers,
+          },
+          waterReminder: {
+            ...parsedSettings.waterReminder,
+            ...settingsUpdate.waterReminder,
+          },
+          prayerReminder: {
+            ...parsedSettings.prayerReminder,
+            ...settingsUpdate.prayerReminder,
+            perPrayer: {
+              ...parsedSettings.prayerReminder?.perPrayer,
+              ...settingsUpdate.prayerReminder?.perPrayer,
+            },
+          },
+          location: {
+            ...parsedSettings.location,
+            ...settingsUpdate.location,
+          },
+          ui: {
+            ...parsedSettings.ui,
+            ...settingsUpdate.ui,
+          },
+        };
+
+        localStorage.setItem("settings", JSON.stringify(updatedSettings));
+      }
+    } catch (err) {
+      const errorMessage =
+        err instanceof Error ? err.message : "حدث خطأ أثناء تحديث الإعدادات";
+      setError(errorMessage);
+      console.error("Error updating settings:", err);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return { updateUser, updateUserSettings, loading, error };
 }

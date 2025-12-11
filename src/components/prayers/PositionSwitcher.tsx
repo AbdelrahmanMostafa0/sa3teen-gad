@@ -17,14 +17,15 @@ import {
     TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useUser } from "@/hooks/useUser";
+import { useUpdateUser } from "@/hooks/useUpdateUser";
 
 const PositionSwitcher = () => {
     const dispatch = useDispatch();
     const currentPosition = useSelector(
-        (state: RootState) => state.Settings.prayerTimesPosition
+        (state: RootState) => state.Settings.ui.prayerTimesPosition
     );
-    const { user, updateProfile, isAuthenticated } = useUser();
-    const position = user?.settings?.ui?.prayerTimesPosition || currentPosition
+    const { updateUserSettings } = useUpdateUser();
+    const { user } = useUser();
     const positions = [
         { value: "right", icon: PanelRight, label: "يمين" },
         { value: "top", icon: AlignHorizontalSpaceAround, label: "أعلى" },
@@ -32,24 +33,22 @@ const PositionSwitcher = () => {
     ] as const;
 
     const handlePositionChange = (position: "top" | "left" | "right") => {
-        const settings = localStorage.getItem("settings") || "{}";
-        const parsedSettings = JSON.parse(settings);
-        parsedSettings.prayerTimesPosition = position;
-        if (isAuthenticated) {
-            updateProfile({
-                settings: {
-                    ui: {
-                        prayerTimesPosition: position,
-                    },
-                },
-            });
-        }
-        localStorage.setItem("settings", JSON.stringify(parsedSettings));
+        // const settings = localStorage.getItem("settings") || "{}";
+        // const parsedSettings = JSON.parse(settings);
+        // parsedSettings?.ui?.prayerTimesPosition = position;
         dispatch(updatePrayerTimesPosition(position));
+
+        updateUserSettings({
+            ui: {
+                prayerTimesPosition: position,
+            },
+        });
+
+        // localStorage.setItem("settings", JSON.stringify(parsedSettings));
     };
 
     // Show dropdown menu when position is "top"
-    if (position === "top") {
+    if (currentPosition === "top") {
         return (
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -85,10 +84,10 @@ const PositionSwitcher = () => {
                     <Tooltip key={value}>
                         <TooltipTrigger asChild>
                             <Button
-                                variant={position === value ? "default" : "ghost"}
+                                variant={currentPosition === value ? "default" : "ghost"}
                                 size="sm"
                                 onClick={() => handlePositionChange(value)}
-                                className={`h-8 w-8 p-0 transition-all duration-200 ${position === value
+                                className={`h-8 w-8 p-0 transition-all duration-200 ${currentPosition === value
                                     ? "shadow-md scale-105"
                                     : "hover:scale-105 opacity-60 hover:opacity-100"
                                     }`}

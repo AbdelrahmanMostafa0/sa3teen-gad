@@ -40,11 +40,11 @@ export const useTaskCardLogic = (task: ITask) => {
       animationFrame = requestAnimationFrame(animate);
     }
 
-    if (task.completed && hasInteracted) {
-      pencilRef.current?.play();
-    } else {
-      setPathLength(0);
-    }
+    // if (task.completed && hasInteracted) {
+    //   pencilRef.current?.play();
+    // } else {
+    //   setPathLength(0);
+    // }
 
     return () => cancelAnimationFrame(animationFrame);
   }, [task.completed, hasInteracted]);

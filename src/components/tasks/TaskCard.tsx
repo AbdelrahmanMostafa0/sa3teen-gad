@@ -11,21 +11,33 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { motion, AnimatePresence } from "motion/react";
 
 import { useUser } from "@/hooks/useUser";
+import { useEffect, useState } from "react";
 
 const TaskCard = ({ task }: { task: ITask }) => {
   const { isAuthenticated } = useUser()
+  const [checked, setChecked] = useState(task.completed);
   const localHooks = useTasks();
   const apiHooks = useTasksActions();
+  const taskId = task.id || (task as any)._id;
 
   const { updateTask, deleteTask } = isAuthenticated ? apiHooks : localHooks;
-
   const {
     isArabic,
     isOpen,
     handleModalToggle,
-    handleCheckboxClick,
     taskCompleted,
   } = useTaskCardLogic(task);
+  const handleCheckboxClick = (checked: boolean) => {
+    if (!taskId) {
+      console.error("Task ID is missing");
+      return;
+    }
+    setChecked(checked);
+    updateTask(taskId, { completed: checked });
+  };
+  useEffect(() => {
+    setChecked(task.completed);
+  }, [task.completed]);
 
   return (
     <motion.div
@@ -40,7 +52,7 @@ const TaskCard = ({ task }: { task: ITask }) => {
       <div className="relative flex items-center justify-between gap-4">
         <button
           onClick={handleModalToggle}
-          className={`text-lg font-semibold flex-1 w-full text-start transition-all duration-200 ${taskCompleted
+          className={`text-lg font-semibold flex-1 w-full text-start transition-all duration-200 ${checked
             ? "line-through text-foreground/50"
             : "text-foreground group-hover:text-foreground/80"
             }`}
@@ -48,11 +60,32 @@ const TaskCard = ({ task }: { task: ITask }) => {
           {task.title}
         </button>
 
-        <Checkbox
-          checked={taskCompleted}
-          onCheckedChange={handleCheckboxClick}
-          className="h-6 w-6 transition-transform duration-200 hover:scale-110"
-        />
+        <motion.button
+          type="button"
+          whileTap={{ scale: 0.9 }}
+          onClick={() => handleCheckboxClick(!checked)}
+          className={`shrink-0 h-8 w-8 rounded-lg border-2 flex items-center justify-center transition-all duration-200 ${checked
+            ? "bg-green-500 border-green-500 shadow-lg shadow-green-500/20"
+            : "border-slate-300 dark:border-foreground/30 hover:border-slate-400 dark:hover:border-foreground/50 hover:bg-slate-100 dark:hover:bg-foreground/5"
+            }`}
+        >
+          <AnimatePresence>
+            {checked && (
+              <motion.div
+                initial={{ scale: 0, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0, opacity: 0 }}
+                transition={{ duration: 0.15 }}
+              >
+                <TbCheck
+                  className="text-white"
+                  size={20}
+                  strokeWidth={3}
+                />
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </motion.button>
       </div>
 
       <TaskModal

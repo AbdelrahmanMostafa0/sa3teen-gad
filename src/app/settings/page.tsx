@@ -1,5 +1,5 @@
 import RenderSettings from "@/components/settings/RenderSettings";
-import SettingsPage from "@/components/settings/SettingsPage";
+// import SettingsPage from "@/components/settings/SettingsPage";
 import { Metadata } from "next";
 export const metadata: Metadata = {
   title: "ساعتين جد - الإعدادات",

@@ -41,14 +41,13 @@ const TaskModal = ({
 }: TaskModalProps) => {
     const [localTask, setLocalTask] = useState<ITask>(task);
     const isArabic = detectStartingLang(localTask.title) === "arabic";
-
+    const [checked, setChecked] = useState(task.completed);
     const taskId = task.id || (task as any)._id;
 
     const {
         register,
         handleSubmit,
         formState: { errors },
-        reset,
         setValue,
     } = useForm<TaskFormData>({
         defaultValues: {
@@ -70,6 +69,7 @@ const TaskModal = ({
             console.error("Task ID is missing");
             return;
         }
+        setChecked(checked);
         updateTask(taskId, { completed: checked });
     };
 
@@ -104,12 +104,16 @@ const TaskModal = ({
         deleteTask(taskId);
         setIsOpen();
     };
-
+    useEffect(() => {
+        setChecked(task.completed);
+    }, [task.completed])
     const formattedDate = task.createdAt
-        ? formatArabicDate(typeof task.createdAt === 'string'
-            ? new Date(task.createdAt)
-            : task.createdAt)
-        : '';
+        ? formatArabicDate(
+            typeof task.createdAt === "string"
+                ? new Date(task.createdAt)
+                : task.createdAt
+        )
+        : "";
 
     return (
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -126,14 +130,14 @@ const TaskModal = ({
                                 <motion.button
                                     type="button"
                                     whileTap={{ scale: 0.9 }}
-                                    onClick={() => handleCheckboxClick(!task.completed)}
-                                    className={`flex-shrink-0 h-8 w-8 rounded-lg border-2 flex items-center justify-center transition-all duration-200 ${task.completed
-                                        ? "bg-green-500 border-green-500 shadow-lg shadow-green-500/20"
-                                        : "border-slate-300 dark:border-foreground/30 hover:border-slate-400 dark:hover:border-foreground/50 hover:bg-slate-100 dark:hover:bg-foreground/5"
+                                    onClick={() => handleCheckboxClick(!checked)}
+                                    className={`flex-shrink-0 h-8 w-8 rounded-lg border-2 flex items-center justify-center transition-all duration-200 ${checked
+                                            ? "bg-green-500 border-green-500 shadow-lg shadow-green-500/20"
+                                            : "border-slate-300 dark:border-foreground/30 hover:border-slate-400 dark:hover:border-foreground/50 hover:bg-slate-100 dark:hover:bg-foreground/5"
                                         }`}
                                 >
                                     <AnimatePresence>
-                                        {task.completed && (
+                                        {checked && (
                                             <motion.div
                                                 initial={{ scale: 0, opacity: 0 }}
                                                 animate={{ scale: 1, opacity: 1 }}
@@ -161,7 +165,6 @@ const TaskModal = ({
                                             },
                                         })}
                                         placeholder="عنوان المهمة"
-
                                     />
                                     {errors.title && (
                                         <motion.p
@@ -241,21 +244,30 @@ const TaskModal = ({
                                         التقدم
                                     </span>
                                     <span className="text-slate-600 dark:text-foreground/60 font-semibold">
-                                        {localTask.subtasks.filter(st => st.done).length} / {localTask.subtasks.length}
+                                        {localTask.subtasks.filter((st) => st.done).length} /{" "}
+                                        {localTask.subtasks.length}
                                     </span>
                                 </div>
                                 <div className="relative h-2 bg-slate-200 dark:bg-foreground/20 rounded-full overflow-hidden">
                                     <motion.div
                                         initial={{ width: 0 }}
                                         animate={{
-                                            width: `${(localTask.subtasks.filter(st => st.done).length / localTask.subtasks.length) * 100}%`
+                                            width: `${(localTask.subtasks.filter((st) => st.done).length /
+                                                    localTask.subtasks.length) *
+                                                100
+                                                }%`,
                                         }}
                                         transition={{ duration: 0.3, ease: "easeOut" }}
                                         className="h-full bg-gradient-to-r from-green-500 to-emerald-500 rounded-full"
                                     />
                                 </div>
                                 <p className="text-xs text-slate-500 dark:text-foreground/50 text-center">
-                                    {Math.round((localTask.subtasks.filter(st => st.done).length / localTask.subtasks.length) * 100)}% مكتمل
+                                    {Math.round(
+                                        (localTask.subtasks.filter((st) => st.done).length /
+                                            localTask.subtasks.length) *
+                                        100
+                                    )}
+                                    % مكتمل
                                 </p>
                             </div>
                         )}

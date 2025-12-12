@@ -107,7 +107,11 @@ const usePrayerTimes = () => {
     name: nameMap[name],
     time,
   }));
-  return { prayerTimes: formatted || [], rawPrayerTimes: prayerTimes || [] };
+  return {
+    prayerTimes: formatted || [],
+    rawPrayerTimes: prayerTimes || [],
+    PrayerNameMap: nameMap,
+  };
 };
 
 export default usePrayerTimes;

@@ -8,7 +8,7 @@ import { createPortal } from "react-dom";
 import { motion } from "motion/react";
 
 const DrinkWater = () => {
-  const { waterReminder: { enabled: isWaterReminderOn, interval: waterReminderInterval } } = useSelector(
+  const { waterReminder: { enabled, interval: waterReminderInterval } } = useSelector(
     (state: RootState) => state.Settings
   );
 
@@ -28,20 +28,20 @@ const DrinkWater = () => {
 
   useEffect(() => {
     Notification.requestPermission().then((permission) => {
-      if (permission === "granted" && isWaterReminderOn) {
+      if (permission === "granted" && enabled) {
         const interval = setInterval(() => {
           new Notification("💧 Reminder", {
-            body: "Drink some water!",
+            body: "بفكرك تشرب ماية عشان صحتك ياجميل",
+            icon: "/water-cooler.png",
           });
         }, waterReminderInterval * 60 * 1000);
-
         return () => clearInterval(interval);
       }
     });
-  }, [isWaterReminderOn, waterReminderInterval]);
+  }, [enabled, waterReminderInterval]);
 
   useEffect(() => {
-    if (isWaterReminderOn) {
+    if (enabled) {
       const interval = setInterval(() => {
         setShowPopup(true);
         reminderSoundRef.current?.play();
@@ -50,7 +50,7 @@ const DrinkWater = () => {
 
       return () => clearInterval(interval);
     }
-  }, [isWaterReminderOn, waterReminderInterval]);
+  }, [enabled, waterReminderInterval]);
 
   if (!showPopup) return null;
   const waterPopup = (

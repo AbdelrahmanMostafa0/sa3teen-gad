@@ -11,14 +11,13 @@ import usePrayerTimes from "@/hooks/usePrayerTimes";
 import { PrayerName } from "@/types/user";
 
 const PrayerReminder = () => {
-  const { rawPrayerTimes } = usePrayerTimes();
+  const { rawPrayerTimes, PrayerNameMap } = usePrayerTimes();
   const prayerSettings = useSelector((state: RootState) => state.Settings.prayerReminder);
   const [showPopup, setShowPopup] = useState(false);
-  const [currentPrayer, setCurrentPrayer] = useState<string>("");
+  const [currentPrayer, setCurrentPrayer] = useState<PrayerName | "">("");
   const [isPreReminder, setIsPreReminder] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
-  // Load sound effect
   useEffect(() => {
     audioRef.current = new Audio("/sound/prayer-reminder.mp3");
   }, []);
@@ -126,8 +125,8 @@ const PrayerReminder = () => {
         </p>
         <p className="text-sm text-primary/90">
           {isPreReminder
-            ? `صلاة ${currentPrayer} بعد ${prayerSettings.preReminderMinutes} دقيقة`
-            : `حان الآن وقت صلاة ${currentPrayer}`}
+            ? `صلاة ${currentPrayer ? PrayerNameMap[currentPrayer] : ""} بعد ${prayerSettings.preReminderMinutes} دقيقة`
+            : `حان الآن وقت صلاة ${currentPrayer ? PrayerNameMap[currentPrayer] : ""}`}
         </p>
       </div>
       <button

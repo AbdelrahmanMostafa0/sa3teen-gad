@@ -59,7 +59,6 @@ export function useUpdateUser(): UseUpdateUserReturn {
     }
   }, [isAuthenticated]);
   const updateUserSettings = async (settingsUpdate: Partial<SettingsType>) => {
-    console.log("settingsUpdate", settingsUpdate);
     setLoading(true);
     setError(null);
     const newSettings = {
@@ -87,7 +86,6 @@ export function useUpdateUser(): UseUpdateUserReturn {
           ...parsedSettings,
           ...settingsUpdate,
         };
-        console.log("updatedSettings", updatedSettings);
         localStorage.setItem("settings", JSON.stringify(updatedSettings));
       }
     } catch (err) {

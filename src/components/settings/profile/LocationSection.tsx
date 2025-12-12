@@ -23,8 +23,6 @@ export default function LocationSection({ location, onUpdate, loading }: Locatio
         setCountry(location.country);
         setCity(location.city);
     }, [location.city, location.country]);
-    console.log("country", country);
-    console.log("city", city);
 
     const countryCities = useMemo(() => {
         return countries.find((c) => c.iso3 === country)?.cities || [];

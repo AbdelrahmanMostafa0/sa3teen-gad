@@ -7,7 +7,7 @@ import { ModeToggle } from "../mode-toggle";
 import Image from "next/image";
 import Link from "next/link";
 // import { Clock } from "lucide-react";
-
+import Cookies from "js-cookie";
 import { FiCheckSquare } from "react-icons/fi";
 import { Home, Settings2 } from "lucide-react";
 import { useUser } from "@/hooks/useUser";
@@ -20,6 +20,7 @@ const Navbar = () => {
   const pathname = usePathname();
   // const time = useTime();
   const { user } = useUser();
+
 
   return (
     <>

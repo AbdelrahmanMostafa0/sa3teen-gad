@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { verifyToken } from "../jwt";
+import { cookies } from "next/headers";
 
 // authMiddleware.ts
 export interface AuthenticatedRequest extends NextRequest {
@@ -15,7 +16,7 @@ type AuthHandler<T = any> = (
 ) => Promise<NextResponse>;
 
 export default function authMiddleware<T = any>(handler: AuthHandler<T>) {
-  return async (req: NextRequest, context?: T) => {
+  return async (req: NextRequest, context?: T, res?: NextResponse) => {
     const token = req.cookies.get("token")?.value;
 
     if (!token) {
@@ -28,10 +29,17 @@ export default function authMiddleware<T = any>(handler: AuthHandler<T>) {
     const decoded = verifyToken(token);
 
     if (!decoded) {
-      return NextResponse.json(
+      const res = NextResponse.json(
         { success: false, message: "رمز غير صالح" },
         { status: 401 }
       );
+      res.cookies.set({
+        name: "token",
+        value: "",
+        path: "/",
+        expires: new Date(0),
+      });
+      return res;
     }
 
     const authenticatedReq = req as AuthenticatedRequest;

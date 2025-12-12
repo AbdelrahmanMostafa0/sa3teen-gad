@@ -24,7 +24,6 @@ export default function UserProfileSettings() {
     const [successMessage, setSuccessMessage] = useState<string | null>(null);
     const settings = useSelector((state: RootState) => state.Settings);
     const handleUpdate = async (data: any) => {
-        console.log("data", data);
         try {
             await updateUserSettings(data);
             setSuccessMessage('تم حفظ التغييرات بنجاح');

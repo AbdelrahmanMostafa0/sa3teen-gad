@@ -42,7 +42,6 @@ export default function GoogleLoginButton({ onError }: GoogleLoginButtonProps) {
       }
     },
     onError: () => {
-      console.log("Login Failed");
       setLoading(false);
       if (onError) {
         onError("فشل تسجيل الدخول بجوجل");

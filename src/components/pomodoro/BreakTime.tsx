@@ -7,23 +7,22 @@ import { useUser } from "@/hooks/useUser";
 // import { updateAutoSwitch } from "@/store/features/settingsSlice";
 
 const BreakTime = ({ breakType = "shortBreak" }: { breakType: "shortBreak" | "longBreak" }) => {
-  const { shortBreakDuration, longBreakDuration, autoSwitch, autoBreakStart } = useSelector(
+  const { timers: { shortBreakDuration, longBreakDuration } } = useSelector(
     (state: RootState) => state.Settings
   );
-  const { user } = useUser();
   const dispatch = useDispatch();
-  const duration = breakType === "shortBreak" ? user?.settings?.timers?.shotBreakDuration || shortBreakDuration : user?.settings?.timers?.longBreakDuration || longBreakDuration;
+  const duration = breakType === "shortBreak" ? shortBreakDuration : longBreakDuration;
   const { minutes, seconds, isActive, togglePomodoro, resetPomodoro } =
     usePomodoro({
       isBreak: true,
       specificMinutes: duration,
     });
-  useEffect(() => {
-    if (autoBreakStart && autoSwitch && !isActive) {
-      // dispatch(updateAutoSwitch(false));
-      togglePomodoro();
-    }
-  }, [autoBreakStart, autoSwitch, isActive, togglePomodoro, dispatch]);
+  // useEffect(() => {
+  //   if (autoBreakStart && autoSwitch && !isActive) {
+  //     // dispatch(updateAutoSwitch(false));
+  //     togglePomodoro();
+  //   }
+  // }, [autoBreakStart, autoSwitch, isActive, togglePomodoro, dispatch]);
   return (
     <Timer
       resetPomodoro={resetPomodoro}

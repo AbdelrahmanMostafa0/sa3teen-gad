@@ -23,7 +23,7 @@ const prayerNameMap: Record<PrayerName, string> = {
 
 interface PrayerReminderSectionProps {
     prayerReminder: SettingsType['prayerReminder'];
-    onUpdate: (data: { settings: { prayerReminder: Partial<SettingsType['prayerReminder']> } }) => Promise<void>;
+    onUpdate: (data: { prayerReminder: Partial<SettingsType['prayerReminder']> }) => Promise<void>;
     loading?: boolean;
 }
 
@@ -37,18 +37,15 @@ export default function PrayerReminderSection({ prayerReminder, onUpdate, loadin
     const [isEditing, setIsEditing] = useState(false);
 
     const handleSave = async () => {
-        const updates: any = {};
-
-        if (enabled !== prayerReminder.enabled) updates.enabled = enabled;
-        if (preReminderMinutes !== prayerReminder.preReminderMinutes) updates.preReminderMinutes = preReminderMinutes;
-        if (preReminderEnabled !== prayerReminder.preReminderEnabled) updates.preReminderEnabled = preReminderEnabled;
-        if (atTimeReminderEnabled !== prayerReminder.atTimeReminderEnabled) updates.atTimeReminderEnabled = atTimeReminderEnabled;
-        if (JSON.stringify(perPrayer) !== JSON.stringify(prayerReminder.perPrayer)) updates.perPrayer = perPrayer;
-
-        if (Object.keys(updates).length > 0) {
-            await onUpdate({ settings: { prayerReminder: updates } });
-            setIsEditing(false);
-        }
+        const updates: any = {
+            enabled,
+            preReminderMinutes,
+            preReminderEnabled,
+            atTimeReminderEnabled,
+            perPrayer,
+        };
+        await onUpdate({ prayerReminder: updates });
+        setIsEditing(false);
     };
 
     const handleCancel = () => {

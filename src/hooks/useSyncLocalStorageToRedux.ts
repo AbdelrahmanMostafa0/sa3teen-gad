@@ -1,7 +1,10 @@
 import { updateSettings } from "@/store/features/settingsSlice";
 import { AppDispatch, RootState } from "@/store/store";
+import { defaultSettings } from "@/types/user";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useUpdateUser } from "./useUpdateUser";
+import { useUser } from "./useUser";
 const INITIAL_SETTINGS = {
   focusDurationTime: 25,
   shortBreakDuration: 5,
@@ -31,12 +34,19 @@ const useSyncLocalStorageToRedux = () => {
   const dispatch = useDispatch<AppDispatch>();
   const settings = useSelector((state: RootState) => state.Settings);
   const [isLoading, setIsLoading] = useState(true);
-
+  const { updateUserSettings } = useUpdateUser();
+  const { status } = useUser();
   useEffect(() => {
-    const settings = localStorage.getItem("settings");
-    if (settings) {
-      const parsed = JSON.parse(settings);
-      dispatch(updateSettings({ ...INITIAL_SETTINGS, ...parsed }));
+    if (status === "failed") {
+      const settings = localStorage.getItem("settings");
+      console.log(settings);
+      if (settings) {
+        const parsed = JSON.parse(settings);
+        updateUserSettings({ ...defaultSettings, ...parsed });
+      } else {
+        localStorage.setItem("settings", JSON.stringify(defaultSettings));
+        updateUserSettings(defaultSettings);
+      }
     }
     // Add a delay after sync completes to show the loading screen
     const timer = setTimeout(() => {
@@ -44,7 +54,7 @@ const useSyncLocalStorageToRedux = () => {
     }, 2000); // 1 second delay
 
     return () => clearTimeout(timer);
-  }, [dispatch]);
+  }, [dispatch, status]);
 
   return { settings, isLoading };
 };

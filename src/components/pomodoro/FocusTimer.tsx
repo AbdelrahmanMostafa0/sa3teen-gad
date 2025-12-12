@@ -2,23 +2,20 @@ import { useSelector } from "react-redux";
 import Timer from "./Timer";
 import usePomodoro from "@/hooks/usePomodoro";
 import { RootState } from "@/store/store";
-import { useUser } from "@/hooks/useUser";
 
 const FocusTimer = () => {
-  const { focusDurationTime } = useSelector(
+  const { timers: { focusDurationTime } } = useSelector(
     (state: RootState) => state.Settings
   );
-  const { user } = useUser();
   const { minutes, seconds, isActive, togglePomodoro, resetPomodoro } =
     usePomodoro({
       isBreak: false,
-      specificMinutes: user?.settings?.timers?.focusDurationTime || focusDurationTime,
+      specificMinutes: focusDurationTime,
     });
-  console.log(user?.settings?.timers?.focusDurationTime);
 
   return (
     <Timer
-      duration={user?.settings?.timers?.focusDurationTime || focusDurationTime}
+      duration={focusDurationTime}
       minutes={minutes}
       seconds={seconds}
       togglePomodoro={togglePomodoro}

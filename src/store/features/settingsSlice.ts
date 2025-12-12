@@ -8,7 +8,7 @@ const settingsSlice = createSlice({
   initialState,
   reducers: {
     updateSettings: (state, action) => {
-      Object.assign(state, action.payload);
+      return { ...state, ...action.payload };
     },
     // Timer reducers
     updateFocusDuration: (state, action) => {

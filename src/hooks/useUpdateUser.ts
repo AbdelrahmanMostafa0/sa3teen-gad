@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
-import { AppDispatch } from "@/store/store";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "@/store/store";
 import { updateSettings } from "@/store/features/settingsSlice";
 import { SettingsType } from "@/types/user";
 import { useUser } from "./useUser";
@@ -29,6 +29,7 @@ export function useUpdateUser(): UseUpdateUserReturn {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const dispatch = useDispatch<AppDispatch>();
+  const settings = useSelector((state: RootState) => state.Settings);
   const { isAuthenticated, user } = useUser();
   const updateUser = async (data: UpdateUserData) => {
     setLoading(true);
@@ -53,17 +54,20 @@ export function useUpdateUser(): UseUpdateUserReturn {
     }
   };
   useEffect(() => {
-    if (isAuthenticated) {
+    if (isAuthenticated && user) {
       dispatch(updateSettings(user.settings));
     }
   }, [isAuthenticated]);
   const updateUserSettings = async (settingsUpdate: Partial<SettingsType>) => {
+    console.log("settingsUpdate", settingsUpdate);
     setLoading(true);
     setError(null);
-
+    const newSettings = {
+      ...settings,
+      ...settingsUpdate,
+    };
+    dispatch(updateSettings(newSettings));
     try {
-      dispatch(updateSettings(settingsUpdate));
-
       if (isAuthenticated) {
         const response = await axios.put("/api/auth/me", {
           settings: settingsUpdate,
@@ -82,32 +86,8 @@ export function useUpdateUser(): UseUpdateUserReturn {
         const updatedSettings = {
           ...parsedSettings,
           ...settingsUpdate,
-          timers: {
-            ...parsedSettings.timers,
-            ...settingsUpdate.timers,
-          },
-          waterReminder: {
-            ...parsedSettings.waterReminder,
-            ...settingsUpdate.waterReminder,
-          },
-          prayerReminder: {
-            ...parsedSettings.prayerReminder,
-            ...settingsUpdate.prayerReminder,
-            perPrayer: {
-              ...parsedSettings.prayerReminder?.perPrayer,
-              ...settingsUpdate.prayerReminder?.perPrayer,
-            },
-          },
-          location: {
-            ...parsedSettings.location,
-            ...settingsUpdate.location,
-          },
-          ui: {
-            ...parsedSettings.ui,
-            ...settingsUpdate.ui,
-          },
         };
-
+        console.log("updatedSettings", updatedSettings);
         localStorage.setItem("settings", JSON.stringify(updatedSettings));
       }
     } catch (err) {

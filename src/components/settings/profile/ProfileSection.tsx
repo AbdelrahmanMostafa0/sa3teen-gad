@@ -20,20 +20,13 @@ export default function ProfileSection({ user, onUpdate, loading }: ProfileSecti
     const [isEditing, setIsEditing] = useState(false);
 
     const handleSave = async () => {
-        const updates: any = {};
+        const updates: any = {
+            fullName,
+            profilePicture,
+        };
 
-        if (fullName !== user.fullName) {
-            updates.fullName = fullName;
-        }
-
-        if (profilePicture !== user.profilePicture) {
-            updates.profilePicture = profilePicture || null;
-        }
-
-        if (Object.keys(updates).length > 0) {
-            await onUpdate(updates);
-            setIsEditing(false);
-        }
+        await onUpdate(updates);
+        setIsEditing(false);
     };
 
     const handleCancel = () => {

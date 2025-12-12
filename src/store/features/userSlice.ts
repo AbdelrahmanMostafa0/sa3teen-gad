@@ -7,6 +7,7 @@ interface UserState {
   user: IUser | null;
   loading: boolean;
   error: string | null;
+  status: "idle" | "loading" | "success" | "failed";
   isAuthenticated: boolean;
   hasFetched: boolean; // Track if we've already attempted to fetch
 }
@@ -15,6 +16,7 @@ const initialState: UserState = {
   user: null,
   loading: false,
   error: null,
+  status: "idle",
   isAuthenticated: false,
   hasFetched: false,
 };
@@ -52,6 +54,12 @@ const userSlice = createSlice({
       state.error = null;
       state.hasFetched = true; // Mark as fetched
     },
+    setStatus: (
+      state,
+      action: PayloadAction<"idle" | "loading" | "success" | "failed">
+    ) => {
+      state.status = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -76,5 +84,5 @@ const userSlice = createSlice({
   },
 });
 
-export const { logout, setUser } = userSlice.actions;
+export const { logout, setUser, setStatus } = userSlice.actions;
 export default userSlice.reducer;

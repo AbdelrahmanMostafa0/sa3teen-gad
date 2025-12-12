@@ -10,7 +10,7 @@ import { SettingsType } from '@/types/user';
 
 interface TimerSettingsSectionProps {
     timers: SettingsType['timers'];
-    onUpdate: (data: { settings: { timers: Partial<SettingsType['timers']> } }) => Promise<void>;
+    onUpdate: (data: { timers: Partial<SettingsType['timers']> }) => Promise<void>;
     loading?: boolean;
 }
 
@@ -21,22 +21,14 @@ export default function TimerSettingsSection({ timers, onUpdate, loading }: Time
     const [isEditing, setIsEditing] = useState(false);
 
     const handleSave = async () => {
-        const updates: Partial<SettingsType['timers']> = {};
+        const updates: Partial<SettingsType['timers']> = {
+            focusDurationTime: focusDuration,
+            shortBreakDuration: shortBreak,
+            longBreakDuration: longBreak,
+        };
 
-        if (focusDuration !== timers.focusDurationTime) {
-            updates.focusDurationTime = focusDuration;
-        }
-        if (shortBreak !== timers.shortBreakDuration) {
-            updates.shortBreakDuration = shortBreak;
-        }
-        if (longBreak !== timers.longBreakDuration) {
-            updates.longBreakDuration = longBreak;
-        }
-
-        if (Object.keys(updates).length > 0) {
-            await onUpdate({ settings: { timers: updates } });
-            setIsEditing(false);
-        }
+        await onUpdate({ timers: updates });
+        setIsEditing(false);
     };
 
     const handleCancel = () => {

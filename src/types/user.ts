@@ -25,7 +25,7 @@ export const defaultSettings: SettingsType = {
     },
   },
   location: {
-    country: "Egypt",
+    country: "EGY",
     city: "Cairo",
   },
   ui: {

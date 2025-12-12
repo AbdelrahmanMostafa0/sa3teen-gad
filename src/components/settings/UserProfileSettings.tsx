@@ -20,12 +20,13 @@ import { isAuthenticated } from '@/lib/auth-middleware';
 export default function UserProfileSettings() {
     const router = useRouter();
     const { user, loading: fetchLoading, error: fetchError, refetchUser } = useUser();
-    const { updateUser, loading: updateLoading, error: updateError } = useUpdateUser();
+    const { updateUser, loading: updateLoading, error: updateError, updateUserSettings } = useUpdateUser();
     const [successMessage, setSuccessMessage] = useState<string | null>(null);
     const settings = useSelector((state: RootState) => state.Settings);
     const handleUpdate = async (data: any) => {
+        console.log("data", data);
         try {
-            await updateUser(data);
+            await updateUserSettings(data);
             setSuccessMessage('تم حفظ التغييرات بنجاح');
             setTimeout(() => setSuccessMessage(null), 3000);
         } catch (error) {

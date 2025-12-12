@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -11,7 +11,7 @@ import { SettingsType } from '@/types/user';
 
 interface WaterReminderSectionProps {
     waterReminder: SettingsType['waterReminder'];
-    onUpdate: (data: { settings: { waterReminder: Partial<SettingsType['waterReminder']> } }) => Promise<void>;
+    onUpdate: (data: { waterReminder: Partial<SettingsType['waterReminder']> }) => Promise<void>;
     loading?: boolean;
 }
 
@@ -19,21 +19,17 @@ export default function WaterReminderSection({ waterReminder, onUpdate, loading 
     const [enabled, setEnabled] = useState(waterReminder.enabled);
     const [interval, setInterval] = useState(waterReminder.interval);
     const [isEditing, setIsEditing] = useState(false);
-
+    useEffect(() => {
+        setInterval(waterReminder.interval);
+    }, [waterReminder.interval]);
     const handleSave = async () => {
-        const updates: Partial<SettingsType['waterReminder']> = {};
+        const updates: Partial<SettingsType['waterReminder']> = {
+            enabled,
+            interval,
+        };
 
-        if (enabled !== waterReminder.enabled) {
-            updates.enabled = enabled;
-        }
-        if (interval !== waterReminder.interval) {
-            updates.interval = interval;
-        }
-
-        if (Object.keys(updates).length > 0) {
-            await onUpdate({ settings: { waterReminder: updates } });
-            setIsEditing(false);
-        }
+        await onUpdate({ waterReminder: updates });
+        setIsEditing(false);
     };
 
     const handleCancel = () => {
@@ -76,7 +72,7 @@ export default function WaterReminderSection({ waterReminder, onUpdate, loading 
                             type="number"
                             min={5}
                             max={180}
-                            value={interval}
+                            value={interval || ""}
                             onChange={(e) => {
                                 setInterval(Number(e.target.value));
                                 setIsEditing(true);

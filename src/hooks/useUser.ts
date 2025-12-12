@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState, AppDispatch } from "@/store/store";
-import { fetchUser, logout } from "@/store/features/userSlice";
+import { fetchUser, logout, setStatus } from "@/store/features/userSlice";
 import { useRouter } from "next/navigation";
 import { updateProfile } from "@/services/profile";
 import Cookies from "js-cookie";
@@ -10,14 +10,15 @@ import { updateSettings } from "@/store/features/settingsSlice";
 export const useUser = () => {
   const dispatch = useDispatch<AppDispatch>();
   const router = useRouter();
-  const { user, loading, error, isAuthenticated, hasFetched } = useSelector(
-    (state: RootState) => state.User
-  );
+  const { user, loading, error, isAuthenticated, hasFetched, status } =
+    useSelector((state: RootState) => state.User);
   const token = Cookies.get("token");
 
   useEffect(() => {
     if (!hasFetched && !loading && token) {
       dispatch(fetchUser());
+    } else {
+      dispatch(setStatus("failed"));
     }
   }, [hasFetched, loading, dispatch, token]);
 
@@ -48,6 +49,7 @@ export const useUser = () => {
     loading,
     error,
     isAuthenticated,
+    status,
     logout: handleLogout,
     refetchUser: () => dispatch(fetchUser()),
     updateProfile: handleUpdateProfile,

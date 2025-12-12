@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
@@ -11,7 +11,7 @@ import countries from '@/data/countries.json';
 
 interface LocationSectionProps {
     location: SettingsType['location'];
-    onUpdate: (data: { settings: { location: Partial<SettingsType['location']> } }) => Promise<void>;
+    onUpdate: (data: { location: Partial<SettingsType['location']> }) => Promise<void>;
     loading?: boolean;
 }
 
@@ -19,25 +19,25 @@ export default function LocationSection({ location, onUpdate, loading }: Locatio
     const [country, setCountry] = useState(location.country);
     const [city, setCity] = useState(location.city);
     const [isEditing, setIsEditing] = useState(false);
+    useEffect(() => {
+        setCountry(location.country);
+        setCity(location.city);
+    }, [location.city, location.country]);
+    console.log("country", country);
+    console.log("city", city);
 
     const countryCities = useMemo(() => {
         return countries.find((c) => c.iso3 === country)?.cities || [];
     }, [country]);
 
     const handleSave = async () => {
-        const updates: Partial<SettingsType['location']> = {};
+        const updates: Partial<SettingsType['location']> = {
+            country,
+            city,
+        };
 
-        if (country !== location.country) {
-            updates.country = country;
-        }
-        if (city !== location.city) {
-            updates.city = city;
-        }
-
-        if (Object.keys(updates).length > 0) {
-            await onUpdate({ settings: { location: updates } });
-            setIsEditing(false);
-        }
+        await onUpdate({ location: updates });
+        setIsEditing(false);
     };
 
     const handleCancel = () => {
@@ -68,7 +68,7 @@ export default function LocationSection({ location, onUpdate, loading }: Locatio
                             }}
                             disabled={loading}
                         >
-                            <SelectTrigger className="w-full">
+                            <SelectTrigger className="w-full bg-white">
                                 <SelectValue placeholder="اختر الدولة" />
                             </SelectTrigger>
                             <SelectContent>
@@ -85,6 +85,7 @@ export default function LocationSection({ location, onUpdate, loading }: Locatio
                     <div className="space-y-2">
                         <Label className="font-bold">المدينة</Label>
                         <Select
+
                             value={city}
                             onValueChange={(value) => {
                                 setCity(value);
@@ -92,7 +93,7 @@ export default function LocationSection({ location, onUpdate, loading }: Locatio
                             }}
                             disabled={loading || !country}
                         >
-                            <SelectTrigger className="w-full">
+                            <SelectTrigger className="w-full bg-white">
                                 <SelectValue placeholder="اختر المدينة" />
                             </SelectTrigger>
                             <SelectContent>

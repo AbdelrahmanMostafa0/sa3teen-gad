@@ -9,7 +9,7 @@ import { SettingsType } from '@/types/user';
 
 interface UIPreferencesSectionProps {
     ui: SettingsType['ui'];
-    onUpdate: (data: { settings: { ui: Partial<SettingsType['ui']> } }) => Promise<void>;
+    onUpdate: (data: { ui: Partial<SettingsType['ui']> }) => Promise<void>;
     loading?: boolean;
 }
 
@@ -19,7 +19,7 @@ export default function UIPreferencesSection({ ui, onUpdate, loading }: UIPrefer
 
     const handleSave = async () => {
         if (prayerTimesPosition !== ui.prayerTimesPosition) {
-            await onUpdate({ settings: { ui: { prayerTimesPosition } } });
+            await onUpdate({ ui: { prayerTimesPosition } });
             setIsEditing(false);
         }
     };
@@ -52,8 +52,8 @@ export default function UIPreferencesSection({ ui, onUpdate, loading }: UIPrefer
                         }}
                         disabled={loading}
                         className={`relative p-4 rounded-lg border-2 transition-all duration-300 hover:scale-105 ${prayerTimesPosition === "top"
-                                ? "border-primary bg-primary/10 shadow-lg"
-                                : "border-border bg-card hover:border-primary/50"
+                            ? "border-primary bg-primary/10 shadow-lg"
+                            : "border-border bg-card hover:border-primary/50"
                             }`}
                     >
                         <div className="flex flex-col items-center gap-3">
@@ -78,8 +78,8 @@ export default function UIPreferencesSection({ ui, onUpdate, loading }: UIPrefer
                         }}
                         disabled={loading}
                         className={`relative p-4 rounded-lg border-2 transition-all duration-300 hover:scale-105 ${prayerTimesPosition === "right"
-                                ? "border-primary bg-primary/10 shadow-lg"
-                                : "border-border bg-card hover:border-primary/50"
+                            ? "border-primary bg-primary/10 shadow-lg"
+                            : "border-border bg-card hover:border-primary/50"
                             }`}
                     >
                         <div className="flex flex-col items-center gap-3">
@@ -104,8 +104,8 @@ export default function UIPreferencesSection({ ui, onUpdate, loading }: UIPrefer
                         }}
                         disabled={loading}
                         className={`relative p-4 rounded-lg border-2 transition-all duration-300 hover:scale-105 ${prayerTimesPosition === "left"
-                                ? "border-primary bg-primary/10 shadow-lg"
-                                : "border-border bg-card hover:border-primary/50"
+                            ? "border-primary bg-primary/10 shadow-lg"
+                            : "border-border bg-card hover:border-primary/50"
                             }`}
                     >
                         <div className="flex flex-col items-center gap-3">

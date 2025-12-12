@@ -8,7 +8,7 @@ import { createPortal } from "react-dom";
 import { motion } from "motion/react";
 
 const DrinkWater = () => {
-  const { isWaterReminderOn, waterReminderInterval } = useSelector(
+  const { waterReminder: { enabled: isWaterReminderOn, interval: waterReminderInterval } } = useSelector(
     (state: RootState) => state.Settings
   );
 

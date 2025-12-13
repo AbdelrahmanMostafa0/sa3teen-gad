@@ -50,8 +50,9 @@ export function ModeToggle() {
           <span className="sr-only">Toggle theme</span>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="min-w-[140px]">
+      <DropdownMenuContent align="start" className="min-w-[140px] ">
         <DropdownMenuItem
+          dir="rtl"
           onClick={() => setTheme("light")}
           className="cursor-pointer gap-2"
         >
@@ -60,6 +61,7 @@ export function ModeToggle() {
           {resolvedTheme === "light" && <Check className="w-4 h-4" />}
         </DropdownMenuItem>
         <DropdownMenuItem
+          dir="rtl"
           onClick={() => setTheme("dark")}
           className="cursor-pointer gap-2"
         >
@@ -68,11 +70,12 @@ export function ModeToggle() {
           {resolvedTheme === "dark" && <Check className="w-4 h-4" />}
         </DropdownMenuItem>
         <DropdownMenuItem
+          dir="rtl"
           onClick={() => setTheme("black")}
           className="cursor-pointer gap-2"
         >
           <SunMoon className="w-4 h-4" />
-          <span className="flex-1">أسود نقي</span>
+          <span className="flex-1">أسود </span>
           {resolvedTheme === "black" && <Check className="w-4 h-4" />}
         </DropdownMenuItem>
       </DropdownMenuContent>

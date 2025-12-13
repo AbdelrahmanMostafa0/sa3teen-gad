@@ -11,7 +11,6 @@ import { useState } from "react";
 const Pomodoro = () => {
   const dispatch = useDispatch();
   const [displayedTimer, setDisplayedTimer] = useState("focus");
-  console.log(displayedTimer);
   const handleTabChange = (value: string) => {
     setDisplayedTimer(value);
     // dispatch(updateDisplayedTimer(value as "focus" | "shortBreak"));

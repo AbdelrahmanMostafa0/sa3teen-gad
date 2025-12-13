@@ -39,7 +39,6 @@ const useSyncLocalStorageToRedux = () => {
   useEffect(() => {
     if (status === "failed") {
       const settings = localStorage.getItem("settings");
-      console.log(settings);
       if (settings) {
         const parsed = JSON.parse(settings);
         updateUserSettings({ ...defaultSettings, ...parsed });

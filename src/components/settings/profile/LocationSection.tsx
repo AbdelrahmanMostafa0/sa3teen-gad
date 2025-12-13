@@ -58,6 +58,7 @@ export default function LocationSection({ location, onUpdate, loading }: Locatio
                     <div className="space-y-2">
                         <Label className="font-bold">الدولة</Label>
                         <Select
+                            dir="rtl"
                             value={country}
                             onValueChange={(value) => {
                                 setCountry(value);
@@ -66,7 +67,7 @@ export default function LocationSection({ location, onUpdate, loading }: Locatio
                             }}
                             disabled={loading}
                         >
-                            <SelectTrigger className="w-full bg-white">
+                            <SelectTrigger className="w-full bg-white text-black">
                                 <SelectValue placeholder="اختر الدولة" />
                             </SelectTrigger>
                             <SelectContent>
@@ -83,7 +84,7 @@ export default function LocationSection({ location, onUpdate, loading }: Locatio
                     <div className="space-y-2">
                         <Label className="font-bold">المدينة</Label>
                         <Select
-
+                            dir="rtl"
                             value={city}
                             onValueChange={(value) => {
                                 setCity(value);
@@ -91,7 +92,7 @@ export default function LocationSection({ location, onUpdate, loading }: Locatio
                             }}
                             disabled={loading || !country}
                         >
-                            <SelectTrigger className="w-full bg-white">
+                            <SelectTrigger className="w-full bg-white text-black">
                                 <SelectValue placeholder="اختر المدينة" />
                             </SelectTrigger>
                             <SelectContent>

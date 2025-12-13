@@ -11,7 +11,7 @@ const BreakTime = ({ breakType = "shortBreak" }: { breakType: "shortBreak" | "lo
     (state: RootState) => state.Settings
   );
   const dispatch = useDispatch();
-  const duration = breakType === "shortBreak" ? shortBreakDuration : longBreakDuration;
+  const duration = breakType === "longBreak" ? longBreakDuration : shortBreakDuration;
   const { minutes, seconds, isActive, togglePomodoro, resetPomodoro } =
     usePomodoro({
       isBreak: true,

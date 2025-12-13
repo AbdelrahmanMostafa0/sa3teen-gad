@@ -26,7 +26,7 @@ const Timer = ({
     duration,
   ]);
 
-
+  console.log(hasStarted);
   const progress = useMemo(() => {
     const total = Number(duration) * 60;
     const remaining = Number(minutes) * 60 + Number(seconds);

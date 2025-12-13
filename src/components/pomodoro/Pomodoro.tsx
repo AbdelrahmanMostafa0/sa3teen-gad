@@ -11,7 +11,7 @@ import { useState } from "react";
 const Pomodoro = () => {
   const dispatch = useDispatch();
   const [displayedTimer, setDisplayedTimer] = useState("focus");
-
+  console.log(displayedTimer);
   const handleTabChange = (value: string) => {
     setDisplayedTimer(value);
     // dispatch(updateDisplayedTimer(value as "focus" | "shortBreak"));
@@ -41,15 +41,15 @@ const Pomodoro = () => {
         </TabsList>
 
         <TabsContent value="focus" className="mt-6 md:max-w-[400px] mx-auto">
-          <FocusTimer />
+          <FocusTimer key="focus" />
         </TabsContent>
         <TabsContent value="longBreak" className="mt-6 md:max-w-[400px] mx-auto">
-          <BreakTime breakType="longBreak" />
+          <BreakTime key="longBreak" breakType="longBreak" />
 
         </TabsContent>
 
         <TabsContent value="shortBreak" className="mt-6 md:max-w-[400px] mx-auto">
-          <BreakTime breakType="shortBreak" />
+          <BreakTime key="shortBreak" breakType="shortBreak" />
         </TabsContent>
       </Tabs>
     </div>

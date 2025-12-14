@@ -44,6 +44,14 @@ export const useUser = () => {
     }
   };
 
+  const refetchUser = async () => {
+    const result = await dispatch(fetchUser());
+    // Use the fetched user data from the action result, not the stale state
+    if (result.payload && "settings" in result.payload) {
+      await dispatch(updateSettings(result.payload.settings));
+    }
+  };
+
   return {
     user,
     loading,
@@ -51,7 +59,7 @@ export const useUser = () => {
     isAuthenticated,
     status,
     logout: handleLogout,
-    refetchUser: () => dispatch(fetchUser()),
+    refetchUser,
     updateProfile: handleUpdateProfile,
   };
 };

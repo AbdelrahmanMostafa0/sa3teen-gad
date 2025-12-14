@@ -1,4 +1,3 @@
-import { updateSettings } from "@/store/features/settingsSlice";
 import { AppDispatch, RootState } from "@/store/store";
 import { defaultSettings } from "@/types/user";
 import { useEffect, useState } from "react";

@@ -97,9 +97,9 @@ export const updateUserHandler = async (req: AuthenticatedRequest) => {
         updateData["settings.timers.focusDurationTime"] =
           settings.timers.focusDurationTime;
       }
-      if (settings.timers?.shotBreakDuration !== undefined) {
-        updateData["settings.timers.shotBreakDuration"] =
-          settings.timers.shotBreakDuration;
+      if (settings.timers?.shortBreakDuration !== undefined) {
+        updateData["settings.timers.shortBreakDuration"] =
+          settings.timers.shortBreakDuration;
       }
       if (settings.timers?.longBreakDuration !== undefined) {
         updateData["settings.timers.longBreakDuration"] =

@@ -4,7 +4,7 @@ export type PrayerName = "Fajr" | "Dhuhr" | "Asr" | "Maghrib" | "Isha";
 export const defaultSettings: SettingsType = {
   timers: {
     focusDurationTime: 25,
-    shortBreakDuration: 5, // Fixed typo: was "shotBreakDuration"
+    shortBreakDuration: 5,
     longBreakDuration: 15,
   },
   waterReminder: {
@@ -35,7 +35,7 @@ export const defaultSettings: SettingsType = {
 export interface SettingsType {
   timers: {
     focusDurationTime: number;
-    shortBreakDuration: number; // Fixed typo: was "shotBreakDuration"
+    shortBreakDuration: number;
     longBreakDuration: number;
   };
   waterReminder: {

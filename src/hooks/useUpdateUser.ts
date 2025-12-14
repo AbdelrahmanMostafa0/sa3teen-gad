@@ -30,7 +30,7 @@ export function useUpdateUser(): UseUpdateUserReturn {
   const [error, setError] = useState<string | null>(null);
   const dispatch = useDispatch<AppDispatch>();
   const settings = useSelector((state: RootState) => state.Settings);
-  const { isAuthenticated, user } = useUser();
+  const { isAuthenticated, user, refetchUser, status } = useUser();
   const updateUser = async (data: UpdateUserData) => {
     setLoading(true);
     setError(null);
@@ -54,10 +54,10 @@ export function useUpdateUser(): UseUpdateUserReturn {
     }
   };
   useEffect(() => {
-    if (isAuthenticated && user) {
+    if (isAuthenticated && user?.settings && status === "success") {
       dispatch(updateSettings(user.settings));
     }
-  }, [isAuthenticated]);
+  }, [isAuthenticated, user?.settings, status]);
   const updateUserSettings = async (settingsUpdate: Partial<SettingsType>) => {
     setLoading(true);
     setError(null);
@@ -77,6 +77,7 @@ export function useUpdateUser(): UseUpdateUserReturn {
         if (!result.success) {
           throw new Error(result.message || "فشل تحديث الإعدادات");
         }
+        refetchUser();
       } else {
         const currentSettings = localStorage.getItem("settings");
         const parsedSettings = currentSettings

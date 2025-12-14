@@ -20,7 +20,7 @@ export const updateUserSchema = z
         timers: z
           .object({
             focusDurationTime: z.number().min(1).max(120).optional(),
-            shotBreakDuration: z.number().min(1).max(60).optional(),
+            shortBreakDuration: z.number().min(1).max(60).optional(),
             longBreakDuration: z.number().min(1).max(120).optional(),
           })
           .optional(),

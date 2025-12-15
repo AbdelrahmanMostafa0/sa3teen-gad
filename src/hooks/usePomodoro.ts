@@ -3,6 +3,7 @@
 //   updateAutoSwitch,
 //   updateDisplayedTimer,
 // } from "@/store/features/settingsSlice";
+import { setActiveTab } from "@/store/features/timerSlice";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
 interface TimerProps {
@@ -15,7 +16,7 @@ function usePomodoro({ specificMinutes = 25, isBreak = false }: TimerProps) {
   const [finished, setFinished] = useState<boolean>(false);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const alarmRef = useRef<HTMLAudioElement | null>(null);
-
+  const [hasStarted, setHasStarted] = useState<boolean>(false);
   const dispatch = useDispatch();
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -26,12 +27,9 @@ function usePomodoro({ specificMinutes = 25, isBreak = false }: TimerProps) {
   }, [isBreak]);
   useEffect(() => {
     if (!isActive || finished) {
-      // if (finished) {
-      //   dispatch(updateDisplayedTimer(isBreak ? "focus" : "shortBreak"));
-      // }
-      // if (finished && !isBreak) {
-      //   dispatch(updateAutoSwitch(true));
-      // }
+      if (finished) {
+        setHasStarted(false);
+      }
       if (intervalRef.current) {
         clearInterval(intervalRef.current);
         intervalRef.current = null;
@@ -41,10 +39,7 @@ function usePomodoro({ specificMinutes = 25, isBreak = false }: TimerProps) {
 
     intervalRef.current = setInterval(() => {
       setTimeLeft((prev) => {
-        if (prev <= 1) {
-          setFinished(true);
-          setIsActive(false);
-          alarmRef.current?.play();
+        if (prev <= 0) {
           return 0;
         }
         return prev - 1;
@@ -56,10 +51,13 @@ function usePomodoro({ specificMinutes = 25, isBreak = false }: TimerProps) {
         clearInterval(intervalRef.current);
       }
     };
-  }, [isActive, finished, dispatch, isBreak]);
+  }, [isActive, finished]);
+
   useEffect(() => {
     setTimeLeft(specificMinutes * 60);
   }, [specificMinutes]);
+
+  // Handle timer completion side effects
 
   const minutes = useMemo(() => Math.floor(timeLeft / 60), [timeLeft]);
   const seconds = useMemo(() => timeLeft % 60, [timeLeft]);
@@ -74,22 +72,48 @@ function usePomodoro({ specificMinutes = 25, isBreak = false }: TimerProps) {
   );
 
   const togglePomodoro = () => {
+    if (!hasStarted) {
+      startPomodoro();
+      return;
+    }
     setIsActive((prev) => !prev);
   };
+  useEffect(() => {
+    if (isActive) {
+      setHasStarted(true);
+    }
+  }, [isActive]);
 
   const startPomodoro = useCallback((): void => {
     setTimeLeft(specificMinutes * 60);
     setFinished(false);
     setIsActive(true);
+    setHasStarted(true);
   }, [specificMinutes]);
   const stopPomodoro = useCallback((): void => {
     setIsActive(false);
   }, []);
   const resetPomodoro = useCallback((): void => {
     setIsActive(false);
-    setTimeLeft(specificMinutes * 60);
+    setHasStarted(false);
     setFinished(false);
+    setTimeLeft(specificMinutes * 60);
   }, [specificMinutes]);
+
+  useEffect(() => {
+    if (timeLeft === 0 && isActive) {
+      setFinished(true);
+      resetPomodoro();
+      setIsActive(false);
+      alarmRef.current?.play();
+
+      if (!isBreak) {
+        dispatch(setActiveTab("shortBreak"));
+      } else {
+        dispatch(setActiveTab("focus"));
+      }
+    }
+  }, [timeLeft, isActive, isBreak, dispatch, resetPomodoro]);
   return {
     isActive,
     togglePomodoro,
@@ -100,6 +124,7 @@ function usePomodoro({ specificMinutes = 25, isBreak = false }: TimerProps) {
     startPomodoro,
     stopPomodoro,
     resetPomodoro,
+    hasStarted,
   };
 }
 

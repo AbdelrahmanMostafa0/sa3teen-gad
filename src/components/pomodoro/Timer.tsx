@@ -5,27 +5,19 @@ import { BiPlay } from "react-icons/bi";
 import { GrPowerReset } from "react-icons/gr";
 import { PiPause } from "react-icons/pi";
 import { Button } from "@/components/ui/button";
+import usePomodoro from "@/hooks/usePomodoro";
+import { useSelector } from "react-redux";
+import { RootState } from "@/store/store";
 
 const Timer = ({
-  minutes,
-  seconds,
-  togglePomodoro,
-  duration,
-  isActive,
-  resetPomodoro,
+  type = "focus",
 }: {
-  minutes: string | number;
-  duration: number;
-  seconds: string | number;
-  togglePomodoro?: () => void;
-  resetPomodoro?: () => void;
-  isActive?: boolean;
+  type?: "focus" | "shortBreak" | "longBreak";
 }) => {
-  const hasStarted = useMemo(() => Number(duration) !== Number(minutes), [
-    minutes,
-    duration,
-  ]);
-  console.log(minutes, seconds, duration);
+  const { timers: { focusDurationTime, longBreakDuration, shortBreakDuration } } = useSelector((state: RootState) => state.Settings);
+  const duration = type === "focus" ? focusDurationTime : type === "shortBreak" ? shortBreakDuration : longBreakDuration;
+  const isBreak = type === "shortBreak" || type === "longBreak";
+  const { hasStarted, minutes, seconds, isActive, togglePomodoro, resetPomodoro } = usePomodoro({ specificMinutes: Number(duration), isBreak });
   const progress = useMemo(() => {
     const total = Number(duration) * 60;
     const remaining = Number(minutes) * 60 + Number(seconds);
@@ -59,8 +51,8 @@ const Timer = ({
 
         {/* WATER WAVE 1 */}
         <Image
-          style={{ top: `${progress}%` }}
-          className="absolute scale-x-[2.8] scale-y-[1.4] rotate-clockwise transition-all duration-300 opacity-40"
+          style={{ top: `${progress + 14}%` }}
+          className={`absolute scale-x-[2.8] scale-y-[1.4]  ${hasStarted && "rotate-clockwise"} transition-all duration-300 opacity-40`}
           src={"/water-wave-1.svg"}
           width={450}
           height={450}
@@ -69,8 +61,8 @@ const Timer = ({
 
         {/* WATER WAVE 2 */}
         <Image
-          style={{ top: `${progress}%` }}
-          className="absolute scale-x-[2.8] scale-y-[1.4] rotate-counterclockwise transition-all duration-300 opacity-40"
+          style={{ top: `${progress + 14}%` }}
+          className={`absolute scale-x-[2.8] scale-y-[1.4]  ${hasStarted && "rotate-counterclockwise"} transition-all duration-300 opacity-40`}
           src={"/water-wave-2.svg"}
           width={450}
           height={450}

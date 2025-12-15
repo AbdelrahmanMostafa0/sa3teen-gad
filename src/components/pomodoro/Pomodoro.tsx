@@ -1,19 +1,19 @@
 "use client";
-import FocusTimer from "./FocusTimer";
-import BreakTime from "./BreakTime";
-import { useDispatch, useSelector } from "react-redux";
-// import { updateDisplayedTimer } from "@/store/features/settingsSlice";
-// import { RootState } from "@/store/store";
+
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { RiZzzLine } from "react-icons/ri";
 import { Coffee, Target } from "lucide-react";
 import { useState } from "react";
+import Timer from "./Timer";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "@/store/store";
+import { setActiveTab } from "@/store/features/timerSlice";
 const Pomodoro = () => {
   const dispatch = useDispatch();
-  const [displayedTimer, setDisplayedTimer] = useState("focus");
+  const displayedTimer = useSelector((state: RootState) => state.Timer.activeTab);
+
   const handleTabChange = (value: string) => {
-    setDisplayedTimer(value);
-    // dispatch(updateDisplayedTimer(value as "focus" | "shortBreak"));
+    dispatch(setActiveTab(value as "focus" | "shortBreak" | "longBreak"));
   };
 
   return (
@@ -40,15 +40,15 @@ const Pomodoro = () => {
         </TabsList>
 
         <TabsContent value="focus" className="mt-6 md:max-w-[400px] mx-auto">
-          <FocusTimer key="focus" />
+          <Timer type="focus" />
         </TabsContent>
         <TabsContent value="longBreak" className="mt-6 md:max-w-[400px] mx-auto">
-          <BreakTime key="longBreak" breakType="longBreak" />
+          <Timer type="longBreak" />
 
         </TabsContent>
 
         <TabsContent value="shortBreak" className="mt-6 md:max-w-[400px] mx-auto">
-          <BreakTime key="shortBreak" breakType="shortBreak" />
+          <Timer type="shortBreak" />
         </TabsContent>
       </Tabs>
     </div>

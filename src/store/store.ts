@@ -4,6 +4,7 @@ import tasksReducer from "./features/tasksSlice";
 import prayerReducer from "./features/prayerSlice";
 import userReducer from "./features/userSlice";
 import allTasksReducer from "./features/allTasksSlice";
+import timerReducer from "./features/timerSlice";
 
 const store = configureStore({
   reducer: {
@@ -12,6 +13,7 @@ const store = configureStore({
     Prayers: prayerReducer,
     User: userReducer,
     AllTasks: allTasksReducer,
+    Timer: timerReducer,
   },
 });
 

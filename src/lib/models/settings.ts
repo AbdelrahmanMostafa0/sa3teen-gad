@@ -68,6 +68,7 @@ const SettingsSchema = new Schema<ISettings>(
   },
   {
     timestamps: true,
+    strict: "throw",
   }
 );
 

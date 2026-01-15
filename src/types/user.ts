@@ -1,5 +1,8 @@
 // Export prayer name type for use across the app
 export type PrayerName = "Fajr" | "Dhuhr" | "Asr" | "Maghrib" | "Isha";
+export type DeepPartial<T> = {
+  [K in keyof T]?: T[K] extends object ? DeepPartial<T[K]> : T[K];
+};
 
 export const defaultSettings: SettingsType = {
   timers: {
@@ -75,3 +78,4 @@ export interface IUser {
   updatedAt: Date;
   lastLoginAt?: Date;
 }
+export type SettingsUpdateInput = DeepPartial<SettingsType>;

@@ -1,8 +1,16 @@
+import { getMySettings } from "@/services/profile";
 import { SettingsType, defaultSettings, PrayerName } from "@/types/user";
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
 const initialState: SettingsType = defaultSettings;
-
+export const getSettings = createAsyncThunk(
+  "settings/getSettings",
+  async () => {
+    const response = await getMySettings();
+    const data = await response;
+    return data;
+  }
+);
 const settingsSlice = createSlice({
   name: "settings",
   initialState,
@@ -65,6 +73,13 @@ const settingsSlice = createSlice({
     updatePrayerTimesPosition: (state, action) => {
       state.ui.prayerTimesPosition = action.payload;
     },
+  },
+  extraReducers: (builder) => {
+    builder.addCase(getSettings.fulfilled, (state, action) => {
+      console.log("action.payload", action.payload);
+
+      return action.payload;
+    });
   },
 });
 

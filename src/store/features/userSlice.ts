@@ -8,6 +8,7 @@ interface UserState {
   loading: boolean;
   error: string | null;
   status: "idle" | "loading" | "success" | "failed";
+  userType: "guest" | "user" | "unknown";
   isAuthenticated: boolean;
   hasFetched: boolean; // Track if we've already attempted to fetch
 }
@@ -17,6 +18,7 @@ const initialState: UserState = {
   loading: false,
   error: null,
   status: "idle",
+  userType: "unknown",
   isAuthenticated: false,
   hasFetched: false,
 };
@@ -73,6 +75,7 @@ const userSlice = createSlice({
         state.loading = false;
         state.error = null;
         state.hasFetched = true; // Mark as fetched
+        state.userType = "user";
       })
       .addCase(fetchUser.rejected, (state, action) => {
         state.user = null;
@@ -80,6 +83,7 @@ const userSlice = createSlice({
         state.loading = false;
         state.error = action.payload as string;
         state.hasFetched = true; // Mark as fetched even on error
+        state.userType = "guest";
       });
   },
 });

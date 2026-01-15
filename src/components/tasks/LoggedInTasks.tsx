@@ -1,9 +1,7 @@
 "use client";
 
 import useTasksActions from "@/hooks/useTasksActions";
-import TaskCard from "./TaskCard";
 import LoggedInTaskForm from "./LoggedInTaskForm";
-import { FiCheckCircle } from "react-icons/fi";
 import RenderTasks from "./RenderTasks";
 import TasksHeader from "./TasksHeader";
 
@@ -20,4 +18,3 @@ const LoggedInTasks = () => {
 };
 
 export default LoggedInTasks;
-

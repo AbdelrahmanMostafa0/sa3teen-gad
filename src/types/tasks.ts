@@ -18,7 +18,9 @@ export interface ISubtask {
 
 export interface ITask {
   id?: string;
+  _id?: string;
   title: string;
+  guestId?: string;
   description?: string;
   subtasks?: ISubtask[];
   userId?: string;

@@ -32,8 +32,13 @@ const TaskSchema = new Schema<ITask>(
     },
     userId: {
       type: String,
-      required: [true, "User ID is required"],
-      index: true, // Index for faster queries
+      index: true,
+      default: null,
+    },
+    guestId: {
+      type: String,
+      index: true,
+      default: null,
     },
     completed: {
       type: Boolean,
@@ -41,10 +46,11 @@ const TaskSchema = new Schema<ITask>(
     },
   },
   {
-    timestamps: true, // Adds createdAt and updatedAt
+    timestamps: true,
   }
 );
-export const tasksResponse = (task: any) => ({
+
+export const tasksResponse = (task: ITask) => ({
   id: task._id,
   title: task.title,
   description: task.description,
@@ -54,6 +60,15 @@ export const tasksResponse = (task: any) => ({
   updatedAt: task.updatedAt,
 });
 TaskSchema.index({ userId: 1, createdAt: -1 });
+TaskSchema.pre("validate", async function () {
+  if (!this.userId && !this.guestId) {
+    throw new Error("Task must belong to a user or a guest");
+  }
+
+  if (this.userId && this.guestId) {
+    throw new Error("Task cannot belong to both user and guest");
+  }
+});
 
 const Task = models.Task || model<ITask>("Task", TaskSchema);
 

@@ -6,12 +6,20 @@ import { useRouter } from "next/navigation";
 import { updateProfile } from "@/services/profile";
 import Cookies from "js-cookie";
 import { updateSettings } from "@/store/features/settingsSlice";
+import { IUser } from "@/types/user";
 
 export const useUser = () => {
   const dispatch = useDispatch<AppDispatch>();
   const router = useRouter();
-  const { user, loading, error, isAuthenticated, hasFetched, status } =
-    useSelector((state: RootState) => state.User);
+  const {
+    user,
+    loading,
+    error,
+    isAuthenticated,
+    hasFetched,
+    status,
+    userType,
+  } = useSelector((state: RootState) => state.User);
   const token = Cookies.get("token");
 
   useEffect(() => {
@@ -21,7 +29,11 @@ export const useUser = () => {
       dispatch(setStatus("failed"));
     }
   }, [hasFetched, loading, dispatch, token]);
-
+  useEffect(() => {
+    if (userType === "guest") {
+      Cookies.get("guestId");
+    }
+  }, [userType]);
   const handleLogout = () => {
     dispatch(logout());
     router.push("/login");
@@ -34,7 +46,7 @@ export const useUser = () => {
   //   }
   // }, [hasFetched]); // Only run when hasFetched changes (once)
 
-  const handleUpdateProfile = async (data: any) => {
+  const handleUpdateProfile = async (data: IUser) => {
     try {
       await updateProfile(data);
       dispatch(fetchUser());

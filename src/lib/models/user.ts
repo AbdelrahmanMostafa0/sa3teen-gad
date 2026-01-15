@@ -1,4 +1,4 @@
-import { defaultSettings, IUser } from "@/types/user";
+import { IUser } from "@/types/user";
 import { Schema, model, models } from "mongoose";
 
 export const UserSchema = new Schema<IUser>(
@@ -41,10 +41,6 @@ export const UserSchema = new Schema<IUser>(
       type: String,
       sparse: true,
       unique: true,
-    },
-    settings: {
-      type: Schema.Types.Mixed,
-      default: defaultSettings,
     },
     lastLoginAt: {
       type: Date,

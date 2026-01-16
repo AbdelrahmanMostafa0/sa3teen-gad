@@ -6,32 +6,30 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { User, Mail, Calendar, Shield } from 'lucide-react';
-import { IUser } from '@/types/user';
+import { useUpdateUser } from '@/hooks/useUpdateUser';
+import { useUser } from '@/hooks/useUser';
 
-interface ProfileSectionProps {
-    user: IUser;
-    onUpdate: (data: { fullName?: string; profilePicture?: string | null }) => Promise<void>;
-    loading?: boolean;
-}
-
-export default function ProfileSection({ user, onUpdate, loading }: ProfileSectionProps) {
-    const [fullName, setFullName] = useState(user.fullName);
-    const [profilePicture, setProfilePicture] = useState(user.profilePicture || '');
+export default function ProfileSection() {
+    const { user } = useUser();
+    const {
+        updateUser,
+        loading,
+        error,
+    } = useUpdateUser();
+    const [fullName, setFullName] = useState(user?.fullName);
+    const [profilePicture, setProfilePicture] = useState(user?.profilePicture || '');
     const [isEditing, setIsEditing] = useState(false);
-
+    // if (!user) return null;
     const handleSave = async () => {
-        const updates: any = {
+        updateUser({
             fullName,
-            profilePicture,
-        };
-
-        await onUpdate(updates);
+        })
         setIsEditing(false);
     };
-
+    if (!user) return null;
     const handleCancel = () => {
-        setFullName(user.fullName);
-        setProfilePicture(user.profilePicture || '');
+        setFullName(user?.fullName);
+        setProfilePicture(user?.profilePicture || '');
         setIsEditing(false);
     };
 

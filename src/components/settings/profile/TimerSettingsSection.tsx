@@ -12,7 +12,7 @@ import { useSelector } from "react-redux";
 // import { useAppSelector } from '@/store/store';
 
 interface TimerSettingsSectionProps {
-  timers: SettingsType["timers"];
+  // timers: SettingsType["timers"];
   onUpdate: (data: {
     timers: Partial<SettingsType["timers"]>;
   }) => Promise<void>;

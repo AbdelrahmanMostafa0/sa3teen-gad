@@ -3,20 +3,19 @@ import {
   getSettings,
   updateSettings as updateSettingsAction,
 } from "@/store/features/settingsSlice";
-import { AppDispatch } from "@/store/store";
+import { AppDispatch, RootState } from "@/store/store";
 import { SettingsType } from "@/types/user";
 import { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import Cookies from "js-cookie";
 const useUpdateSettings = () => {
+  const settings = useSelector((state: RootState) => state.Settings);
   const cookies = Cookies.get("guestID");
-  console.log(cookies);
+  // console.log(cookies);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const dispatch = useDispatch<AppDispatch>();
-  useEffect(() => {
-    dispatch(getSettings());
-  }, [dispatch]);
+
   const updateMySettings = async (data: Partial<SettingsType>) => {
     setLoading(true);
     setError(null);
@@ -33,8 +32,13 @@ const useUpdateSettings = () => {
       setLoading(false);
     }
   };
-
+  const getUserSettings = async () => {
+    setLoading(true);
+    await dispatch(getSettings());
+    setLoading(false);
+  };
   return {
+    getUserSettings: getUserSettings,
     updateSettings: updateMySettings,
     loading,
     error,

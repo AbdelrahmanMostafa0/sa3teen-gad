@@ -1,9 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useUserProfile } from "@/hooks/useUserProfile";
-import { useUpdateUser } from "@/hooks/useUpdateUser";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, CheckCircle, XCircle } from "lucide-react";
 import ProfileSection from "./profile/ProfileSection";
@@ -15,37 +13,26 @@ import UIPreferencesSection from "./profile/UIPreferencesSection";
 import { useUser } from "@/hooks/useUser";
 import { RootState } from "@/store/store";
 import { useSelector } from "react-redux";
-import { isAuthenticated } from "@/lib/auth-middleware";
 import useUpdateSettings from "@/hooks/useUpdateSettings";
 
 export default function UserProfileSettings() {
   const router = useRouter();
   const { user } = useUser();
+
   const {
-    updateUser,
-    loading: updateLoading,
-    error: updateError,
-    updateUserSettings,
-  } = useUpdateUser();
-  const {
+    getUserSettings,
     updateSettings,
     loading: updateSettingsLoading,
     error: updateSettingsError,
   } = useUpdateSettings();
+  useEffect(() => {
+    getUserSettings();
+  }, []);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const settings = useSelector((state: RootState) => state.Settings);
   const handleUpdate = async (data: any) => {
     try {
       await updateSettings(data);
-      setSuccessMessage("تم حفظ التغييرات بنجاح");
-      setTimeout(() => setSuccessMessage(null), 3000);
-    } catch (error) {
-      console.error("Update failed:", error);
-    }
-  };
-  const handleUpdateUserSettings = async (data: any) => {
-    try {
-      await updateUserSettings(data);
       setSuccessMessage("تم حفظ التغييرات بنجاح");
       setTimeout(() => setSuccessMessage(null), 3000);
     } catch (error) {
@@ -90,38 +77,30 @@ export default function UserProfileSettings() {
         {/* Settings Sections */}
         <div className="space-y-6">
           {user && (
-            <ProfileSection
-              user={user}
-              onUpdate={handleUpdateUserSettings}
-              loading={updateSettingsLoading}
-            />
+            <ProfileSection />
           )}
           <TimerSettingsSection
-            timers={settings.timers}
+            // timers={settings.timers}
             onUpdate={handleUpdate}
             loading={updateSettingsLoading}
           />
 
           <WaterReminderSection
-            waterReminder={settings.waterReminder}
             onUpdate={handleUpdate}
             loading={updateSettingsLoading}
           />
 
           <PrayerReminderSection
-            prayerReminder={settings.prayerReminder}
             onUpdate={handleUpdate}
             loading={updateSettingsLoading}
           />
 
           <LocationSection
-            location={settings.location}
             onUpdate={handleUpdate}
             loading={updateSettingsLoading}
           />
 
           <UIPreferencesSection
-            ui={settings.ui}
             onUpdate={handleUpdate}
             loading={updateSettingsLoading}
           />

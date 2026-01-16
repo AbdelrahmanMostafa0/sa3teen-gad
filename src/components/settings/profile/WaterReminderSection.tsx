@@ -8,20 +8,24 @@ import { Switch } from '@/components/ui/switch';
 import { Button } from '@/components/ui/button';
 import { Droplets } from 'lucide-react';
 import { SettingsType } from '@/types/user';
+import { RootState } from '@/store/store';
+import { useSelector } from 'react-redux';
 
 interface WaterReminderSectionProps {
-    waterReminder: SettingsType['waterReminder'];
     onUpdate: (data: { waterReminder: Partial<SettingsType['waterReminder']> }) => Promise<void>;
     loading?: boolean;
 }
 
-export default function WaterReminderSection({ waterReminder, onUpdate, loading }: WaterReminderSectionProps) {
+export default function WaterReminderSection({ onUpdate, loading }: WaterReminderSectionProps) {
+    const { waterReminder } = useSelector((state: RootState) => state.Settings);
+
     const [enabled, setEnabled] = useState(waterReminder.enabled);
     const [interval, setInterval] = useState(waterReminder.interval);
     const [isEditing, setIsEditing] = useState(false);
     useEffect(() => {
+        setEnabled(waterReminder.enabled);
         setInterval(waterReminder.interval);
-    }, [waterReminder.interval]);
+    }, [waterReminder.interval, waterReminder.enabled]);
     const handleSave = async () => {
         const updates: Partial<SettingsType['waterReminder']> = {
             enabled,

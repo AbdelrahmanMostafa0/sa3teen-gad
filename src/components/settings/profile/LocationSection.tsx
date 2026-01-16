@@ -8,14 +8,16 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { MapPin } from 'lucide-react';
 import { SettingsType } from '@/types/user';
 import countries from '@/data/countries.json';
+import { RootState } from '@/store/store';
+import { useSelector } from 'react-redux';
 
 interface LocationSectionProps {
-    location: SettingsType['location'];
     onUpdate: (data: { location: Partial<SettingsType['location']> }) => Promise<void>;
     loading?: boolean;
 }
 
-export default function LocationSection({ location, onUpdate, loading }: LocationSectionProps) {
+export default function LocationSection({ onUpdate, loading }: LocationSectionProps) {
+    const { location } = useSelector((state: RootState) => state.Settings);
     const [country, setCountry] = useState(location.country);
     const [city, setCity] = useState(location.city);
     const [isEditing, setIsEditing] = useState(false);

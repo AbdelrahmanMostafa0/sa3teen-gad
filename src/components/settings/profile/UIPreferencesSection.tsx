@@ -1,19 +1,21 @@
 "use client";
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Layout } from 'lucide-react';
 import { SettingsType } from '@/types/user';
+import { RootState } from '@/store/store';
+import { useSelector } from 'react-redux';
 
 interface UIPreferencesSectionProps {
-    ui: SettingsType['ui'];
     onUpdate: (data: { ui: Partial<SettingsType['ui']> }) => Promise<void>;
     loading?: boolean;
 }
 
-export default function UIPreferencesSection({ ui, onUpdate, loading }: UIPreferencesSectionProps) {
+export default function UIPreferencesSection({ onUpdate, loading }: UIPreferencesSectionProps) {
+    const { ui } = useSelector((state: RootState) => state.Settings);
     const [prayerTimesPosition, setPrayerTimesPosition] = useState(ui.prayerTimesPosition);
     const [isEditing, setIsEditing] = useState(false);
 
@@ -28,7 +30,9 @@ export default function UIPreferencesSection({ ui, onUpdate, loading }: UIPrefer
         setPrayerTimesPosition(ui.prayerTimesPosition);
         setIsEditing(false);
     };
-
+    useEffect(() => {
+        setPrayerTimesPosition(ui.prayerTimesPosition);
+    }, [ui])
     return (
         <Card className="border-border/40 shadow-sm backdrop-blur-sm">
             <CardHeader>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -17,12 +17,12 @@ type PrayerName = typeof PRAYER_NAMES[number];
 
 
 interface PrayerReminderSectionProps {
-    prayerReminder: SettingsType['prayerReminder'];
     onUpdate: (data: { prayerReminder: Partial<SettingsType['prayerReminder']> }) => Promise<void>;
     loading?: boolean;
 }
 
-export default function PrayerReminderSection({ prayerReminder, onUpdate, loading }: PrayerReminderSectionProps) {
+export default function PrayerReminderSection({ onUpdate, loading }: PrayerReminderSectionProps) {
+    const { prayerReminder } = useSelector((state: RootState) => state.Settings);
     const rawPrayerTimes = useSelector((state: RootState) => state.Prayers.prayerTimes);
     const [enabled, setEnabled] = useState(prayerReminder.enabled);
     const [preReminderMinutes, setPreReminderMinutes] = useState(prayerReminder.preReminderMinutes);
@@ -62,6 +62,14 @@ export default function PrayerReminderSection({ prayerReminder, onUpdate, loadin
         }));
         setIsEditing(true);
     };
+    useEffect(() => {
+        // console.log(prayerReminder);
+        setEnabled(prayerReminder.enabled);
+        setPreReminderMinutes(prayerReminder.preReminderMinutes);
+        setPreReminderEnabled(prayerReminder.preReminderEnabled);
+        setAtTimeReminderEnabled(prayerReminder.atTimeReminderEnabled);
+        setPerPrayer(prayerReminder.perPrayer);
+    }, [prayerReminder])
 
     return (
         <Card className="border-border/40 shadow-sm backdrop-blur-sm">

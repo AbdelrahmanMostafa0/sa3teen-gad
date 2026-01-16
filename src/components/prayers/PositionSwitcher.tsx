@@ -17,14 +17,14 @@ import {
     TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useUser } from "@/hooks/useUser";
-import { useUpdateUser } from "@/hooks/useUpdateUser";
+import useUpdateSettings from "@/hooks/useUpdateSettings";
 
 const PositionSwitcher = () => {
     const dispatch = useDispatch();
     const currentPosition = useSelector(
         (state: RootState) => state.Settings.ui.prayerTimesPosition
     );
-    const { updateUserSettings } = useUpdateUser();
+    const { updateSettings } = useUpdateSettings();
     const { user } = useUser();
     const positions = [
         { value: "right", icon: PanelRight, label: "يمين" },
@@ -38,7 +38,7 @@ const PositionSwitcher = () => {
         // parsedSettings?.ui?.prayerTimesPosition = position;
         dispatch(updatePrayerTimesPosition(position));
 
-        updateUserSettings({
+        updateSettings({
             ui: {
                 prayerTimesPosition: position,
             },

@@ -1,5 +1,4 @@
 import Pomodoro from "@/components/pomodoro/Pomodoro";
-import TasksWrapper from "@/components/tasks/TasksWrapper";
 import UserTasks from "@/components/tasks/UserTasks";
 import { Metadata } from "next";
 export const metadata: Metadata = {

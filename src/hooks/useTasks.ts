@@ -8,13 +8,7 @@ import { useEffect } from "react";
 const useTasks = () => {
   const dispatch = useDispatch<AppDispatch>();
   const tasks = useSelector((state: RootState) => state.Tasks.tasks);
-  useEffect(() => {
-    const storedTasks = localStorage.getItem("tasks");
-    if (storedTasks) {
-      const parsedTasks = JSON.parse(storedTasks);
-      dispatch(setTasks(parsedTasks));
-    }
-  }, [dispatch]);
+
   const addTaks = (task: string) => {
     const newTask: ITask = {
       id: nanoid(),

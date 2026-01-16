@@ -7,7 +7,6 @@ export async function getSettings(req: AuthenticatedRequest) {
   try {
     await connect();
     const { userId, guestId } = req.user;
-    console.log("guestId", guestId);
 
     const query = userId ? { userId } : { guestId };
 

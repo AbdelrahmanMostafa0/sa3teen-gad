@@ -3,24 +3,18 @@
 import detectStartingLang from "@/utils/detectLang";
 import { ITask } from "@/types/tasks";
 import { TbCheck } from "react-icons/tb";
-import useTasks from "@/hooks/useTasks";
 import useTasksActions from "@/hooks/useTasksActions";
 import useTaskCardLogic from "@/hooks/useTaskCardLogic";
 import TaskModal from "./TaskModal";
-import { Checkbox } from "@/components/ui/checkbox";
 import { motion, AnimatePresence } from "motion/react";
 
-import { useUser } from "@/hooks/useUser";
 import { useEffect, useState } from "react";
 
 const TaskCard = ({ task }: { task: ITask }) => {
-  const { isAuthenticated } = useUser()
   const [checked, setChecked] = useState(task.completed);
-  const localHooks = useTasks();
-  const apiHooks = useTasksActions();
+  const { updateTask, deleteTask } = useTasksActions();
   const taskId = task.id || (task as any)._id;
 
-  const { updateTask, deleteTask } = isAuthenticated ? apiHooks : localHooks;
   const {
     isArabic,
     isOpen,

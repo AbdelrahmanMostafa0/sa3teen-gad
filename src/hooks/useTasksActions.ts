@@ -8,11 +8,10 @@ import {
 } from "@/store/features/allTasksSlice";
 import { ITask } from "@/types/tasks";
 import { useEffect } from "react";
-import { useUser } from "./useUser";
 
 const useTasksActions = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const { isAuthenticated } = useUser();
+
   const { hasFetched, tasks, loading } = useSelector(
     (state: RootState) => state.AllTasks
   );
@@ -34,10 +33,10 @@ const useTasksActions = () => {
   };
 
   useEffect(() => {
-    if (!loading && !hasFetched && isAuthenticated) {
+    if (!loading && !hasFetched) {
       dispatch(getAllTasks());
     }
-  }, [loading, hasFetched, dispatch, isAuthenticated]);
+  }, [loading, hasFetched, dispatch]);
 
   return {
     fetchAllTasks,

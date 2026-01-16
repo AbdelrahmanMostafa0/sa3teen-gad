@@ -1,20 +1,18 @@
 "use client";
 
-import useTasks from "@/hooks/useTasks";
-import NewTaskForm from "./NewTaskForm";
 import useTasksActions from "@/hooks/useTasksActions";
 import RenderTasks from "./RenderTasks";
 import TasksHeader from "./TasksHeader";
+import CreateTaskForm from "./LoggedInTaskForm";
 
 const UserTasks = () => {
-  const { tasks } = useTasks();
-  const { tasks: allTasks } = useTasksActions()
+  const { tasks, loading } = useTasksActions();
 
   return (
     <div className="w-full space-y-6 max-w-[700px]">
       <TasksHeader />
-      <NewTaskForm />
-      <RenderTasks tasks={tasks} />
+      <CreateTaskForm />
+      <RenderTasks tasks={tasks} loading={loading} />
     </div>
   );
 };

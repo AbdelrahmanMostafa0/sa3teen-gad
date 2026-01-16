@@ -7,10 +7,10 @@ import { motion } from "motion/react";
 import { FaPlus } from "react-icons/fa6";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import useTasks from "@/hooks/useTasks";
+import useTasksActions from "@/hooks/useTasksActions";
 
 const NewTaskForm = () => {
-  const { addTaks } = useTasks();
+  const { createTask } = useTasksActions();
 
   const [inputValue, setInputValue] = useState<string>("");
   const [inputDirection, setInputDirection] = useState<"rtl" | "ltr">("rtl");
@@ -35,7 +35,7 @@ const NewTaskForm = () => {
     if (inputValue.trim() === "") {
       return;
     }
-    addTaks(inputValue);
+    createTask({ title: inputValue });
     setInputValue("");
     setInputDirection("rtl");
   };

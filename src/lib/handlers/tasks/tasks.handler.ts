@@ -7,16 +7,17 @@ import {
   createTaskSchema,
   updateTaskSchema,
 } from "@/lib/validators/tasks/tasks.validator";
+import { Types } from "mongoose";
 
 export const getAllTasksHandler = async (req: AuthenticatedRequest) => {
   try {
     const { searchParams } = new URL(req.url);
     const filter = searchParams.get("filter");
-    const { userId } = req.user;
-
+    const { userId, guestId } = req.user;
+    const authQuery = userId ? { userId } : { guestId };
     await connect();
 
-    const query: Record<string, any> = { userId };
+    const query: Record<string, any> = { ...authQuery };
 
     if (filter === "active") query.completed = false;
     if (filter === "completed") query.completed = true;
@@ -41,8 +42,8 @@ export const getAllTasksHandler = async (req: AuthenticatedRequest) => {
 
 export const createTaskHandler = async (req: AuthenticatedRequest) => {
   try {
-    const { userId } = req.user;
-
+    const { userId, guestId } = req.user;
+    const authId = userId ? { userId } : { guestId };
     const body = await req.json();
     const validationResult = createTaskSchema.safeParse(body);
 
@@ -61,7 +62,7 @@ export const createTaskHandler = async (req: AuthenticatedRequest) => {
 
     const task = await Task.create({
       ...validationResult.data,
-      userId,
+      ...authId,
     });
 
     return NextResponse.json(
@@ -87,7 +88,7 @@ export const updateTaskHandler = async (
 ) => {
   try {
     const { id } = await context!.params;
-    const { userId } = req.user;
+    const { userId, guestId } = req.user;
 
     // 2. Parse and validate request body
     const body = await req.json();
@@ -106,24 +107,33 @@ export const updateTaskHandler = async (
 
     await connect();
 
-    // 3. Find task by ID
+    
     const task = await Task.findById(id);
-
+    const taskUserId = task?.userId;
+    const taskGuestId = task?.guestId;
     if (!task) {
       return NextResponse.json(
         { success: false, message: "المهمة غير موجودة" },
         { status: 404 }
       );
     }
-
-    // 4. Verify ownership
-    if (task.userId !== userId) {
-      return NextResponse.json(
-        { success: false, message: "غير مصرح - لا يمكنك تعديل هذه المهمة" },
-        { status: 403 }
-      );
+    if (userId) {
+      // 4. Verify ownership
+      if (taskUserId !== userId) {
+        return NextResponse.json(
+          { success: false, message: "غير مصرح - لا يمكنك تعديل هذه المهمة" },
+          { status: 403 }
+        );
+      }
+    } else {
+      // 4. Verify ownership
+      if (taskGuestId !== guestId) {
+        return NextResponse.json(
+          { success: false, message: "غير مصرح - لا يمكنك تعديل هذه المهمة" },
+          { status: 403 }
+        );
+      }
     }
-
     // 5. Update task
     const updatedTask = await Task.findByIdAndUpdate(
       id,
@@ -135,15 +145,7 @@ export const updateTaskHandler = async (
       {
         success: true,
         message: "تم تحديث المهمة بنجاح",
-        task: {
-          id: updatedTask!._id,
-          title: updatedTask!.title,
-          description: updatedTask!.description,
-          subtasks: updatedTask!.subtasks,
-          completed: updatedTask!.completed,
-          createdAt: updatedTask!.createdAt,
-          updatedAt: updatedTask!.updatedAt,
-        },
+        task: tasksResponse(updatedTask),
       },
       { status: 200 }
     );
@@ -162,24 +164,35 @@ export const deleteTaskHandler = async (
 ) => {
   try {
     const { id } = await context!.params;
-    const { userId } = req.user;
+    const { userId, guestId } = req.user;
 
     await connect();
 
     const task = await Task.findById(id);
-
+    const taskUserId = task?.userId;
+    const taskGuestId = task?.guestId;
     if (!task) {
       return NextResponse.json(
         { success: false, message: "المهمة غير موجودة" },
         { status: 404 }
       );
     }
-
-    if (task.userId !== userId) {
-      return NextResponse.json(
-        { success: false, message: "غير مصرح - لا يمكنك تعديل هذه المهمة" },
-        { status: 403 }
-      );
+    if (userId) {
+      // 4. Verify ownership
+      if (taskUserId !== userId) {
+        return NextResponse.json(
+          { success: false, message: "غير مصرح - لا يمكنك حذف هذه المهمة" },
+          { status: 403 }
+        );
+      }
+    } else {
+      // 4. Verify ownership
+      if (taskGuestId !== guestId) {
+        return NextResponse.json(
+          { success: false, message: "غير مصرح - لا يمكنك حذف هذه المهمة" },
+          { status: 403 }
+        );
+      }
     }
 
     await Task.findByIdAndDelete(id);
@@ -203,30 +216,39 @@ export const getSingleTask = async (
 ) => {
   try {
     const { id } = await context!.params;
-    const { userId } = req.user;
+    const { userId, guestId } = req.user;
 
     await connect();
 
     const task = await Task.findById(id);
-
+    const taskUserId = task?.userId;
+    const taskGuestId = task?.guestId;
     if (!task) {
       return NextResponse.json(
         { success: false, message: "المهمة غير موجودة" },
         { status: 404 }
       );
     }
-
-    if (task.userId !== userId) {
-      return NextResponse.json(
-        { success: false, message: "غير مصرح - لا يمكنك تعديل هذه المهمة" },
-        { status: 403 }
-      );
+    if (userId) {
+      if (taskUserId !== userId) {
+        return NextResponse.json(
+          { success: false, message: "غير مصرح - لا يمكنك عرض هذه المهمة" },
+          { status: 403 }
+        );
+      }
+    } else {
+      if (taskGuestId !== guestId) {
+        return NextResponse.json(
+          { success: false, message: "غير مصرح - لا يمكنك عرض هذه المهمة" },
+          { status: 403 }
+        );
+      }
     }
-
     return NextResponse.json(
       {
         success: true,
-        message: "تم حذف المهمة بنجاح",
+        message: "تم عرض المهمة بنجاح",
+        task: tasksResponse(task),
       },
       { status: 200 }
     );

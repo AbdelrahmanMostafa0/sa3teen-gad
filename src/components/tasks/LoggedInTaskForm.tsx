@@ -13,7 +13,7 @@ interface TaskFormData {
     title: string;
 }
 
-const LoggedInTaskForm = () => {
+const CreateTaskForm = () => {
     const { createTask } = useTasksActions();
     const [inputDirection, setInputDirection] = useState<"rtl" | "ltr">("rtl");
 
@@ -100,4 +100,4 @@ const LoggedInTaskForm = () => {
     );
 };
 
-export default LoggedInTaskForm;
+export default CreateTaskForm;

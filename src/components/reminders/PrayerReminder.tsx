@@ -126,7 +126,7 @@ const PrayerReminder = () => {
         <p className="text-sm text-primary/90">
           {isPreReminder
             ? `صلاة ${currentPrayer ? PrayerNameMap[currentPrayer] : ""} بعد ${prayerSettings.preReminderMinutes} دقيقة`
-            : `حان الآن وقت صلاة ${currentPrayer ? PrayerNameMap[currentPrayer] : ""}`}
+            : `حان الآن وقت  ${currentPrayer ? PrayerNameMap[currentPrayer] : ""}`}
         </p>
       </div>
       <button

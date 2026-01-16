@@ -8,18 +8,13 @@ import { Switch } from '@/components/ui/switch';
 import { Button } from '@/components/ui/button';
 import { Bell, Clock } from 'lucide-react';
 import { SettingsType } from '@/types/user';
-import usePrayerTimes from '@/hooks/usePrayerTimes';
+import { PrayerNameMap } from '@/hooks/usePrayerTimes';
+import { RootState } from '@/store/store';
+import { useSelector } from 'react-redux';
 
 const PRAYER_NAMES = ["Fajr", "Dhuhr", "Asr", "Maghrib", "Isha"] as const;
 type PrayerName = typeof PRAYER_NAMES[number];
 
-const prayerNameMap: Record<PrayerName, string> = {
-    Fajr: "الفجر",
-    Dhuhr: "الظهر",
-    Asr: "العصر",
-    Maghrib: "المغرب",
-    Isha: "العشاء",
-};
 
 interface PrayerReminderSectionProps {
     prayerReminder: SettingsType['prayerReminder'];
@@ -28,7 +23,7 @@ interface PrayerReminderSectionProps {
 }
 
 export default function PrayerReminderSection({ prayerReminder, onUpdate, loading }: PrayerReminderSectionProps) {
-    const { rawPrayerTimes } = usePrayerTimes();
+    const rawPrayerTimes = useSelector((state: RootState) => state.Prayers.prayerTimes);
     const [enabled, setEnabled] = useState(prayerReminder.enabled);
     const [preReminderMinutes, setPreReminderMinutes] = useState(prayerReminder.preReminderMinutes);
     const [preReminderEnabled, setPreReminderEnabled] = useState(prayerReminder.preReminderEnabled);
@@ -164,7 +159,7 @@ export default function PrayerReminderSection({ prayerReminder, onUpdate, loadin
                                             <CardContent className="p-4">
                                                 <div className="flex items-center justify-between mb-3">
                                                     <div>
-                                                        <p className="font-bold text-lg">{prayerNameMap[prayer]}</p>
+                                                        <p className="font-bold text-lg">{PrayerNameMap[prayer]}</p>
                                                         {prayerTime && (
                                                             <p className="text-sm text-muted-foreground">{prayerTime.time}</p>
                                                         )}

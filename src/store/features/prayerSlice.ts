@@ -1,8 +1,12 @@
 import { PrayerTimesType } from "./../../types/prayers";
 import { createSlice } from "@reduxjs/toolkit";
-
+type PrayerTime = {
+  name: "Fajr" | "Sunrise" | "Dhuhr" | "Asr" | "Maghrib" | "Isha";
+  time: string; // formatted Arabic time (12h)
+  time24: string; // original 24h time from API (HH:mm)
+};
 const initialState = {
-  prayerTimes: null as PrayerTimesType | null,
+  prayerTimes: [] as PrayerTime[] | [],
   isLoading: false,
   error: null,
 };

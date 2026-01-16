@@ -1,12 +1,12 @@
 "use client";
 
 import { getPrayers } from "@/services/prayerApi";
-import { RootState } from "@/store/store";
+import { AppDispatch, RootState } from "@/store/store";
 import { formatTime12 } from "@/utils/date";
 import { format } from "date-fns";
 import { useCallback, useEffect, useState } from "react";
-import { useSelector } from "react-redux";
-import { useUser } from "./useUser";
+import { useDispatch, useSelector } from "react-redux";
+import { setPrayerTimesStore } from "@/store/features/prayerSlice";
 
 type PrayerTime = {
   name: "Fajr" | "Sunrise" | "Dhuhr" | "Asr" | "Maghrib" | "Isha";
@@ -14,23 +14,27 @@ type PrayerTime = {
   time24: string; // original 24h time from API (HH:mm)
 };
 
-const nameMap: Record<PrayerTime["name"], string> = {
-  Fajr: "صلاة الفجر",
+export const PrayerNameMap: Record<PrayerTime["name"], string> = {
+  Fajr: "الفجر",
   Sunrise: "الشروق",
-  Dhuhr: "صلاة الظهر",
-  Asr: "صلاة العصر",
-  Maghrib: "صلاة المغرب",
-  Isha: "صلاة العشاء",
+  Dhuhr: "الظهر",
+  Asr: "العصر",
+  Maghrib: "المغرب",
+  Isha: "العشاء",
 };
 
 const usePrayerTimes = () => {
-  const [prayerTimes, setPrayerTimes] = useState<PrayerTime[] | null>(null);
+  // const [prayerTimes, setPrayerTimes] = useState<PrayerTime[] | null>(null);
   const { city, country } = useSelector(
     (state: RootState) => state.Settings.location
   );
-  const { user } = useUser();
-  const profileCity = user?.settings?.location?.city || city;
-  const profileCountry = user?.settings?.location?.country || country;
+  const dispatch = useDispatch<AppDispatch>();
+  const prayers = useSelector((state: RootState) => state.Prayers.prayerTimes);
+  const isLoading = useSelector((state: RootState) => state.Prayers.isLoading);
+  const settings = useSelector((state: RootState) => state.Settings);
+  const profileCity = settings?.location?.city || city;
+  const profileCountry = settings?.location?.country || country;
+  console.log("prayers", prayers);
   const fetchPrayerTimes = useCallback(async () => {
     // Don't fetch if location is not set
     let city = profileCity;
@@ -92,25 +96,26 @@ const usePrayerTimes = () => {
           time24: raw?.Isha || "",
         },
       ];
-      setPrayerTimes(times);
+      dispatch(setPrayerTimesStore(times));
     } catch (err) {
       console.error(err);
     }
   }, [profileCity, profileCountry]);
 
   useEffect(() => {
+    if (prayers.length > 0 || isLoading) return;
     fetchPrayerTimes();
   }, [fetchPrayerTimes]);
 
   // Return formatted Arabic times for UI and raw 24‑hour times for reminder logic
-  const formatted = prayerTimes?.map(({ name, time }) => ({
-    name: nameMap[name],
+  const formatted = prayers?.map(({ name, time }) => ({
+    name: PrayerNameMap[name],
     time,
   }));
   return {
     prayerTimes: formatted || [],
-    rawPrayerTimes: prayerTimes || [],
-    PrayerNameMap: nameMap,
+    rawPrayerTimes: prayers || [],
+    PrayerNameMap,
   };
 };
 

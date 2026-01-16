@@ -81,7 +81,7 @@ const allTasksSlice = createSlice({
     builder
       .addCase(getAllTasks.pending, (state) => {
         state.loading = true;
-        state.hasFetched = false;
+        // state.hasFetched = false;
       })
       .addCase(getAllTasks.fulfilled, (state, action) => {
         state.loading = false;

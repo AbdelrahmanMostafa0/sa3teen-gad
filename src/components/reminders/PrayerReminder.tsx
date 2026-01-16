@@ -1,4 +1,3 @@
-// src/components/reminders/PrayerReminder.tsx
 "use client";
 
 import React, { useEffect, useState, useRef } from "react";
@@ -7,11 +6,12 @@ import { motion } from "motion/react";
 import Image from "next/image";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store/store";
-import usePrayerTimes from "@/hooks/usePrayerTimes";
+import { PrayerNameMap } from "@/hooks/usePrayerTimes";
 import { PrayerName } from "@/types/user";
 
 const PrayerReminder = () => {
-  const { rawPrayerTimes, PrayerNameMap } = usePrayerTimes();
+
+  const rawPrayerTimes = useSelector((state: RootState) => state.Prayers.prayerTimes);
   const prayerSettings = useSelector((state: RootState) => state.Settings.prayerReminder);
   const [showPopup, setShowPopup] = useState(false);
   const [currentPrayer, setCurrentPrayer] = useState<PrayerName | "">("");
@@ -126,7 +126,7 @@ const PrayerReminder = () => {
         <p className="text-sm text-primary/90">
           {isPreReminder
             ? `صلاة ${currentPrayer ? PrayerNameMap[currentPrayer] : ""} بعد ${prayerSettings.preReminderMinutes} دقيقة`
-            : `حان الآن وقت  ${currentPrayer ? PrayerNameMap[currentPrayer] : ""}`}
+            : `حان الآن وقت صلاة ${currentPrayer ? PrayerNameMap[currentPrayer] : ""}`}
         </p>
       </div>
       <button

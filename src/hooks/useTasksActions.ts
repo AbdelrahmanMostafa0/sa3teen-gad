@@ -7,21 +7,23 @@ import {
   deleteTask as deleteTaskThunk,
 } from "@/store/features/allTasksSlice";
 import { ITask } from "@/types/tasks";
-import { useEffect } from "react";
+import { useState, useCallback } from "react";
 
 const useTasksActions = () => {
   const dispatch = useDispatch<AppDispatch>();
-
+  const [createPostLoading, setCreatePostLoading] = useState(false);
   const { hasFetched, tasks, loading } = useSelector(
     (state: RootState) => state.AllTasks
   );
 
-  const fetchAllTasks = () => {
+  const fetchAllTasks = useCallback(() => {
     dispatch(getAllTasks());
-  };
+  }, [dispatch]);
 
   const createTask = (task: ITask) => {
+    setCreatePostLoading(true);
     dispatch(postTask(task));
+    setCreatePostLoading(false);
   };
 
   const updateTask = (id: string, changes: Partial<ITask>) => {
@@ -32,12 +34,6 @@ const useTasksActions = () => {
     dispatch(deleteTaskThunk(id));
   };
 
-  useEffect(() => {
-    if (!loading && !hasFetched) {
-      dispatch(getAllTasks());
-    }
-  }, [loading, hasFetched, dispatch]);
-
   return {
     fetchAllTasks,
     createTask,
@@ -46,6 +42,7 @@ const useTasksActions = () => {
     loading,
     hasFetched,
     tasks,
+    createPostLoading,
   };
 };
 

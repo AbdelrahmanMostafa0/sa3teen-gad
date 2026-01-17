@@ -7,27 +7,83 @@ import {
   createTaskSchema,
   updateTaskSchema,
 } from "@/lib/validators/tasks/tasks.validator";
-import { Types } from "mongoose";
-
+type TaskQuery = {
+  userId?: string;
+  guestId?: string;
+  completed?: boolean;
+};
 export const getAllTasksHandler = async (req: AuthenticatedRequest) => {
   try {
     const { searchParams } = new URL(req.url);
-    const filter = searchParams.get("filter");
+    const filter = searchParams.get("filter") as "active" | "completed" | null;
+    const page = Math.max(1, Number(searchParams.get("page") ?? 1));
+    const limit = Math.min(
+      200,
+      Math.max(1, Number(searchParams.get("limit") ?? 100))
+    );
+    const skip = (page - 1) * limit;
+
     const { userId, guestId } = req.user;
     const authQuery = userId ? { userId } : { guestId };
     await connect();
 
-    const query: Record<string, any> = { ...authQuery };
+    const [result] = await Task.aggregate([
+      { $match: authQuery }, // First match only by user ownership
+      {
+        $facet: {
+          // Facet for fetching filtered tasks
+          tasks: [
+            // Apply filter if one exists
+            ...(filter === "active" ? [{ $match: { completed: false } }] : []),
+            ...(filter === "completed"
+              ? [{ $match: { completed: true } }]
+              : []),
+            { $sort: { createdAt: -1 } },
+            { $skip: skip },
+            { $limit: limit },
+          ],
+          // Facet for counting total filtered docs (for pagination)
+          total: [
+            ...(filter === "active" ? [{ $match: { completed: false } }] : []),
+            ...(filter === "completed"
+              ? [{ $match: { completed: true } }]
+              : []),
+            { $count: "count" },
+          ],
+        },
+      },
+    ]);
 
-    if (filter === "active") query.completed = false;
-    if (filter === "completed") query.completed = true;
+    const tasks = result.tasks || [];
+    const total = result.total[0]?.count || 0;
 
-    const tasks = await Task.find(query).sort({ createdAt: -1 }).lean();
+    // Process stats
+    const statsArray = result.stats || [];
+    const activeCount =
+      statsArray.find((s: any) => s._id === false)?.count || 0;
+    const completedCount =
+      statsArray.find((s: any) => s._id === true)?.count || 0;
+    const allCount = activeCount + completedCount;
+
+    const totalPages = Math.ceil(total / limit);
 
     return NextResponse.json(
       {
         success: true,
         tasks: tasks.map(tasksResponse),
+        pagination: {
+          total,
+          page,
+          limit,
+          totalPages,
+          hasNextPage: page < totalPages,
+          hasPrevPage: page > 1,
+        },
+        stats: {
+          all: allCount,
+          active: activeCount,
+          completed: completedCount,
+        },
       },
       { status: 200 }
     );
@@ -107,7 +163,6 @@ export const updateTaskHandler = async (
 
     await connect();
 
-    
     const task = await Task.findById(id);
     const taskUserId = task?.userId;
     const taskGuestId = task?.guestId;

@@ -20,10 +20,16 @@ const useTasksActions = () => {
     dispatch(getAllTasks());
   }, [dispatch]);
 
-  const createTask = (task: ITask) => {
+  const createTask = async (task: ITask) => {
     setCreatePostLoading(true);
-    dispatch(postTask(task));
-    setCreatePostLoading(false);
+    try {
+      const result = await dispatch(postTask(task)).unwrap();
+      setCreatePostLoading(false);
+      return result;
+    } catch (error) {
+      setCreatePostLoading(false);
+      throw error;
+    }
   };
 
   const updateTask = (id: string, changes: Partial<ITask>) => {

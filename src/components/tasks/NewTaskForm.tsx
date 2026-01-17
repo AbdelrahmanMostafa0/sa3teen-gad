@@ -9,7 +9,11 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import useTasksActions from "@/hooks/useTasksActions";
 
-const NewTaskForm = () => {
+interface NewTaskFormProps {
+  onSuccess?: () => void;
+}
+
+const NewTaskForm = ({ onSuccess }: NewTaskFormProps) => {
   const { createTask } = useTasksActions();
 
   const [inputValue, setInputValue] = useState<string>("");
@@ -30,14 +34,17 @@ const NewTaskForm = () => {
     setInputValue(e.target.value);
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (inputValue.trim() === "") {
       return;
     }
-    createTask({ title: inputValue });
+    await createTask({ title: inputValue });
     setInputValue("");
     setInputDirection("rtl");
+    if (onSuccess) {
+      onSuccess();
+    }
   };
 
   return (

@@ -34,6 +34,7 @@ export const defaultSettings: SettingsType = {
   ui: {
     prayerTimesPosition: "top",
   },
+  homeTaskFilter: "week",
 };
 export interface SettingsType {
   timers: {
@@ -64,6 +65,7 @@ export interface SettingsType {
   ui: {
     prayerTimesPosition: "top" | "left" | "right";
   };
+  homeTaskFilter: "today" | "week" | "month" | "all_time";
 }
 export interface IUser {
   _id: string;

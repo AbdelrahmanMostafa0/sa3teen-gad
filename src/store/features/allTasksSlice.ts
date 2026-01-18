@@ -6,6 +6,15 @@ interface AllTasksState {
   tasks: ITask[];
   loading: boolean;
   error: string | null;
+  pagination: {
+    total: number;
+    page: number;
+    limit: number;
+    totalPages: number;
+    hasNextPage: boolean;
+    hasPrevPage: boolean;
+  };
+  range?: "today" | "week" | "month" | "all_time";
   hasFetched: boolean;
 }
 
@@ -13,19 +22,39 @@ const initialState: AllTasksState = {
   tasks: [],
   loading: false,
   error: null,
+  pagination: {
+    total: 0,
+    limit: 0,
+    page: 0,
+    totalPages: 0,
+    hasNextPage: false,
+    hasPrevPage: false,
+  },
+  range: "all_time",
   hasFetched: false,
 };
 
 export const getAllTasks = createAsyncThunk(
   "allTasks/getAllTasks",
-  async () => {
+  async ({
+    range,
+    filter,
+  }: {
+    range?: "today" | "week" | "month" | "all_time";
+    filter?: string;
+  }) => {
     try {
-      const response = await axios.get("/api/tasks");
-      return response.data?.tasks;
+      const response = await axios.get("/api/tasks", {
+        params: {
+          range: range || "all_time",
+          filter,
+        },
+      });
+      return response.data;
     } catch (err) {
       throw err;
     }
-  }
+  },
 );
 export const postTask = createAsyncThunk(
   "allTasks/postTask",
@@ -36,7 +65,7 @@ export const postTask = createAsyncThunk(
     } catch (err) {
       throw err;
     }
-  }
+  },
 );
 
 export const updateTask = createAsyncThunk(
@@ -48,7 +77,7 @@ export const updateTask = createAsyncThunk(
     } catch (err) {
       throw err;
     }
-  }
+  },
 );
 
 export const deleteTask = createAsyncThunk(
@@ -60,7 +89,7 @@ export const deleteTask = createAsyncThunk(
     } catch (err) {
       throw err;
     }
-  }
+  },
 );
 
 const allTasksSlice = createSlice({
@@ -76,6 +105,16 @@ const allTasksSlice = createSlice({
     setError: (state, action) => {
       state.error = action.payload;
     },
+    removeTask: (state, action: { payload: string }) => {
+      console.log(
+        "[allTasksSlice] removeTask reducer called for id:",
+        action.payload,
+      );
+      state.tasks = state.tasks.filter(
+        (task) =>
+          task.id !== action.payload && (task as any)._id !== action.payload,
+      );
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -85,7 +124,9 @@ const allTasksSlice = createSlice({
       })
       .addCase(getAllTasks.fulfilled, (state, action) => {
         state.loading = false;
-        state.tasks = action.payload;
+        state.tasks = action.payload.tasks;
+        state.pagination = action.payload.pagination;
+        state.range = action.payload.range;
         state.hasFetched = true;
       })
       .addCase(getAllTasks.rejected, (state, action) => {
@@ -112,7 +153,9 @@ const allTasksSlice = createSlice({
         state.loading = false;
         // Update the task in the array
         const index = state.tasks.findIndex(
-          (task) => task.id === action.payload.id
+          (task) =>
+            task.id === action.payload.id ||
+            (task as any)._id === (action.payload.id || action.payload._id),
         );
         if (index !== -1) {
           state.tasks[index] = action.payload;
@@ -137,5 +180,6 @@ const allTasksSlice = createSlice({
   },
 });
 
-export const { setTasks, setLoading, setError } = allTasksSlice.actions;
+export const { setTasks, setLoading, setError, removeTask } =
+  allTasksSlice.actions;
 export default allTasksSlice.reducer;

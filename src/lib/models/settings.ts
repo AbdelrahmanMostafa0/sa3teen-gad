@@ -12,7 +12,7 @@ const PerPrayerSchema = new Schema(
     pre: { type: Boolean, default: true },
     atTime: { type: Boolean, default: true },
   },
-  { _id: false }
+  { _id: false },
 );
 const SettingsSchema = new Schema<ISettings>(
   {
@@ -37,7 +37,11 @@ const SettingsSchema = new Schema<ISettings>(
       enabled: { type: Boolean, default: false },
       interval: { type: Number, default: 15 },
     },
-
+    homeTaskFilter: {
+      type: String,
+      enum: ["today", "week", "month", "all_time"],
+      default: "week",
+    },
     prayerReminder: {
       enabled: { type: Boolean, default: false },
       preReminderMinutes: { type: Number, default: 10 },
@@ -69,7 +73,7 @@ const SettingsSchema = new Schema<ISettings>(
   {
     timestamps: true,
     strict: "throw",
-  }
+  },
 );
 
 SettingsSchema.pre("validate", function () {

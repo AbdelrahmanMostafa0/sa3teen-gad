@@ -13,7 +13,7 @@ interface TaskFormData {
     title: string;
 }
 
-const CreateTaskForm = () => {
+const CreateTaskForm = ({ onSuccess }: { onSuccess?: () => void }) => {
     const { createTask } = useTasksActions();
     const [inputDirection, setInputDirection] = useState<"rtl" | "ltr">("rtl");
 
@@ -45,6 +45,7 @@ const CreateTaskForm = () => {
     const onSubmit = (data: TaskFormData) => {
         if (data.title.trim()) {
             createTask({ title: data.title.trim() });
+            if (onSuccess) onSuccess();
             reset();
             setInputDirection("rtl");
         }

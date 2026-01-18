@@ -3,12 +3,14 @@ import { createSlice } from "@reduxjs/toolkit";
 
 interface InitialState {
   tasks: ITask[]; // Replace 'any' with your specific task type
+  completedTasks: ITask[];
   currentTask: string | null; // Replace 'any' with your specific task type
   isLoading: boolean;
   error: string | null;
 }
 const initialState: InitialState = {
   tasks: [],
+  completedTasks: [],
   currentTask: null,
   isLoading: false,
   error: null,

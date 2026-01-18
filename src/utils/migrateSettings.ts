@@ -13,6 +13,8 @@ export function migrateSettings(oldSettings: any): SettingsType {
 
   // Migrate from flat to nested structure
   return {
+    homeTaskFilter:
+      oldSettings?.homeTaskFilter ?? defaultSettings.homeTaskFilter,
     timers: {
       focusDurationTime:
         oldSettings?.focusDurationTime ??

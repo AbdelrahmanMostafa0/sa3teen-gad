@@ -5,6 +5,8 @@ import {
   postTask,
   updateTask as updateTaskThunk,
   deleteTask as deleteTaskThunk,
+  setTasks,
+  removeTask,
 } from "@/store/features/allTasksSlice";
 import { ITask } from "@/types/tasks";
 import { useState, useCallback } from "react";
@@ -13,12 +15,12 @@ const useTasksActions = () => {
   const dispatch = useDispatch<AppDispatch>();
   const [createPostLoading, setCreatePostLoading] = useState(false);
   const { hasFetched, tasks, loading } = useSelector(
-    (state: RootState) => state.AllTasks
+    (state: RootState) => state.AllTasks,
   );
-
+  const { homeTaskFilter } = useSelector((state: RootState) => state.Settings);
   const fetchAllTasks = useCallback(() => {
-    dispatch(getAllTasks());
-  }, [dispatch]);
+    dispatch(getAllTasks({ range: homeTaskFilter, filter: "active" }));
+  }, [dispatch, homeTaskFilter]);
 
   const createTask = async (task: ITask) => {
     setCreatePostLoading(true);
@@ -33,7 +35,25 @@ const useTasksActions = () => {
   };
 
   const updateTask = (id: string, changes: Partial<ITask>) => {
+    console.log(
+      "[useTasksActions] updateTask called with id:",
+      id,
+      "changes:",
+      changes,
+    );
     dispatch(updateTaskThunk({ id, changes }));
+    if (changes.completed) {
+      console.log(
+        "[useTasksActions] Task marked completed, setting 1s timeout for removal...",
+      );
+      setTimeout(() => {
+        console.log(
+          "[useTasksActions] Timeout reached, dispatching removeTask for id:",
+          id,
+        );
+        dispatch(removeTask(id));
+      }, 1000);
+    }
   };
 
   const deleteTask = (id: string) => {

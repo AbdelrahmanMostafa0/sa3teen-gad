@@ -20,6 +20,7 @@ const TaskCard = ({ task }: { task: ITask }) => {
     isOpen,
     handleModalToggle,
     taskCompleted,
+
   } = useTaskCardLogic(task);
   const handleCheckboxClick = (checked: boolean) => {
     if (!taskId) {

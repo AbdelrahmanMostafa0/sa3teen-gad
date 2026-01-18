@@ -2,7 +2,6 @@ import { AuthenticatedRequest } from "@/lib/middlewares/authMiddleware";
 import Task, { tasksResponse } from "@/lib/models/task";
 import connect from "@/lib/db";
 import { NextResponse } from "next/server";
-import z from "zod";
 import {
   createTaskSchema,
   updateTaskSchema,
@@ -12,23 +11,71 @@ type TaskQuery = {
   guestId?: string;
   completed?: boolean;
 };
+type Range = "all_time" | "today" | "yesterday" | "week" | "month";
+const allowedRanges: Range[] = [
+  "all_time",
+  "today",
+  "yesterday",
+  "week",
+  "month",
+];
 export const getAllTasksHandler = async (req: AuthenticatedRequest) => {
   try {
     const { searchParams } = new URL(req.url);
     const filter = searchParams.get("filter") as "active" | "completed" | null;
+    const range = (searchParams.get("range") as Range) || "all_time";
+    const fromParam = searchParams.get("from");
+    const toParam = searchParams.get("to");
+
     const page = Math.max(1, Number(searchParams.get("page") ?? 1));
     const limit = Math.min(
       200,
-      Math.max(1, Number(searchParams.get("limit") ?? 100))
+      Math.max(1, Number(searchParams.get("limit") ?? 100)),
     );
     const skip = (page - 1) * limit;
 
     const { userId, guestId } = req.user;
-    const authQuery = userId ? { userId } : { guestId };
+    const taskQuery: any = userId ? { userId } : { guestId };
+    if (!allowedRanges.includes(range)) {
+      return NextResponse.json(
+        { success: false, message: "النطاق غير صحيح" },
+        { status: 400 },
+      );
+    }
+    // Update taskQuery with date filtering
+    if (fromParam || toParam) {
+      taskQuery.createdAt = {};
+      if (fromParam) taskQuery.createdAt.$gte = new Date(fromParam);
+      if (toParam) taskQuery.createdAt.$lte = new Date(toParam);
+    } else if (range !== "all_time") {
+      const now = new Date();
+      const startOfToday = new Date(now.setHours(0, 0, 0, 0));
+
+      if (range === "today") {
+        taskQuery.createdAt = { $gte: startOfToday };
+      } else if (range === "yesterday") {
+        const startOfYesterday = new Date(startOfToday);
+        startOfYesterday.setDate(startOfYesterday.getDate() - 1);
+        const endOfYesterday = new Date(startOfToday);
+        endOfYesterday.setMilliseconds(-1);
+        taskQuery.createdAt = { $gte: startOfYesterday, $lte: endOfYesterday };
+      } else if (range === "week") {
+        const sevenDaysAgo = new Date(startOfToday);
+        sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+        taskQuery.createdAt = { $gte: sevenDaysAgo };
+      } else if (range === "month") {
+        const startOfMonth = new Date(
+          startOfToday.getFullYear(),
+          startOfToday.getMonth(),
+          1,
+        );
+        taskQuery.createdAt = { $gte: startOfMonth };
+      }
+    }
     await connect();
 
     const [result] = await Task.aggregate([
-      { $match: authQuery }, // First match only by user ownership
+      { $match: taskQuery }, // First match only by user ownership
       {
         $facet: {
           // Facet for fetching filtered tasks
@@ -49,6 +96,15 @@ export const getAllTasksHandler = async (req: AuthenticatedRequest) => {
               ? [{ $match: { completed: true } }]
               : []),
             { $count: "count" },
+          ],
+          // Facet for calculating stats based on the filtered result set
+          stats: [
+            {
+              $group: {
+                _id: "$completed",
+                count: { $sum: 1 },
+              },
+            },
           ],
         },
       },
@@ -79,19 +135,20 @@ export const getAllTasksHandler = async (req: AuthenticatedRequest) => {
           hasNextPage: page < totalPages,
           hasPrevPage: page > 1,
         },
+        range,
         stats: {
           all: allCount,
           active: activeCount,
           completed: completedCount,
         },
       },
-      { status: 200 }
+      { status: 200 },
     );
   } catch (error) {
     console.error("Get tasks error:", error);
     return NextResponse.json(
       { success: false, message: "حدث خطأ ما" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 };
@@ -110,7 +167,7 @@ export const createTaskHandler = async (req: AuthenticatedRequest) => {
           message: "البيانات المدخلة غير صحيحة",
           errors: validationResult.error.flatten().fieldErrors,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -127,20 +184,20 @@ export const createTaskHandler = async (req: AuthenticatedRequest) => {
         message: "تم إنشاء المهمة بنجاح",
         task: tasksResponse(task),
       },
-      { status: 201 }
+      { status: 201 },
     );
   } catch (error) {
     console.error("Create task error:", error);
     return NextResponse.json(
       { success: false, message: "حدث خطأ ما" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 };
 
 export const updateTaskHandler = async (
   req: AuthenticatedRequest,
-  context?: { params: Promise<{ id: string }> }
+  context?: { params: Promise<{ id: string }> },
 ) => {
   try {
     const { id } = await context!.params;
@@ -157,7 +214,7 @@ export const updateTaskHandler = async (
           message: "البيانات المدخلة غير صحيحة",
           errors: validationResult.error.flatten().fieldErrors,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -169,7 +226,7 @@ export const updateTaskHandler = async (
     if (!task) {
       return NextResponse.json(
         { success: false, message: "المهمة غير موجودة" },
-        { status: 404 }
+        { status: 404 },
       );
     }
     if (userId) {
@@ -177,7 +234,7 @@ export const updateTaskHandler = async (
       if (taskUserId !== userId) {
         return NextResponse.json(
           { success: false, message: "غير مصرح - لا يمكنك تعديل هذه المهمة" },
-          { status: 403 }
+          { status: 403 },
         );
       }
     } else {
@@ -185,7 +242,7 @@ export const updateTaskHandler = async (
       if (taskGuestId !== guestId) {
         return NextResponse.json(
           { success: false, message: "غير مصرح - لا يمكنك تعديل هذه المهمة" },
-          { status: 403 }
+          { status: 403 },
         );
       }
     }
@@ -193,7 +250,7 @@ export const updateTaskHandler = async (
     const updatedTask = await Task.findByIdAndUpdate(
       id,
       { $set: validationResult.data },
-      { new: true, runValidators: true }
+      { new: true, runValidators: true },
     );
 
     return NextResponse.json(
@@ -202,20 +259,20 @@ export const updateTaskHandler = async (
         message: "تم تحديث المهمة بنجاح",
         task: tasksResponse(updatedTask),
       },
-      { status: 200 }
+      { status: 200 },
     );
   } catch (error) {
     console.error("Update task error:", error);
     return NextResponse.json(
       { success: false, message: "حدث خطأ ما" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 };
 
 export const deleteTaskHandler = async (
   req: AuthenticatedRequest,
-  context?: { params: Promise<{ id: string }> }
+  context?: { params: Promise<{ id: string }> },
 ) => {
   try {
     const { id } = await context!.params;
@@ -229,7 +286,7 @@ export const deleteTaskHandler = async (
     if (!task) {
       return NextResponse.json(
         { success: false, message: "المهمة غير موجودة" },
-        { status: 404 }
+        { status: 404 },
       );
     }
     if (userId) {
@@ -237,7 +294,7 @@ export const deleteTaskHandler = async (
       if (taskUserId !== userId) {
         return NextResponse.json(
           { success: false, message: "غير مصرح - لا يمكنك حذف هذه المهمة" },
-          { status: 403 }
+          { status: 403 },
         );
       }
     } else {
@@ -245,7 +302,7 @@ export const deleteTaskHandler = async (
       if (taskGuestId !== guestId) {
         return NextResponse.json(
           { success: false, message: "غير مصرح - لا يمكنك حذف هذه المهمة" },
-          { status: 403 }
+          { status: 403 },
         );
       }
     }
@@ -254,20 +311,20 @@ export const deleteTaskHandler = async (
 
     return NextResponse.json(
       { success: true, message: "تم حذف المهمة بنجاح" },
-      { status: 200 }
+      { status: 200 },
     );
   } catch (error) {
     console.error("Delete task error:", error);
     return NextResponse.json(
       { success: false, message: "حدث خطأ ما" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 };
 
 export const getSingleTask = async (
   req: AuthenticatedRequest,
-  context?: { params: Promise<{ id: string }> }
+  context?: { params: Promise<{ id: string }> },
 ) => {
   try {
     const { id } = await context!.params;
@@ -281,21 +338,21 @@ export const getSingleTask = async (
     if (!task) {
       return NextResponse.json(
         { success: false, message: "المهمة غير موجودة" },
-        { status: 404 }
+        { status: 404 },
       );
     }
     if (userId) {
       if (taskUserId !== userId) {
         return NextResponse.json(
           { success: false, message: "غير مصرح - لا يمكنك عرض هذه المهمة" },
-          { status: 403 }
+          { status: 403 },
         );
       }
     } else {
       if (taskGuestId !== guestId) {
         return NextResponse.json(
           { success: false, message: "غير مصرح - لا يمكنك عرض هذه المهمة" },
-          { status: 403 }
+          { status: 403 },
         );
       }
     }
@@ -305,13 +362,13 @@ export const getSingleTask = async (
         message: "تم عرض المهمة بنجاح",
         task: tasksResponse(task),
       },
-      { status: 200 }
+      { status: 200 },
     );
   } catch (error) {
     console.error("Delete task error:", error);
     return NextResponse.json(
       { success: false, message: "حدث خطأ ما" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 };

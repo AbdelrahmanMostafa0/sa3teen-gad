@@ -1,6 +1,5 @@
 "use client";
 
-// import useTasks from "@/hooks/";
 import detectStartingLang from "@/utils/detectLang";
 import { useState } from "react";
 import { motion } from "motion/react";

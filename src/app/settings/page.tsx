@@ -1,4 +1,5 @@
 import RenderSettings from "@/components/settings/RenderSettings";
+import UserProfileSettings from "@/components/settings/UserProfileSettings";
 import { Metadata } from "next";
 export const metadata: Metadata = {
   title: "ساعتين جد - الإعدادات",
@@ -27,7 +28,7 @@ export const metadata: Metadata = {
   },
 };
 const page = () => {
-  return <RenderSettings />;
+  return <UserProfileSettings />;
 };
 
 export default page;

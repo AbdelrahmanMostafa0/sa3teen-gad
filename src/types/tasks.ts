@@ -5,8 +5,6 @@ export interface TaskType {
   completed?: boolean;
   createdAt: string;
   updatedAt?: string;
-  dueDate?: string; // Optional due date
-  priority?: "low" | "medium" | "high"; // Optional priority level
   tags?: string[]; // Optional tags for categorization
 }
 
@@ -28,3 +26,5 @@ export interface ITask {
   createdAt?: Date | string;
   updatedAt?: Date | string;
 }
+
+// export const  rangeType ="all_time"  as const "all_time" | "today" | "week" | "month";

@@ -11,6 +11,7 @@ import { FiCheckCircle, FiChevronLeft, FiChevronRight, FiLoader } from "react-ic
 import { motion, AnimatePresence } from "motion/react";
 import { ITask } from "@/types/tasks";
 import { Button } from "@/components/ui/button";
+import CreateTaskForm from "./CreateTaskForm";
 
 interface PaginationData {
     total: number;
@@ -87,7 +88,7 @@ export default function TasksPage() {
                         <FiCheckCircle className="text-primary" />
                         إضافة مهمة جديدة
                     </h2>
-                    <NewTaskForm onSuccess={fetchTasks} />
+                    <CreateTaskForm onSuccess={fetchTasks} />
                 </div>
 
                 {/* Filters & List Section */}
@@ -143,7 +144,7 @@ export default function TasksPage() {
                     </div>
 
                     {/* Pagination Controls */}
-                    {!loading && tasks.length > 0 && (
+                    {!loading && pagination.totalPages > 1 && (
                         <div className="flex justify-center items-center gap-4 mt-8">
                             <Button
                                 variant="outline"

@@ -69,7 +69,7 @@ export default function LocationSection({ onUpdate, loading }: LocationSectionPr
                             }}
                             disabled={loading}
                         >
-                            <SelectTrigger className="w-full bg-white text-black">
+                            <SelectTrigger className="w-full bg-white dark:bg-background">
                                 <SelectValue placeholder="اختر الدولة" />
                             </SelectTrigger>
                             <SelectContent>
@@ -94,7 +94,7 @@ export default function LocationSection({ onUpdate, loading }: LocationSectionPr
                             }}
                             disabled={loading || !country}
                         >
-                            <SelectTrigger className="w-full bg-white text-black">
+                            <SelectTrigger className="w-full bg-white dark:bg-background">
                                 <SelectValue placeholder="اختر المدينة" />
                             </SelectTrigger>
                             <SelectContent>

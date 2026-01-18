@@ -10,6 +10,7 @@ import WaterReminderSection from "./profile/WaterReminderSection";
 import PrayerReminderSection from "./profile/PrayerReminderSection";
 import LocationSection from "./profile/LocationSection";
 import UIPreferencesSection from "./profile/UIPreferencesSection";
+import TaskSettingsSection from "./profile/TaskSettingsSection";
 import { useUser } from "@/hooks/useUser";
 import { RootState } from "@/store/store";
 import { useSelector } from "react-redux";
@@ -45,15 +46,8 @@ export default function UserProfileSettings() {
       <div className="max-w-4xl mx-auto space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
-          <h1 className="text-3xl font-bold text-primary">إعدادات الحساب</h1>
-          <Button
-            variant="outline"
-            onClick={() => router.push("/")}
-            className="gap-2"
-          >
-            <ArrowRight className="w-4 h-4" />
-            رجوع
-          </Button>
+          <h1 className="text-3xl font-bold text-primary">الأهم من الشغل تظبيط الشغل</h1>
+
         </div>
 
         {/* Success Message */}
@@ -84,7 +78,10 @@ export default function UserProfileSettings() {
             onUpdate={handleUpdate}
             loading={updateSettingsLoading}
           />
-
+          <TaskSettingsSection
+            onUpdate={handleUpdate}
+            loading={updateSettingsLoading}
+          />
           <WaterReminderSection
             onUpdate={handleUpdate}
             loading={updateSettingsLoading}
@@ -104,6 +101,8 @@ export default function UserProfileSettings() {
             onUpdate={handleUpdate}
             loading={updateSettingsLoading}
           />
+
+
         </div>
       </div>
     </div>

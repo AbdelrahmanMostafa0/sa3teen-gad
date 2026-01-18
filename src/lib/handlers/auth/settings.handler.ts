@@ -48,12 +48,12 @@ export async function updateSettings(req: AuthenticatedRequest) {
         upsert: true,
         setDefaultsOnInsert: true,
         runValidators: true,
-      }
+      },
     );
     if (!settings) {
       return NextResponse.json(
         { success: false, message: "فشل تحديث البيانات" },
-        { status: 500 }
+        { status: 500 },
       );
     }
     return NextResponse.json(settings, { status: 200 });

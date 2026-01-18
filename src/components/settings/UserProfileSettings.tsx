@@ -1,9 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import { Button } from "@/components/ui/button";
-import { ArrowRight, CheckCircle, XCircle } from "lucide-react";
+import { CheckCircle, XCircle } from "lucide-react";
 import ProfileSection from "./profile/ProfileSection";
 import TimerSettingsSection from "./profile/TimerSettingsSection";
 import WaterReminderSection from "./profile/WaterReminderSection";
@@ -12,25 +10,21 @@ import LocationSection from "./profile/LocationSection";
 import UIPreferencesSection from "./profile/UIPreferencesSection";
 import TaskSettingsSection from "./profile/TaskSettingsSection";
 import { useUser } from "@/hooks/useUser";
-import { RootState } from "@/store/store";
-import { useSelector } from "react-redux";
 import useUpdateSettings from "@/hooks/useUpdateSettings";
 
 export default function UserProfileSettings() {
-  const router = useRouter();
   const { user } = useUser();
 
   const {
-    getUserSettings,
+    // getUserSettings,
     updateSettings,
     loading: updateSettingsLoading,
     error: updateSettingsError,
   } = useUpdateSettings();
-  useEffect(() => {
-    getUserSettings();
-  }, []);
+  // useEffect(() => {
+  //   getUserSettings();
+  // }, []);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
-  const settings = useSelector((state: RootState) => state.Settings);
   const handleUpdate = async (data: any) => {
     try {
       await updateSettings(data);
@@ -46,8 +40,9 @@ export default function UserProfileSettings() {
       <div className="max-w-4xl mx-auto space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
-          <h1 className="text-3xl font-bold text-primary">الأهم من الشغل تظبيط الشغل</h1>
-
+          <h1 className="text-3xl font-bold text-primary">
+            الأهم من الشغل تظبيط الشغل
+          </h1>
         </div>
 
         {/* Success Message */}
@@ -70,9 +65,7 @@ export default function UserProfileSettings() {
 
         {/* Settings Sections */}
         <div className="space-y-6">
-          {user && (
-            <ProfileSection />
-          )}
+          {user && <ProfileSection />}
           <TimerSettingsSection
             // timers={settings.timers}
             onUpdate={handleUpdate}
@@ -101,8 +94,6 @@ export default function UserProfileSettings() {
             onUpdate={handleUpdate}
             loading={updateSettingsLoading}
           />
-
-
         </div>
       </div>
     </div>

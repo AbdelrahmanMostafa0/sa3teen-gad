@@ -10,6 +10,10 @@ type TaskQuery = {
   userId?: string;
   guestId?: string;
   completed?: boolean;
+  createdAt?: {
+    $gte?: Date;
+    $lte?: Date;
+  };
 };
 type Range = "all_time" | "today" | "yesterday" | "week" | "month";
 const allowedRanges: Range[] = [
@@ -35,7 +39,7 @@ export const getAllTasksHandler = async (req: AuthenticatedRequest) => {
     const skip = (page - 1) * limit;
 
     const { userId, guestId } = req.user;
-    const taskQuery: any = userId ? { userId } : { guestId };
+    const taskQuery: TaskQuery = userId ? { userId } : { guestId };
     if (!allowedRanges.includes(range)) {
       return NextResponse.json(
         { success: false, message: "النطاق غير صحيح" },
@@ -366,6 +370,129 @@ export const getSingleTask = async (
     );
   } catch (error) {
     console.error("Delete task error:", error);
+    return NextResponse.json(
+      { success: false, message: "حدث خطأ ما" },
+      { status: 500 },
+    );
+  }
+};
+
+// app/api/tasks/[id]/reorder/route.ts
+
+export const reorderTaskHandler = async (
+  req: AuthenticatedRequest,
+  context?: { params: Promise<{ id: string }> },
+) => {
+  try {
+    const { id } = await context!.params;
+    const { newPrevTaskId, newNextTaskId } = await req.json();
+
+    const userId = req.user.userId;
+    const guestId = req.user.guestId;
+
+    await connect();
+
+    const task = await Task.findById(id);
+
+    if (!task) {
+      return NextResponse.json(
+        { success: false, message: "المهمة غير موجودة" },
+        { status: 404 },
+      );
+    }
+
+    const taskUserId = task.userId;
+    const taskGuestId = task.guestId;
+
+    if (userId) {
+      if (taskUserId !== userId) {
+        return NextResponse.json(
+          {
+            success: false,
+            message: "غير مصرح - لا يمكنك إعادة ترتيب هذه المهمة",
+          },
+          { status: 403 },
+        );
+      }
+    } else {
+      if (taskGuestId !== guestId) {
+        return NextResponse.json(
+          {
+            success: false,
+            message: "غير مصرح - لا يمكنك إعادة ترتيب هذه المهمة",
+          },
+          { status: 403 },
+        );
+      }
+    }
+
+    // Start a session for transaction
+    const session = await Task.startSession();
+
+    try {
+      await session.withTransaction(async () => {
+        // === STEP 1: Remove task from old position ===
+
+        // Update old previous task (if exists)
+        if (task.prevTaskId) {
+          await Task.findByIdAndUpdate(
+            task.prevTaskId,
+            { nextTaskId: task.nextTaskId },
+            { session },
+          );
+        }
+
+        // Update old next task (if exists)
+        if (task.nextTaskId) {
+          await Task.findByIdAndUpdate(
+            task.nextTaskId,
+            { prevTaskId: task.prevTaskId },
+            { session },
+          );
+        }
+
+        // === STEP 2: Insert task in new position ===
+
+        // Update the moved task's pointers
+        task.prevTaskId = newPrevTaskId || null;
+        task.nextTaskId = newNextTaskId || null;
+        await task.save({ session });
+
+        // Update new previous task (if exists)
+        if (newPrevTaskId) {
+          await Task.findByIdAndUpdate(
+            newPrevTaskId,
+            { nextTaskId: id },
+            { session },
+          );
+        }
+
+        // Update new next task (if exists)
+        if (newNextTaskId) {
+          await Task.findByIdAndUpdate(
+            newNextTaskId,
+            { prevTaskId: id },
+            { session },
+          );
+        }
+      });
+
+      // Fetch the updated task
+      const updatedTask = await Task.findById(id);
+
+      return NextResponse.json(
+        {
+          success: true,
+          message: "تم إعادة ترتيب المهمة بنجاح",
+          task: tasksResponse(updatedTask),
+        },
+        { status: 200 },
+      );
+    } finally {
+      await session.endSession();
+    }
+  } catch (error) {
+    console.error("Reorder task error:", error);
     return NextResponse.json(
       { success: false, message: "حدث خطأ ما" },
       { status: 500 },

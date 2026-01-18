@@ -20,6 +20,8 @@ export interface ITask {
   title: string;
   guestId?: string;
   description?: string;
+  prevTaskId?: string;
+  nextTaskId?: string;
   subtasks?: ISubtask[];
   userId?: string;
   completed?: boolean;

@@ -4,8 +4,8 @@
   "description": "ساعتين شاى وكوباية جد وكله هيبقا تمام",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#0a0a0a",
-  "theme_color": "#0a0a0a",
+  "background_color": "#f7f0e4",
+  "theme_color": "#f7f0e4",
   "orientation": "portrait-primary",
   "icons": [
     {

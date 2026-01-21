@@ -6,6 +6,16 @@ import {
   createTaskSchema,
   updateTaskSchema,
 } from "@/lib/validators/tasks/tasks.validator";
+import {
+  getAuthContext,
+  handleError,
+  calculateTaskStats,
+  parseTaskQueryParams,
+  buildTaskQuery,
+  verifyTaskOwnership,
+} from "./tasks.utils";
+
+// Types
 type TaskQuery = {
   userId?: string;
   guestId?: string;
@@ -15,76 +25,47 @@ type TaskQuery = {
     $lte?: Date;
   };
 };
+
 type Range = "all_time" | "today" | "yesterday" | "week" | "month";
-const allowedRanges: Range[] = [
+
+// Constants
+const ALLOWED_RANGES: Range[] = [
   "all_time",
   "today",
   "yesterday",
   "week",
   "month",
 ];
+
+// --- Handlers ---
+
 export const getAllTasksHandler = async (req: AuthenticatedRequest) => {
   try {
-    const { searchParams } = new URL(req.url);
-    const filter = searchParams.get("filter") as "active" | "completed" | null;
-    const range = (searchParams.get("range") as Range) || "all_time";
-    const fromParam = searchParams.get("from");
-    const toParam = searchParams.get("to");
+    const { filter, range, fromParam, toParam, page, limit, skip } =
+      parseTaskQueryParams(req.url);
 
-    const page = Math.max(1, Number(searchParams.get("page") ?? 1));
-    const limit = Math.min(
-      200,
-      Math.max(1, Number(searchParams.get("limit") ?? 100)),
-    );
-    const skip = (page - 1) * limit;
-
-    const { userId, guestId } = req.user;
-    const taskQuery: TaskQuery = userId ? { userId } : { guestId };
-    if (!allowedRanges.includes(range)) {
+    if (!ALLOWED_RANGES.includes(range)) {
       return NextResponse.json(
         { success: false, message: "النطاق غير صحيح" },
         { status: 400 },
       );
     }
-    // Update taskQuery with date filtering
-    if (fromParam || toParam) {
-      taskQuery.createdAt = {};
-      if (fromParam) taskQuery.createdAt.$gte = new Date(fromParam);
-      if (toParam) taskQuery.createdAt.$lte = new Date(toParam);
-    } else if (range !== "all_time") {
-      const now = new Date();
-      const startOfToday = new Date(now.setHours(0, 0, 0, 0));
 
-      if (range === "today") {
-        taskQuery.createdAt = { $gte: startOfToday };
-      } else if (range === "yesterday") {
-        const startOfYesterday = new Date(startOfToday);
-        startOfYesterday.setDate(startOfYesterday.getDate() - 1);
-        const endOfYesterday = new Date(startOfToday);
-        endOfYesterday.setMilliseconds(-1);
-        taskQuery.createdAt = { $gte: startOfYesterday, $lte: endOfYesterday };
-      } else if (range === "week") {
-        const sevenDaysAgo = new Date(startOfToday);
-        sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
-        taskQuery.createdAt = { $gte: sevenDaysAgo };
-      } else if (range === "month") {
-        const startOfMonth = new Date(
-          startOfToday.getFullYear(),
-          startOfToday.getMonth(),
-          1,
-        );
-        taskQuery.createdAt = { $gte: startOfMonth };
-      }
+    const { userId, guestId } = getAuthContext(req);
+    const taskQuery: TaskQuery = userId ? { userId } : { guestId };
+
+    const dateQuery = buildTaskQuery(range, fromParam, toParam);
+    if (dateQuery) {
+      taskQuery.createdAt = dateQuery;
     }
+
     await connect();
 
     const [result] = await Task.aggregate([
-      { $match: taskQuery }, // First match only by user ownership
+      { $match: taskQuery },
       {
         $facet: {
-          // Facet for fetching filtered tasks
           tasks: [
-            // Apply filter if one exists
             ...(filter === "active" ? [{ $match: { completed: false } }] : []),
             ...(filter === "completed"
               ? [{ $match: { completed: true } }]
@@ -93,7 +74,6 @@ export const getAllTasksHandler = async (req: AuthenticatedRequest) => {
             { $skip: skip },
             { $limit: limit },
           ],
-          // Facet for counting total filtered docs (for pagination)
           total: [
             ...(filter === "active" ? [{ $match: { completed: false } }] : []),
             ...(filter === "completed"
@@ -101,7 +81,6 @@ export const getAllTasksHandler = async (req: AuthenticatedRequest) => {
               : []),
             { $count: "count" },
           ],
-          // Facet for calculating stats based on the filtered result set
           stats: [
             {
               $group: {
@@ -116,16 +95,9 @@ export const getAllTasksHandler = async (req: AuthenticatedRequest) => {
 
     const tasks = result.tasks || [];
     const total = result.total[0]?.count || 0;
-
-    // Process stats
-    const statsArray = result.stats || [];
-    const activeCount =
-      statsArray.find((s: any) => s._id === false)?.count || 0;
-    const completedCount =
-      statsArray.find((s: any) => s._id === true)?.count || 0;
-    const allCount = activeCount + completedCount;
-
     const totalPages = Math.ceil(total / limit);
+
+    const stats = calculateTaskStats(result.stats || []);
 
     return NextResponse.json(
       {
@@ -140,27 +112,98 @@ export const getAllTasksHandler = async (req: AuthenticatedRequest) => {
           hasPrevPage: page > 1,
         },
         range,
-        stats: {
-          all: allCount,
-          active: activeCount,
-          completed: completedCount,
-        },
+        stats,
       },
       { status: 200 },
     );
   } catch (error) {
-    console.error("Get tasks error:", error);
-    return NextResponse.json(
-      { success: false, message: "حدث خطأ ما" },
-      { status: 500 },
+    return handleError(error);
+  }
+};
+export const getIncompleteTasksHandler = async (req: AuthenticatedRequest) => {
+  try {
+    const { searchParams } = new URL(req.url);
+    const page = Math.max(1, Number(searchParams.get("page") ?? 1));
+    const limit = Math.min(
+      100,
+      Math.max(1, Number(searchParams.get("limit") ?? 20)),
     );
+    const skip = (page - 1) * limit;
+
+    const { authId } = getAuthContext(req);
+
+    await connect();
+
+    const query = { completed: false, ...authId };
+
+    const total = await Task.countDocuments(query);
+    const tasks = await Task.find(query)
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit);
+
+    const totalPages = Math.ceil(total / limit);
+
+    return NextResponse.json({
+      success: true,
+      tasks: tasks.map(tasksResponse),
+      pagination: {
+        total,
+        page,
+        limit,
+        totalPages,
+        hasNextPage: page < totalPages,
+        hasPrevPage: page > 1,
+      },
+    });
+  } catch (error) {
+    return handleError(error);
+  }
+};
+export const getCompletedTasksHandler = async (req: AuthenticatedRequest) => {
+  try {
+    const { searchParams } = new URL(req.url);
+    const page = Math.max(1, Number(searchParams.get("page") ?? 1));
+    const limit = Math.min(
+      100,
+      Math.max(1, Number(searchParams.get("limit") ?? 20)),
+    );
+    const skip = (page - 1) * limit;
+
+    const { authId } = getAuthContext(req);
+
+    await connect();
+
+    const query = { completed: true, ...authId };
+
+    const total = await Task.countDocuments(query);
+    const tasks = await Task.find(query)
+      .sort({ completedAt: -1 })
+      .skip(skip)
+      .limit(limit);
+
+    const totalPages = Math.ceil(total / limit);
+
+    return NextResponse.json({
+      success: true,
+      tasks: tasks.map(tasksResponse),
+      pagination: {
+        total,
+        page,
+        limit,
+        totalPages,
+        hasNextPage: page < totalPages,
+        hasPrevPage: page > 1,
+      },
+    });
+  } catch (error) {
+    return handleError(error);
   }
 };
 
 export const createTaskHandler = async (req: AuthenticatedRequest) => {
   try {
-    const { userId, guestId } = req.user;
-    const authId = userId ? { userId } : { guestId };
+    const { authId } = getAuthContext(req);
     const body = await req.json();
     const validationResult = createTaskSchema.safeParse(body);
 
@@ -176,11 +219,21 @@ export const createTaskHandler = async (req: AuthenticatedRequest) => {
     }
 
     await connect();
+    const lastTask = await Task.findOne({ completed: false, ...authId }, null, {
+      sort: { createdAt: -1 },
+    });
 
+    const nextTaskId = lastTask?._id;
     const task = await Task.create({
       ...validationResult.data,
+      nextTaskId,
       ...authId,
     });
+
+    if (lastTask) {
+      lastTask.prevTaskId = task._id;
+      await lastTask.save();
+    }
 
     return NextResponse.json(
       {
@@ -191,11 +244,7 @@ export const createTaskHandler = async (req: AuthenticatedRequest) => {
       { status: 201 },
     );
   } catch (error) {
-    console.error("Create task error:", error);
-    return NextResponse.json(
-      { success: false, message: "حدث خطأ ما" },
-      { status: 500 },
-    );
+    return handleError(error);
   }
 };
 
@@ -205,9 +254,8 @@ export const updateTaskHandler = async (
 ) => {
   try {
     const { id } = await context!.params;
-    const { userId, guestId } = req.user;
+    const { userId, guestId } = getAuthContext(req);
 
-    // 2. Parse and validate request body
     const body = await req.json();
     const validationResult = updateTaskSchema.safeParse(body);
 
@@ -225,37 +273,42 @@ export const updateTaskHandler = async (
     await connect();
 
     const task = await Task.findById(id);
-    const taskUserId = task?.userId;
-    const taskGuestId = task?.guestId;
-    if (!task) {
-      return NextResponse.json(
-        { success: false, message: "المهمة غير موجودة" },
-        { status: 404 },
-      );
-    }
-    if (userId) {
-      // 4. Verify ownership
-      if (taskUserId !== userId) {
-        return NextResponse.json(
-          { success: false, message: "غير مصرح - لا يمكنك تعديل هذه المهمة" },
-          { status: 403 },
+    const verification = verifyTaskOwnership(task, userId, guestId, "update");
+    if (verification.error) return verification.error;
+
+    const taskStatus = task?.completed;
+    let updatedTask;
+
+    const updateData = validationResult.data;
+
+    if (taskStatus !== updateData.completed) {
+      if (updateData.completed) {
+        updatedTask = await Task.findByIdAndUpdate(
+          id,
+          {
+            $set: {
+              ...updateData,
+              completedAt: new Date(),
+              prevTaskId: null,
+              nextTaskId: null,
+            },
+          },
+          { new: true, runValidators: true },
+        );
+      } else {
+        updatedTask = await Task.findByIdAndUpdate(
+          id,
+          { $set: { ...updateData, completedAt: null } },
+          { new: true, runValidators: true },
         );
       }
     } else {
-      // 4. Verify ownership
-      if (taskGuestId !== guestId) {
-        return NextResponse.json(
-          { success: false, message: "غير مصرح - لا يمكنك تعديل هذه المهمة" },
-          { status: 403 },
-        );
-      }
+      updatedTask = await Task.findByIdAndUpdate(
+        id,
+        { $set: updateData },
+        { new: true, runValidators: true },
+      );
     }
-    // 5. Update task
-    const updatedTask = await Task.findByIdAndUpdate(
-      id,
-      { $set: validationResult.data },
-      { new: true, runValidators: true },
-    );
 
     return NextResponse.json(
       {
@@ -266,11 +319,7 @@ export const updateTaskHandler = async (
       { status: 200 },
     );
   } catch (error) {
-    console.error("Update task error:", error);
-    return NextResponse.json(
-      { success: false, message: "حدث خطأ ما" },
-      { status: 500 },
-    );
+    return handleError(error);
   }
 };
 
@@ -280,49 +329,36 @@ export const deleteTaskHandler = async (
 ) => {
   try {
     const { id } = await context!.params;
-    const { userId, guestId } = req.user;
+    const { userId, guestId } = getAuthContext(req);
 
     await connect();
 
     const task = await Task.findById(id);
-    const taskUserId = task?.userId;
-    const taskGuestId = task?.guestId;
-    if (!task) {
+    const verification = verifyTaskOwnership(task, userId, guestId, "delete");
+    if (verification.error) return verification.error;
+    const deletedTask = await Task.findByIdAndDelete(id);
+    if (!deletedTask)
       return NextResponse.json(
-        { success: false, message: "المهمة غير موجودة" },
+        { success: false, message: "لم يتم العثور على المهمة" },
         { status: 404 },
       );
+    if (deletedTask.prevTaskId) {
+      await Task.findByIdAndUpdate(deletedTask.prevTaskId, {
+        nextTaskId: deletedTask.nextTaskId,
+      });
     }
-    if (userId) {
-      // 4. Verify ownership
-      if (taskUserId !== userId) {
-        return NextResponse.json(
-          { success: false, message: "غير مصرح - لا يمكنك حذف هذه المهمة" },
-          { status: 403 },
-        );
-      }
-    } else {
-      // 4. Verify ownership
-      if (taskGuestId !== guestId) {
-        return NextResponse.json(
-          { success: false, message: "غير مصرح - لا يمكنك حذف هذه المهمة" },
-          { status: 403 },
-        );
-      }
+    if (deletedTask.nextTaskId) {
+      await Task.findByIdAndUpdate(deletedTask.nextTaskId, {
+        prevTaskId: deletedTask.prevTaskId,
+      });
     }
-
-    await Task.findByIdAndDelete(id);
 
     return NextResponse.json(
       { success: true, message: "تم حذف المهمة بنجاح" },
       { status: 200 },
     );
   } catch (error) {
-    console.error("Delete task error:", error);
-    return NextResponse.json(
-      { success: false, message: "حدث خطأ ما" },
-      { status: 500 },
-    );
+    return handleError(error);
   }
 };
 
@@ -332,34 +368,14 @@ export const getSingleTask = async (
 ) => {
   try {
     const { id } = await context!.params;
-    const { userId, guestId } = req.user;
+    const { userId, guestId } = getAuthContext(req);
 
     await connect();
 
     const task = await Task.findById(id);
-    const taskUserId = task?.userId;
-    const taskGuestId = task?.guestId;
-    if (!task) {
-      return NextResponse.json(
-        { success: false, message: "المهمة غير موجودة" },
-        { status: 404 },
-      );
-    }
-    if (userId) {
-      if (taskUserId !== userId) {
-        return NextResponse.json(
-          { success: false, message: "غير مصرح - لا يمكنك عرض هذه المهمة" },
-          { status: 403 },
-        );
-      }
-    } else {
-      if (taskGuestId !== guestId) {
-        return NextResponse.json(
-          { success: false, message: "غير مصرح - لا يمكنك عرض هذه المهمة" },
-          { status: 403 },
-        );
-      }
-    }
+    const verification = verifyTaskOwnership(task, userId, guestId, "access");
+    if (verification.error) return verification.error;
+
     return NextResponse.json(
       {
         success: true,
@@ -369,15 +385,9 @@ export const getSingleTask = async (
       { status: 200 },
     );
   } catch (error) {
-    console.error("Delete task error:", error);
-    return NextResponse.json(
-      { success: false, message: "حدث خطأ ما" },
-      { status: 500 },
-    );
+    return handleError(error);
   }
 };
-
-// app/api/tasks/[id]/reorder/route.ts
 
 export const reorderTaskHandler = async (
   req: AuthenticatedRequest,
@@ -387,53 +397,19 @@ export const reorderTaskHandler = async (
     const { id } = await context!.params;
     const { newPrevTaskId, newNextTaskId } = await req.json();
 
-    const userId = req.user.userId;
-    const guestId = req.user.guestId;
+    const { userId, guestId } = getAuthContext(req);
 
     await connect();
 
     const task = await Task.findById(id);
+    const verification = verifyTaskOwnership(task, userId, guestId, "reorder");
+    if (verification.error) return verification.error;
 
-    if (!task) {
-      return NextResponse.json(
-        { success: false, message: "المهمة غير موجودة" },
-        { status: 404 },
-      );
-    }
-
-    const taskUserId = task.userId;
-    const taskGuestId = task.guestId;
-
-    if (userId) {
-      if (taskUserId !== userId) {
-        return NextResponse.json(
-          {
-            success: false,
-            message: "غير مصرح - لا يمكنك إعادة ترتيب هذه المهمة",
-          },
-          { status: 403 },
-        );
-      }
-    } else {
-      if (taskGuestId !== guestId) {
-        return NextResponse.json(
-          {
-            success: false,
-            message: "غير مصرح - لا يمكنك إعادة ترتيب هذه المهمة",
-          },
-          { status: 403 },
-        );
-      }
-    }
-
-    // Start a session for transaction
     const session = await Task.startSession();
 
     try {
       await session.withTransaction(async () => {
-        // === STEP 1: Remove task from old position ===
-
-        // Update old previous task (if exists)
+        // Step 1: Remove from old position
         if (task.prevTaskId) {
           await Task.findByIdAndUpdate(
             task.prevTaskId,
@@ -442,7 +418,6 @@ export const reorderTaskHandler = async (
           );
         }
 
-        // Update old next task (if exists)
         if (task.nextTaskId) {
           await Task.findByIdAndUpdate(
             task.nextTaskId,
@@ -451,14 +426,11 @@ export const reorderTaskHandler = async (
           );
         }
 
-        // === STEP 2: Insert task in new position ===
-
-        // Update the moved task's pointers
+        // Step 2: Insert in new position
         task.prevTaskId = newPrevTaskId || null;
         task.nextTaskId = newNextTaskId || null;
         await task.save({ session });
 
-        // Update new previous task (if exists)
         if (newPrevTaskId) {
           await Task.findByIdAndUpdate(
             newPrevTaskId,
@@ -467,7 +439,6 @@ export const reorderTaskHandler = async (
           );
         }
 
-        // Update new next task (if exists)
         if (newNextTaskId) {
           await Task.findByIdAndUpdate(
             newNextTaskId,
@@ -477,7 +448,6 @@ export const reorderTaskHandler = async (
         }
       });
 
-      // Fetch the updated task
       const updatedTask = await Task.findById(id);
 
       return NextResponse.json(
@@ -492,10 +462,6 @@ export const reorderTaskHandler = async (
       await session.endSession();
     }
   } catch (error) {
-    console.error("Reorder task error:", error);
-    return NextResponse.json(
-      { success: false, message: "حدث خطأ ما" },
-      { status: 500 },
-    );
+    return handleError(error);
   }
 };

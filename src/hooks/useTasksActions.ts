@@ -17,10 +17,10 @@ const useTasksActions = () => {
   const { hasFetched, tasks, loading } = useSelector(
     (state: RootState) => state.AllTasks,
   );
-  const { homeTaskFilter } = useSelector((state: RootState) => state.Settings);
+  // const { homeTaskFilter } = useSelector((state: RootState) => state.Settings);
   const fetchAllTasks = useCallback(() => {
-    dispatch(getAllTasks({ range: homeTaskFilter, filter: "active" }));
-  }, [dispatch, homeTaskFilter]);
+    dispatch(getAllTasks());
+  }, [dispatch]);
 
   const createTask = async (task: ITask) => {
     setCreatePostLoading(true);
@@ -43,9 +43,6 @@ const useTasksActions = () => {
     );
     dispatch(updateTaskThunk({ id, changes }));
     if (changes.completed) {
-      console.log(
-        "[useTasksActions] Task marked completed, setting 1s timeout for removal...",
-      );
       setTimeout(() => {
         console.log(
           "[useTasksActions] Timeout reached, dispatching removeTask for id:",

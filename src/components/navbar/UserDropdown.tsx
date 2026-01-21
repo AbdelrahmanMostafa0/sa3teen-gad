@@ -53,7 +53,7 @@ export function UserDropdown() {
             </div>
           </DropdownMenuLabel>
           <DropdownMenuSeparator className="my-2" />
-          <DropdownMenuItem
+          {/* <DropdownMenuItem
             asChild
             dir="rtl"
             className="cursor-pointer rounded-md py-2.5 px-3"
@@ -62,7 +62,7 @@ export function UserDropdown() {
               <User className="h-4 w-4 text-muted-foreground" />
               <span className="text-sm">الملف الشخصي</span>
             </Link>
-          </DropdownMenuItem>
+          </DropdownMenuItem> */}
           <DropdownMenuItem
             asChild
             dir="rtl"

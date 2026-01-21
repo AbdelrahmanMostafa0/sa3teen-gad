@@ -5,6 +5,7 @@ export interface TaskType {
   completed?: boolean;
   createdAt: string;
   updatedAt?: string;
+  completedAt?: string;
   tags?: string[]; // Optional tags for categorization
 }
 
@@ -27,6 +28,7 @@ export interface ITask {
   completed?: boolean;
   createdAt?: Date | string;
   updatedAt?: Date | string;
+  completedAt?: Date | string;
 }
 
 // export const  rangeType ="all_time"  as const "all_time" | "today" | "week" | "month";

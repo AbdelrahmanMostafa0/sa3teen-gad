@@ -54,6 +54,11 @@ const TaskSchema = new Schema<ITask>(
       type: Boolean,
       default: false,
     },
+    completedAt: {
+      type: Date,
+      index: true,
+      default: null,
+    },
   },
   {
     timestamps: true,
@@ -68,6 +73,7 @@ export const tasksResponse = (task: ITask) => ({
   prevTaskId: task.prevTaskId,
   nextTaskId: task.nextTaskId,
   completed: task.completed,
+  completedAt: task.completedAt,
   createdAt: task.createdAt,
   updatedAt: task.updatedAt,
 });

@@ -16,7 +16,7 @@ export default function UserProfileSettings() {
   const { user } = useUser();
 
   const {
-    // getUserSettings,
+    getUserSettings,
     updateSettings,
     loading: updateSettingsLoading,
     error: updateSettingsError,
@@ -25,13 +25,17 @@ export default function UserProfileSettings() {
   //   getUserSettings();
   // }, []);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const handleUpdate = async (data: any) => {
     try {
       await updateSettings(data);
       setSuccessMessage("تم حفظ التغييرات بنجاح");
       setTimeout(() => setSuccessMessage(null), 3000);
     } catch (error) {
+      await getUserSettings();
       console.error("Update failed:", error);
+      setError("حدث خطأ أثناء حفظ التغييرات");
+      setTimeout(() => setError(null), 3000);
     }
   };
 
@@ -54,12 +58,10 @@ export default function UserProfileSettings() {
         )}
 
         {/* Error Message */}
-        {updateSettingsError && (
+        {error && (
           <div className="flex items-center gap-2 p-4 bg-destructive/10 border border-destructive/20 rounded-lg">
             <XCircle className="w-5 h-5 text-destructive" />
-            <p className="text-destructive font-medium">
-              {updateSettingsError}
-            </p>
+            <p className="text-destructive font-medium">{error || "حدث خطأ أثناء حفظ التغييرات"}</p>
           </div>
         )}
 
@@ -71,10 +73,10 @@ export default function UserProfileSettings() {
             onUpdate={handleUpdate}
             loading={updateSettingsLoading}
           />
-          <TaskSettingsSection
+          {/* <TaskSettingsSection
             onUpdate={handleUpdate}
             loading={updateSettingsLoading}
-          />
+          /> */}
           <WaterReminderSection
             onUpdate={handleUpdate}
             loading={updateSettingsLoading}

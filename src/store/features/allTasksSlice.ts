@@ -1,3 +1,4 @@
+import { createTask, getIncompleteTasks } from "@/services/tasksApis";
 import { ITask } from "@/types/tasks";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
@@ -36,37 +37,9 @@ const initialState: AllTasksState = {
 
 export const getAllTasks = createAsyncThunk(
   "allTasks/getAllTasks",
-  async ({
-    range,
-    filter,
-  }: {
-    range?: "today" | "week" | "month" | "all_time";
-    filter?: string;
-  }) => {
-    try {
-      const response = await axios.get("/api/tasks", {
-        params: {
-          range: range || "all_time",
-          filter,
-        },
-      });
-      return response.data;
-    } catch (err) {
-      throw err;
-    }
-  },
+  getIncompleteTasks,
 );
-export const postTask = createAsyncThunk(
-  "allTasks/postTask",
-  async (task: ITask) => {
-    try {
-      const response = await axios.post("/api/tasks", task);
-      return response.data.task;
-    } catch (err) {
-      throw err;
-    }
-  },
-);
+export const postTask = createAsyncThunk("allTasks/postTask", createTask);
 
 export const updateTask = createAsyncThunk(
   "allTasks/updateTask",

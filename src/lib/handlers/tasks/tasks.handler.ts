@@ -219,30 +219,61 @@ export const createTaskHandler = async (req: AuthenticatedRequest) => {
     }
 
     await connect();
-    const lastTask = await Task.findOne({ completed: false, ...authId }, null, {
-      sort: { createdAt: -1 },
-    });
 
-    const nextTaskId = lastTask?._id;
-    const task = await Task.create({
-      ...validationResult.data,
-      nextTaskId,
-      ...authId,
-    });
+    const session = await Task.startSession();
 
-    if (lastTask) {
-      lastTask.prevTaskId = task._id;
-      await lastTask.save();
+    try {
+      let createdTask;
+
+      await session.withTransaction(async () => {
+        // Find head task and create new task in a single transaction
+        const headTask = await Task.findOne(
+          {
+            ...authId,
+            completed: false,
+            prevTaskId: null,
+          },
+          null,
+          { session },
+        );
+
+        const nextTaskId = headTask?._id ?? null;
+
+        // Create the new task
+        const [task] = await Task.create(
+          [
+            {
+              nextTaskId,
+              ...validationResult.data,
+              ...authId,
+            },
+          ],
+          { session },
+        );
+
+        // Update the old head task's prevTaskId if it exists
+        if (headTask) {
+          await Task.updateOne(
+            { _id: headTask._id },
+            { $set: { prevTaskId: task._id } },
+            { session },
+          );
+        }
+
+        createdTask = task;
+      });
+
+      return NextResponse.json(
+        {
+          success: true,
+          message: "تم إنشاء المهمة بنجاح",
+          task: tasksResponse(createdTask!),
+        },
+        { status: 201 },
+      );
+    } finally {
+      await session.endSession();
     }
-
-    return NextResponse.json(
-      {
-        success: true,
-        message: "تم إنشاء المهمة بنجاح",
-        task: tasksResponse(task),
-      },
-      { status: 201 },
-    );
   } catch (error) {
     return handleError(error);
   }
@@ -395,60 +426,125 @@ export const reorderTaskHandler = async (
 ) => {
   try {
     const { id } = await context!.params;
+    const currentTaskId = id;
     const { newPrevTaskId, newNextTaskId } = await req.json();
 
     const { userId, guestId } = getAuthContext(req);
 
     await connect();
 
-    const task = await Task.findById(id);
+    const task = await Task.findById(currentTaskId);
+    if (!task)
+      return NextResponse.json(
+        { success: false, message: "لم يتم العثور على المهمة" },
+        { status: 404 },
+      );
+
     const verification = verifyTaskOwnership(task, userId, guestId, "reorder");
     if (verification.error) return verification.error;
+
+    // Early return if position hasn't changed
+    if (
+      task.prevTaskId === newPrevTaskId &&
+      task.nextTaskId === newNextTaskId
+    ) {
+      return NextResponse.json(
+        {
+          success: true,
+          message: "تم إعادة الترتيب بنجاح",
+          task: tasksResponse(task),
+        },
+        { status: 200 },
+      );
+    }
+
+    // Fetch neighbor tasks and verify they exist
+    const prevTask = newPrevTaskId ? await Task.findById(newPrevTaskId) : null;
+    const nextTask = newNextTaskId ? await Task.findById(newNextTaskId) : null;
+
+    if (newPrevTaskId && !prevTask) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: "المهمة السابقة غير موجودة",
+        },
+        { status: 400 },
+      );
+    }
+
+    if (newNextTaskId && !nextTask) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: "المهمة التالية غير موجودة",
+        },
+        { status: 400 },
+      );
+    }
 
     const session = await Task.startSession();
 
     try {
       await session.withTransaction(async () => {
+        // Build all updates as a single bulkWrite operation
+        const bulkOps = [];
+
         // Step 1: Remove from old position
         if (task.prevTaskId) {
-          await Task.findByIdAndUpdate(
-            task.prevTaskId,
-            { nextTaskId: task.nextTaskId },
-            { session },
-          );
+          bulkOps.push({
+            updateOne: {
+              filter: { _id: task.prevTaskId },
+              update: { $set: { nextTaskId: task.nextTaskId } },
+            },
+          });
         }
 
         if (task.nextTaskId) {
-          await Task.findByIdAndUpdate(
-            task.nextTaskId,
-            { prevTaskId: task.prevTaskId },
-            { session },
-          );
+          bulkOps.push({
+            updateOne: {
+              filter: { _id: task.nextTaskId },
+              update: { $set: { prevTaskId: task.prevTaskId } },
+            },
+          });
         }
 
-        // Step 2: Insert in new position
-        task.prevTaskId = newPrevTaskId || null;
-        task.nextTaskId = newNextTaskId || null;
-        await task.save({ session });
+        // Step 2: Insert in new position - update current task
+        bulkOps.push({
+          updateOne: {
+            filter: { _id: currentTaskId },
+            update: {
+              $set: {
+                prevTaskId: newPrevTaskId || null,
+                nextTaskId: newNextTaskId || null,
+              },
+            },
+          },
+        });
 
+        // Update new neighbors
         if (newPrevTaskId) {
-          await Task.findByIdAndUpdate(
-            newPrevTaskId,
-            { nextTaskId: id },
-            { session },
-          );
+          bulkOps.push({
+            updateOne: {
+              filter: { _id: newPrevTaskId },
+              update: { $set: { nextTaskId: currentTaskId } },
+            },
+          });
         }
 
         if (newNextTaskId) {
-          await Task.findByIdAndUpdate(
-            newNextTaskId,
-            { prevTaskId: id },
-            { session },
-          );
+          bulkOps.push({
+            updateOne: {
+              filter: { _id: newNextTaskId },
+              update: { $set: { prevTaskId: currentTaskId } },
+            },
+          });
         }
+
+        // Execute all operations in a single round-trip
+        await Task.bulkWrite(bulkOps, { session });
       });
 
-      const updatedTask = await Task.findById(id);
+      const updatedTask = await Task.findById(currentTaskId);
 
       return NextResponse.json(
         {

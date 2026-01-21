@@ -8,11 +8,10 @@ export const createTaskSchema = z.object({
       z.object({
         title: z.string(),
         done: z.boolean().default(false),
-      })
+      }),
     )
     .optional()
     .default([]),
-
   completed: z.boolean().optional().default(false),
 });
 
@@ -28,7 +27,7 @@ export const updateTaskSchema = z.object({
       z.object({
         title: z.string(),
         done: z.boolean(),
-      })
+      }),
     )
     .optional(),
   completed: z.boolean().optional(),

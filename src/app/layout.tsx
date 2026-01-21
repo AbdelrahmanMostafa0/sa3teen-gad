@@ -9,6 +9,7 @@ import PrayerReminder from "@/components/reminders/PrayerReminder";
 import SyncLocalstorageDataProvider from "@/providers/SyncLocalstorageDataProvider";
 import Footer from "@/components/Footer";
 import { GoogleOAuthProvider } from "@react-oauth/google";
+import ServiceWorkerRegistration from "@/components/ServiceWorkerRegistration";
 export const metadata: Metadata = {
   title: "ساعتين جد",
   metadataBase: new URL("https://sa3teen-gad.vercel.app"),
@@ -43,6 +44,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ar" suppressHydrationWarning>
+      <head>
+        <link rel="manifest" href="/manifest.json" />
+        <meta name="theme-color" content="#0a0a0a" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+        <meta name="apple-mobile-web-app-title" content="ساعتين جد" />
+        <link rel="apple-touch-icon" href="/icons/icon-192x192.png" />
+      </head>
       <body
         dir="rtl"
         className="bg-background text-foreground transition-colors duration-300 md:pb-0 pb-16"
@@ -70,6 +79,7 @@ export default function RootLayout({
             </ThemeProvider>
           </ReduxProvider>
         </GoogleOAuthProvider>
+        <ServiceWorkerRegistration />
       </body>
     </html>
   );

@@ -68,6 +68,50 @@
 - Audio and visual notifications
 - Dedicated settings page for prayer reminders
 
+### 👤 Guest User Handling
+
+The application provides a seamless experience for visitors without requiring immediate registration.
+
+- **Mechanism**: A unique `guestId` is generated and tracked for non-authenticated users.
+- **Data Isolation**: Tasks and settings are securely associated with this ID, ensuring guests only see their own data.
+- **Implementation Details**: The backend automatically switches contexts based on authentication status.
+
+```typescript
+// Backend logic to switch between User ID and Guest ID
+export function getAuthContext(req: AuthenticatedRequest) {
+  const { userId, guestId } = req.user;
+  // Prioritize registered userId, fallback to guestId
+  const authId = userId ? { userId } : { guestId };
+  return { userId, guestId, authId };
+}
+```
+
+### 🔢 Drag & Drop Implementation
+
+I use **Fractional Indexing** to handle task reordering efficiently. This allows to update the position of a single task without needing to re-index the entire list.
+
+- **How it works**: Every task has a floating-point `order` value.
+- **Reordering**: When a task is moved, its new `order` is calculated based on its new neighbors.
+  - **Between two tasks**: Average of the two neighbors' orders.
+  - **At the top**: High-ranking neighbor + buffer (e.g., 10000).
+  - **At the bottom**: Low-ranking neighbor / 2.
+- **Performance**: This results in O(1) writes for reordering operations, making it highly scalable.
+
+```typescript
+// Logic to calculate the new order index
+let newOrder: number;
+if (prevOrder !== null && nextOrder !== null) {
+  // Insert between two tasks: use midpoint
+  newOrder = (prevOrder + nextOrder) / 2;
+} else if (nextOrder !== null) {
+  // Insert at the top (before the current first task)
+  newOrder = nextOrder + 10000;
+} else if (prevOrder !== null) {
+  // Insert at the bottom (after the current last task)
+  newOrder = prevOrder / 2;
+}
+```
+
 ---
 
 ## 🔮 Planned Features
@@ -82,8 +126,9 @@
 
 ### Core
 
-- **[Next.js 16.0.7](https://nextjs.org/)** - React framework with App Router
-- **[React 19](https://react.dev/)** - UI library
+- **[Next.js 16.0.10](https://nextjs.org/)** - React framework with App Router
+- **[React 19.2.1](https://react.dev/)** - UI library
+- **[DNDKit ](https://dndkit.com/)** - Drag and drop library
 - **[TypeScript](https://www.typescriptlang.org/)** - Type safety
 - **[Redux Toolkit](https://redux-toolkit.js.org/)** - State management
 

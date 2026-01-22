@@ -108,7 +108,7 @@ const PrayerReminder = () => {
       initial={{ opacity: 0, y: 100 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: 100 }}
-      className="fixed bottom-5 left-1/2 z-50 transform -translate-x-1/2 w-full max-w-[95vw] md:max-w-md bg-card/95 dark:bg-card/90 backdrop-blur-md rounded-xl shadow-2xl border border-border/50 flex items-center gap-4 p-5"
+      className="fixed bottom-5 left-1/2 z-[60] transform -translate-x-1/2 w-full max-w-[95vw] md:max-w-md bg-card/95 dark:bg-card/90 backdrop-blur-md rounded-xl shadow-2xl border border-border/50 flex items-center gap-4 p-5"
     >
       <div className="flex-shrink-0">
         <Image

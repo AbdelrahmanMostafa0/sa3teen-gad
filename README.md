@@ -2,11 +2,11 @@
   <img src="public/banners/readme-banner.png" alt="Sa3teen Gad Banner" width="100%">
 </p>
 
-# Sa3teen Gad (ساعتين جد) 🚀
+# Sa3teen Gad (ساعتين جد)
 
 > **Your personal productivity companion for focused work, prayer times, and healthy habits.**
 
-**Sa3teen Gad** (ساعتين جد - "Two Hours of Serious Work") is a productivity web application designed to help you stay focused and balanced throughout your workday. Built with Arabic speakers in mind, it combines the Pomodoro technique, task management, Islamic prayer times, and wellness reminders in a beautiful RTL interface.
+**Sa3teen Gad** : is a productivity web application designed to help you stay focused and balanced throughout your workday. Built with Arabic speakers in mind, it combines the Pomodoro technique, task management, Islamic prayer times, and wellness reminders in a beautiful minimalistic interface.
 
 > ⚠️ **Status**: This app is currently under active development. Some features are planned but not yet implemented.
 
@@ -18,17 +18,19 @@
 
 - **Focus sessions** with customizable duration (default: 25 minutes)
 - **Short breaks** to recharge (default: 5 minutes)
+- **Long breaks** to recharge (default: 15 minutes)
 - Audio notifications when timers complete
 - Auto-switch between focus and break modes
 - Visual timer display with start/pause/reset controls
 
 ### ✅ Task Management
 
-- Create, edit, and delete tasks
-- Mark tasks as completed
-- Persistent storage using localStorage
-- Clean, minimal task interface
-- Support for task descriptions and timestamps
+- **CRUD Operations**: Create, edit, delete, and mark tasks as completed.
+- **Drag & Drop Sorting**: Intuitive task reordering using `dnd-kit` and fractional indexing.
+- **Subtasks Support**: Break down tasks into smaller actionable items.
+<!-- - **Advanced Filtering**: Filter tasks by time range (Today, Week, Month) and status. -->
+- **Cloud Storage**: Secure data persistence using MongoDB.
+- **Pagination**: Efficient client-side pagination for performance.
 
 ### 🕌 Prayer Times
 
@@ -53,12 +55,6 @@
 - Set your location for accurate prayer times
 - Toggle auto-start features
 - Persistent settings storage
-
-### 🌙 Long Break Timer
-
-- Extended breaks after multiple Pomodoro sessions
-- Configurable long break duration
-- Helps prevent burnout with scheduled longer rest periods
 
 ### 🔔 Prayer Notifications
 
@@ -86,7 +82,7 @@ export function getAuthContext(req: AuthenticatedRequest) {
 }
 ```
 
-### 🔢 Drag & Drop Implementation
+### 🔢 Task Drag & Drop
 
 I use **Fractional Indexing** to handle task reordering efficiently. This allows to update the position of a single task without needing to re-index the entire list.
 

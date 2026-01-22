@@ -42,7 +42,7 @@ const TaskModal = ({
     const [localTask, setLocalTask] = useState<ITask>(task);
     const isArabic = detectStartingLang(localTask.title) === "arabic";
     const [checked, setChecked] = useState(task.completed);
-    const taskId = task.id || (task as any)._id;
+    const taskId = task.id
 
     const {
         register,
@@ -132,8 +132,8 @@ const TaskModal = ({
                                     whileTap={{ scale: 0.9 }}
                                     onClick={() => handleCheckboxClick(!checked)}
                                     className={`flex-shrink-0 h-8 w-8 rounded-lg border-2 flex items-center justify-center transition-all duration-200 ${checked
-                                            ? "bg-green-500 border-green-500 shadow-lg shadow-green-500/20"
-                                            : "border-slate-300 dark:border-foreground/30 hover:border-slate-400 dark:hover:border-foreground/50 hover:bg-slate-100 dark:hover:bg-foreground/5"
+                                        ? "bg-green-500 border-green-500 shadow-lg shadow-green-500/20"
+                                        : "border-slate-300 dark:border-foreground/30 hover:border-slate-400 dark:hover:border-foreground/50 hover:bg-slate-100 dark:hover:bg-foreground/5"
                                         }`}
                                 >
                                     <AnimatePresence>
@@ -193,42 +193,6 @@ const TaskModal = ({
                 </div>
 
                 <div className="p-6 space-y-6 bg-white dark:bg-background">
-                    {/* Description section */}
-                    {/* <div className="space-y-3">
-                        <Label
-                            htmlFor="description"
-                            className="text-sm font-semibold text-slate-700 dark:text-foreground/70 flex items-center gap-2"
-                        >
-                            <span className="w-1 h-4 bg-slate-400 dark:bg-foreground/40 rounded-full"></span>
-                            الوصف
-                        </Label>
-                        <div className="relative">
-                            <textarea
-                                id="description"
-                                {...register("description", {
-                                    maxLength: {
-                                        value: 2000,
-                                        message: "الوصف طويل جداً (حد أقصى 2000 حرف)",
-                                    },
-                                })}
-                                className={`min-h-[140px] resize-none rounded-xl border w-full p-4 outline-none focus:border-slate-400 dark:focus:border-foreground/30 focus:ring-4 focus:ring-slate-100 dark:focus:ring-foreground/5 bg-slate-50 dark:bg-muted/30 transition-all placeholder:text-slate-400 dark:placeholder:text-foreground/40 text-slate-900 dark:text-foreground ${errors.description
-                                    ? "border-red-500"
-                                    : "border-slate-200 dark:border-foreground/10"
-                                    }`}
-                                placeholder="أضف وصف للمهمة..."
-                            />
-                            {errors.description && (
-                                <motion.p
-                                    initial={{ opacity: 0, y: -5 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    className="text-red-500 text-xs mt-1"
-                                >
-                                    {errors.description.message}
-                                </motion.p>
-                            )}
-                        </div>
-                    </div> */}
-
                     {/* Subtasks section */}
                     <div className="space-y-3">
                         <Label className="text-sm font-semibold text-slate-700 dark:text-foreground/70 flex items-center gap-2">
@@ -253,7 +217,7 @@ const TaskModal = ({
                                         initial={{ width: 0 }}
                                         animate={{
                                             width: `${(localTask.subtasks.filter((st) => st.done).length /
-                                                    localTask.subtasks.length) *
+                                                localTask.subtasks.length) *
                                                 100
                                                 }%`,
                                         }}

@@ -5,6 +5,7 @@ import { NextResponse } from "next/server";
 import {
   createTaskSchema,
   updateTaskSchema,
+  reorderTaskSchema,
 } from "@/lib/validators/tasks/tasks.validator";
 import {
   getAuthContext,
@@ -39,7 +40,7 @@ const ALLOWED_RANGES: Range[] = [
 
 // --- Handlers ---
 
-export const getAllTasksHandler = async (req: AuthenticatedRequest) => {
+export const getTaskWithFiltersHandler = async (req: AuthenticatedRequest) => {
   try {
     const { filter, range, fromParam, toParam, page, limit, skip } =
       parseTaskQueryParams(req.url);
@@ -138,6 +139,46 @@ export const getIncompleteTasksHandler = async (req: AuthenticatedRequest) => {
 
     const total = await Task.countDocuments(query);
     const tasks = await Task.find(query)
+      .sort({ order: -1 })
+      .skip(skip)
+      .limit(limit);
+
+    const totalPages = Math.ceil(total / limit);
+
+    return NextResponse.json({
+      success: true,
+      tasks: tasks.map(tasksResponse),
+      pagination: {
+        total,
+        page,
+        limit,
+        totalPages,
+        hasNextPage: page < totalPages,
+        hasPrevPage: page > 1,
+      },
+    });
+  } catch (error) {
+    return handleError(error);
+  }
+};
+export const getAllTasksHandler = async (req: AuthenticatedRequest) => {
+  try {
+    const { searchParams } = new URL(req.url);
+    const page = Math.max(1, Number(searchParams.get("page") ?? 1));
+    const limit = Math.min(
+      100,
+      Math.max(1, Number(searchParams.get("limit") ?? 20)),
+    );
+    const skip = (page - 1) * limit;
+
+    const { authId } = getAuthContext(req);
+
+    await connect();
+
+    const query = { ...authId };
+
+    const total = await Task.countDocuments(query);
+    const tasks = await Task.find(query)
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit);
@@ -220,60 +261,24 @@ export const createTaskHandler = async (req: AuthenticatedRequest) => {
 
     await connect();
 
-    const session = await Task.startSession();
+    const lastTask = await Task.findOne({ ...authId }).sort({ order: -1 });
 
-    try {
-      let createdTask;
+    const order = lastTask ? lastTask.order + 10000 : 10000;
 
-      await session.withTransaction(async () => {
-        // Find head task and create new task in a single transaction
-        const headTask = await Task.findOne(
-          {
-            ...authId,
-            completed: false,
-            prevTaskId: null,
-          },
-          null,
-          { session },
-        );
+    const task = await Task.create({
+      ...validationResult.data,
+      ...authId,
+      order,
+    });
 
-        const nextTaskId = headTask?._id ?? null;
-
-        // Create the new task
-        const [task] = await Task.create(
-          [
-            {
-              nextTaskId,
-              ...validationResult.data,
-              ...authId,
-            },
-          ],
-          { session },
-        );
-
-        // Update the old head task's prevTaskId if it exists
-        if (headTask) {
-          await Task.updateOne(
-            { _id: headTask._id },
-            { $set: { prevTaskId: task._id } },
-            { session },
-          );
-        }
-
-        createdTask = task;
-      });
-
-      return NextResponse.json(
-        {
-          success: true,
-          message: "تم إنشاء المهمة بنجاح",
-          task: tasksResponse(createdTask!),
-        },
-        { status: 201 },
-      );
-    } finally {
-      await session.endSession();
-    }
+    return NextResponse.json(
+      {
+        success: true,
+        message: "تم إنشاء المهمة بنجاح",
+        task: tasksResponse(task),
+      },
+      { status: 201 },
+    );
   } catch (error) {
     return handleError(error);
   }
@@ -285,7 +290,7 @@ export const updateTaskHandler = async (
 ) => {
   try {
     const { id } = await context!.params;
-    const { userId, guestId } = getAuthContext(req);
+    const { authId } = getAuthContext(req);
 
     const body = await req.json();
     const validationResult = updateTaskSchema.safeParse(body);
@@ -304,48 +309,30 @@ export const updateTaskHandler = async (
     await connect();
 
     const task = await Task.findById(id);
-    const verification = verifyTaskOwnership(task, userId, guestId, "update");
+    const verification = verifyTaskOwnership(task, authId, "update");
     if (verification.error) return verification.error;
-
-    const taskStatus = task?.completed;
-    let updatedTask;
-
     const updateData = validationResult.data;
-
-    if (taskStatus !== updateData.completed) {
+    if (task?.completed !== updateData.completed) {
       if (updateData.completed) {
-        updatedTask = await Task.findByIdAndUpdate(
-          id,
-          {
-            $set: {
-              ...updateData,
-              completedAt: new Date(),
-              prevTaskId: null,
-              nextTaskId: null,
-            },
-          },
-          { new: true, runValidators: true },
-        );
+        updateData.completedAt = new Date();
       } else {
-        updatedTask = await Task.findByIdAndUpdate(
-          id,
-          { $set: { ...updateData, completedAt: null } },
-          { new: true, runValidators: true },
-        );
+        const lastTask = await Task.findOne({ ...authId }).sort({ order: -1 });
+        const order = lastTask ? lastTask.order + 10000 : 10000;
+        updateData.order = order;
+        updateData.completedAt = null;
       }
-    } else {
-      updatedTask = await Task.findByIdAndUpdate(
-        id,
-        { $set: updateData },
-        { new: true, runValidators: true },
-      );
     }
+    const taskUpdate = await Task.findByIdAndUpdate(
+      id,
+      { $set: { ...updateData } },
+      { new: true, runValidators: true },
+    );
 
     return NextResponse.json(
       {
         success: true,
         message: "تم تحديث المهمة بنجاح",
-        task: tasksResponse(updatedTask),
+        task: tasksResponse(taskUpdate),
       },
       { status: 200 },
     );
@@ -360,32 +347,21 @@ export const deleteTaskHandler = async (
 ) => {
   try {
     const { id } = await context!.params;
-    const { userId, guestId } = getAuthContext(req);
+    const { authId } = getAuthContext(req);
 
     await connect();
 
     const task = await Task.findById(id);
-    const verification = verifyTaskOwnership(task, userId, guestId, "delete");
+    const verification = verifyTaskOwnership(task, authId, "delete");
     if (verification.error) return verification.error;
     const deletedTask = await Task.findByIdAndDelete(id);
-    if (!deletedTask)
-      return NextResponse.json(
-        { success: false, message: "لم يتم العثور على المهمة" },
-        { status: 404 },
-      );
-    if (deletedTask.prevTaskId) {
-      await Task.findByIdAndUpdate(deletedTask.prevTaskId, {
-        nextTaskId: deletedTask.nextTaskId,
-      });
-    }
-    if (deletedTask.nextTaskId) {
-      await Task.findByIdAndUpdate(deletedTask.nextTaskId, {
-        prevTaskId: deletedTask.prevTaskId,
-      });
-    }
 
     return NextResponse.json(
-      { success: true, message: "تم حذف المهمة بنجاح" },
+      {
+        success: true,
+        message: "تم حذف المهمة بنجاح",
+        task: tasksResponse(deletedTask),
+      },
       { status: 200 },
     );
   } catch (error) {
@@ -399,12 +375,12 @@ export const getSingleTask = async (
 ) => {
   try {
     const { id } = await context!.params;
-    const { userId, guestId } = getAuthContext(req);
+    const { authId } = getAuthContext(req);
 
     await connect();
 
     const task = await Task.findById(id);
-    const verification = verifyTaskOwnership(task, userId, guestId, "access");
+    const verification = verifyTaskOwnership(task, authId, "access");
     if (verification.error) return verification.error;
 
     return NextResponse.json(
@@ -426,137 +402,60 @@ export const reorderTaskHandler = async (
 ) => {
   try {
     const { id } = await context!.params;
-    const currentTaskId = id;
-    const { newPrevTaskId, newNextTaskId } = await req.json();
+    const { authId } = getAuthContext(req);
 
-    const { userId, guestId } = getAuthContext(req);
+    const body = await req.json();
+    const validationResult = reorderTaskSchema.safeParse(body);
+
+    if (!validationResult.success) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: "البيانات المدخلة غير صحيحة",
+          errors: validationResult.error.flatten().fieldErrors,
+        },
+        { status: 400 },
+      );
+    }
+
+    const { prevOrder, nextOrder } = validationResult.data;
 
     await connect();
 
-    const task = await Task.findById(currentTaskId);
-    if (!task)
-      return NextResponse.json(
-        { success: false, message: "لم يتم العثور على المهمة" },
-        { status: 404 },
-      );
-
-    const verification = verifyTaskOwnership(task, userId, guestId, "reorder");
+    const task = await Task.findById(id);
+    const verification = verifyTaskOwnership(task, authId, "reorder");
     if (verification.error) return verification.error;
 
-    // Early return if position hasn't changed
-    if (
-      task.prevTaskId === newPrevTaskId &&
-      task.nextTaskId === newNextTaskId
-    ) {
-      return NextResponse.json(
-        {
-          success: true,
-          message: "تم إعادة الترتيب بنجاح",
-          task: tasksResponse(task),
-        },
-        { status: 200 },
-      );
+    // Calculate new order based on neighbors
+    let newOrder: number;
+    if (prevOrder !== null && nextOrder !== null) {
+      // Insert between two tasks: use midpoint
+      newOrder = (prevOrder + nextOrder) / 2;
+    } else if (nextOrder !== null) {
+      // Insert at end (after prevTask)
+      newOrder = nextOrder + 10000;
+    } else if (prevOrder !== null) {
+      // Insert at beginning (before nextTask)
+      newOrder = prevOrder / 2;
+    } else {
+      // Only task in the list
+      newOrder = 10000;
     }
 
-    // Fetch neighbor tasks and verify they exist
-    const prevTask = newPrevTaskId ? await Task.findById(newPrevTaskId) : null;
-    const nextTask = newNextTaskId ? await Task.findById(newNextTaskId) : null;
+    const updatedTask = await Task.findByIdAndUpdate(
+      id,
+      { $set: { order: newOrder } },
+      { new: true },
+    );
 
-    if (newPrevTaskId && !prevTask) {
-      return NextResponse.json(
-        {
-          success: false,
-          message: "المهمة السابقة غير موجودة",
-        },
-        { status: 400 },
-      );
-    }
-
-    if (newNextTaskId && !nextTask) {
-      return NextResponse.json(
-        {
-          success: false,
-          message: "المهمة التالية غير موجودة",
-        },
-        { status: 400 },
-      );
-    }
-
-    const session = await Task.startSession();
-
-    try {
-      await session.withTransaction(async () => {
-        // Build all updates as a single bulkWrite operation
-        const bulkOps = [];
-
-        // Step 1: Remove from old position
-        if (task.prevTaskId) {
-          bulkOps.push({
-            updateOne: {
-              filter: { _id: task.prevTaskId },
-              update: { $set: { nextTaskId: task.nextTaskId } },
-            },
-          });
-        }
-
-        if (task.nextTaskId) {
-          bulkOps.push({
-            updateOne: {
-              filter: { _id: task.nextTaskId },
-              update: { $set: { prevTaskId: task.prevTaskId } },
-            },
-          });
-        }
-
-        // Step 2: Insert in new position - update current task
-        bulkOps.push({
-          updateOne: {
-            filter: { _id: currentTaskId },
-            update: {
-              $set: {
-                prevTaskId: newPrevTaskId || null,
-                nextTaskId: newNextTaskId || null,
-              },
-            },
-          },
-        });
-
-        // Update new neighbors
-        if (newPrevTaskId) {
-          bulkOps.push({
-            updateOne: {
-              filter: { _id: newPrevTaskId },
-              update: { $set: { nextTaskId: currentTaskId } },
-            },
-          });
-        }
-
-        if (newNextTaskId) {
-          bulkOps.push({
-            updateOne: {
-              filter: { _id: newNextTaskId },
-              update: { $set: { prevTaskId: currentTaskId } },
-            },
-          });
-        }
-
-        // Execute all operations in a single round-trip
-        await Task.bulkWrite(bulkOps, { session });
-      });
-
-      const updatedTask = await Task.findById(currentTaskId);
-
-      return NextResponse.json(
-        {
-          success: true,
-          message: "تم إعادة ترتيب المهمة بنجاح",
-          task: tasksResponse(updatedTask),
-        },
-        { status: 200 },
-      );
-    } finally {
-      await session.endSession();
-    }
+    return NextResponse.json(
+      {
+        success: true,
+        message: "تم إعادة ترتيب المهمة بنجاح",
+        task: tasksResponse(updatedTask),
+      },
+      { status: 200 },
+    );
   } catch (error) {
     return handleError(error);
   }

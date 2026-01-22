@@ -19,7 +19,7 @@ const useTasksActions = () => {
   );
   // const { homeTaskFilter } = useSelector((state: RootState) => state.Settings);
   const fetchAllTasks = useCallback(() => {
-    dispatch(getAllTasks());
+    dispatch(getAllTasks({ page: 1, limit: 100 }));
   }, [dispatch]);
 
   const createTask = async (task: ITask) => {

@@ -9,10 +9,10 @@ import TasksHeader from "./TasksHeader";
 import CreateTaskForm from "./CreateTaskForm";
 
 const UserTasks = () => {
-  const { fetchAllTasks } = useTasksActions();
+  const { fetchAllTasks, hasFetched } = useTasksActions();
   const fetchRef = useRef(false);
   useEffect(() => {
-    if (!fetchRef.current) {
+    if (!hasFetched) {
       fetchAllTasks();
     }
     fetchRef.current = true;
@@ -23,7 +23,7 @@ const UserTasks = () => {
     <div className="w-full space-y-6 max-w-[700px]">
       <TasksHeader />
       <CreateTaskForm />
-      <RenderTasks />
+      <RenderTasks isDraggable />
     </div>
   );
 };

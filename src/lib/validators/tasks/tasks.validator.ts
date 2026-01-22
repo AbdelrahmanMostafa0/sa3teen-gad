@@ -13,6 +13,8 @@ export const createTaskSchema = z.object({
     .optional()
     .default([]),
   completed: z.boolean().optional().default(false),
+  completedAt: z.date().optional().nullable(),
+  order: z.number().optional(),
 });
 
 export const updateTaskSchema = z.object({
@@ -31,4 +33,11 @@ export const updateTaskSchema = z.object({
     )
     .optional(),
   completed: z.boolean().optional(),
+  completedAt: z.date().optional().nullable(),
+  order: z.number().optional(),
+});
+
+export const reorderTaskSchema = z.object({
+  prevOrder: z.number().nullable(),
+  nextOrder: z.number().nullable(),
 });

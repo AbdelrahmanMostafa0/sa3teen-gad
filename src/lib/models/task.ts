@@ -30,20 +30,15 @@ const TaskSchema = new Schema<ITask>(
       type: [SubtaskSchema],
       default: [],
     },
-    prevTaskId: {
-      type: String,
-      index: true,
-      default: null,
-    },
-    nextTaskId: {
-      type: String,
-      index: true,
-      default: null,
-    },
     userId: {
       type: String,
       index: true,
       default: null,
+    },
+    order: {
+      type: Number,
+      required: true,
+      index: true,
     },
     guestId: {
       type: String,
@@ -72,6 +67,7 @@ export const tasksResponse = (task: ITask) => ({
   subtasks: task.subtasks,
   prevTaskId: task.prevTaskId,
   nextTaskId: task.nextTaskId,
+  order: task.order,
   completed: task.completed,
   completedAt: task.completedAt,
   createdAt: task.createdAt,

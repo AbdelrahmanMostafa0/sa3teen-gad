@@ -1,27 +1,35 @@
 "use client";
 
-import detectStartingLang from "@/utils/detectLang";
 import { ITask } from "@/types/tasks";
-import { TbCheck } from "react-icons/tb";
+import { TbCheck, TbGripVertical } from "react-icons/tb";
 import useTasksActions from "@/hooks/useTasksActions";
 import useTaskCardLogic from "@/hooks/useTaskCardLogic";
 import TaskModal from "./TaskModal";
 import { motion, AnimatePresence } from "motion/react";
-
 import { useEffect, useState } from "react";
 
-const TaskCard = ({ task }: { task: ITask }) => {
+interface DragHandleProps {
+  attributes: Record<string, any>;
+  listeners?: Record<string, any>;
+}
+
+interface TaskCardProps {
+  task: ITask;
+  dragHandle?: DragHandleProps;
+}
+
+const TaskCard = ({ task, dragHandle }: TaskCardProps) => {
   const [checked, setChecked] = useState(task.completed);
   const { updateTask, deleteTask } = useTasksActions();
-  const taskId = task.id || (task as any)._id;
+  const taskId = task.id;
 
   const {
     isArabic,
     isOpen,
     handleModalToggle,
     taskCompleted,
-
   } = useTaskCardLogic(task);
+
   const handleCheckboxClick = (checked: boolean) => {
     if (!taskId) {
       console.error("Task ID is missing");
@@ -30,6 +38,7 @@ const TaskCard = ({ task }: { task: ITask }) => {
     setChecked(checked);
     updateTask(taskId, { completed: checked });
   };
+
   useEffect(() => {
     setChecked(task.completed);
   }, [task.completed]);
@@ -45,6 +54,18 @@ const TaskCard = ({ task }: { task: ITask }) => {
         }`}
     >
       <div className="relative flex items-center justify-between gap-4">
+        {/* Drag Handle - Only shown when dragHandle prop is provided */}
+        {dragHandle && (
+          <button
+            type="button"
+            className="shrink-0 cursor-grab active:cursor-grabbing text-foreground/40 hover:text-foreground/70 transition-colors touch-none"
+            {...dragHandle.attributes}
+            {...dragHandle.listeners}
+          >
+            <TbGripVertical size={20} />
+          </button>
+        )}
+
         <button
           onClick={handleModalToggle}
           className={`text-lg font-semibold flex-1 w-full text-start transition-all duration-200 ${checked

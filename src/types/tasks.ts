@@ -22,6 +22,7 @@ export interface ITask {
   guestId?: string;
   description?: string;
   prevTaskId?: string;
+  order?: number;
   nextTaskId?: string;
   subtasks?: ISubtask[];
   userId?: string;
@@ -29,6 +30,14 @@ export interface ITask {
   createdAt?: Date | string;
   updatedAt?: Date | string;
   completedAt?: Date | string;
+}
+export interface PaginationData {
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+  hasNextPage: boolean;
+  hasPrevPage: boolean;
 }
 
 // export const  rangeType ="all_time"  as const "all_time" | "today" | "week" | "month";

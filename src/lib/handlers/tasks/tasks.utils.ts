@@ -18,8 +18,7 @@ export function handleError(error: any, message: string = "حدث خطأ ما") 
 // Verify Task Ownership
 export function verifyTaskOwnership(
   task: ITask | null | undefined,
-  userId?: string,
-  guestId?: string,
+  authId: { userId?: string; guestId?: string },
   action: string = "access",
 ) {
   if (!task) {
@@ -31,9 +30,9 @@ export function verifyTaskOwnership(
     };
   }
 
-  const isAuthorized = userId
-    ? task.userId === userId
-    : task.guestId === guestId;
+  const isAuthorized = authId.userId
+    ? task.userId === authId.userId
+    : task.guestId === authId.guestId;
 
   if (!isAuthorized) {
     let actionText = "الوصول إلى";

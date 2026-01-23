@@ -10,32 +10,9 @@ import SyncLocalstorageDataProvider from "@/providers/SyncLocalstorageDataProvid
 import Footer from "@/components/Footer";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import ServiceWorkerRegistration from "@/components/ServiceWorkerRegistration";
-export const metadata: Metadata = {
-  title: "ساعتين جد",
-  metadataBase: new URL("https://sa3teen-gad.vercel.app"),
-  description: "ساعتين شاى وكوباية جد وكله هيبقا تمام",
-  openGraph: {
-    title: "ساعتين جد",
-    description: "ساعتين شاى وكوباية جد وكله هيبقا تمام",
-    images: [
-      {
-        url: "https://sa3teen-gad.vercel.app/banners/readme-banner.png", // Full URL
-        width: 1200,
-        height: 630,
-        alt: "ساعتين جد - Pomodoro Timer & Prayer Times",
-      },
-    ],
-    locale: "ar_EG",
-    type: "website",
-    url: "https://sa3teen-gad.vercel.app", // Add this
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "ساعتين جد",
-    description: "ساعتين شاى وكوباية جد وكله هيبقا تمام",
-    images: ["https://sa3teen-gad.vercel.app/banners/readme-banner.png"], // Full URL
-  },
-};
+import { generateMetadata as generateSEOMetadata, generateWebApplicationStructuredData } from "@/utils/seo";
+
+export const metadata: Metadata = generateSEOMetadata();
 
 export default function RootLayout({
   children,
@@ -51,6 +28,12 @@ export default function RootLayout({
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
         <meta name="apple-mobile-web-app-title" content="ساعتين جد" />
         <link rel="apple-touch-icon" href="/icons/icon-192x192.png" />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(generateWebApplicationStructuredData()),
+          }}
+        />
       </head>
       <body
         dir="rtl"

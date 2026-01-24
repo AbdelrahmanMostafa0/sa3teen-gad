@@ -1,14 +1,19 @@
 import { ITask, PaginationData } from '@/types/tasks';
 import { useCallback, useEffect, useState } from 'react'
-import { getAllTasks, getCompletedTasks } from '@/services/tasksApis';
+import { getCompletedTasks } from '@/services/tasksApis';
 import { AnimatePresence, motion } from 'motion/react';
 import TaskCard from '../TaskCard';
 import TaskLoadingList from './TaskLoadingList';
 import { FiCheckCircle } from 'react-icons/fi';
 
-const CompletedTasks = () => {
+interface CompletedTasksProps {
+    createLoading?: boolean;
+}
+
+const CompletedTasks = ({ createLoading }: CompletedTasksProps) => {
+    const [loading, setLoading] = useState(false);
     const [tasks, setTasks] = useState<ITask[]>([]);
-    const [loading, setLoading] = useState(true);
+    const [hasFetched, setHasFetched] = useState(false);
     const [pagination, setPagination] = useState<PaginationData>({
         total: 0,
         page: 1,
@@ -17,6 +22,11 @@ const CompletedTasks = () => {
         hasNextPage: false,
         hasPrevPage: false,
     });
+
+    const onDelete = (id: string) => {
+        setTasks(tasks.filter((task) => task.id !== id));
+
+    }
     const fetchData = useCallback(async () => {
         setLoading(true);
         try {
@@ -26,24 +36,34 @@ const CompletedTasks = () => {
             });
             setTasks(response.tasks);
             setPagination(response.pagination);
+            setHasFetched(true);
             setLoading(false);
         } catch (err) {
             console.error(err);
             setLoading(false);
         }
-    }, [pagination.page, pagination.limit]);
+    }, [pagination.page, pagination.limit, setTasks]);
+
     useEffect(() => {
+        if (hasFetched) return;
+        if (loading) return;
         fetchData();
-    }, [fetchData]);
+    }, [fetchData, hasFetched, loading]);
     return (
         <div className="space-y-3 min-h-[300px]">
-            {loading ? (
+
+
+            {!hasFetched ? (
                 <TaskLoadingList />
             ) : (
                 <AnimatePresence mode="popLayout">
                     {tasks.length > 0 ? (
                         tasks.map((task) => (
-                            <TaskCard key={task.id} task={task} />
+                            <TaskCard
+                                key={task.id}
+                                task={task}
+                                onDelete={() => onDelete(task.id as string)}
+                            />
                         ))
                     ) : (
                         <motion.div

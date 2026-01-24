@@ -25,6 +25,7 @@ interface TaskModalProps {
     setIsOpen: () => void;
     updateTask: (id: string, changes: Partial<ITask>) => void;
     deleteTask: (id: string) => void;
+    onDelete?: () => void;
 }
 
 interface TaskFormData {
@@ -38,6 +39,7 @@ const TaskModal = ({
     setIsOpen,
     updateTask,
     deleteTask,
+    onDelete,
 }: TaskModalProps) => {
     const [localTask, setLocalTask] = useState<ITask>(task);
     const isArabic = detectStartingLang(localTask.title) === "arabic";
@@ -96,12 +98,13 @@ const TaskModal = ({
         setIsOpen();
     };
 
-    const handleDelete = () => {
+    const handleDelete = async () => {
         if (!taskId) {
             console.error("Task ID is missing");
             return;
         }
-        deleteTask(taskId);
+        await deleteTask(taskId);
+        if (onDelete) onDelete();
         setIsOpen();
     };
     useEffect(() => {

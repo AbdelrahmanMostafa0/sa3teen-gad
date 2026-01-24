@@ -1,91 +1,58 @@
-"use client"
+"use client";
 
 import { useEffect, useState } from "react";
+import { motion } from "motion/react";
 
 const LoadingScreen = () => {
-  const [fadeOut, setFadeOut] = useState(false);
+  const [exit, setExit] = useState(false);
 
   useEffect(() => {
-    // Start fade out after showing the animation for a while
+    // Trigger exit animation before the parent unmounts at 2000ms
     const timer = setTimeout(() => {
-      setFadeOut(true);
-    }, 1500); // 1.5 seconds to enjoy the animation
-
+      setExit(true);
+    }, 1500);
     return () => clearTimeout(timer);
   }, []);
 
   return (
-    <div
-      className={`fixed inset-0 z-50 flex items-center justify-center bg-background transition-opacity duration-500 ${
-        fadeOut ? "opacity-0 pointer-events-none" : "opacity-100"
-      }`}
+    <motion.div
+      initial={{ opacity: 1 }}
+      animate={{ opacity: exit ? 0 : 1 }}
+      transition={{ duration: 0.5, ease: "easeInOut" }}
+      className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-background text-foreground"
     >
-      <div className="flex flex-col items-center gap-8">
-        {/* Animated Clock Icon */}
-        <div className="relative">
-          {/* Subtle glow ring */}
-          <div className="absolute inset-0 rounded-full bg-foreground/10 blur-xl opacity-50 animate-pulse"></div>
-          
-          {/* Clock container */}
-          <div className="relative bg-foreground/5 backdrop-blur-sm rounded-full p-8 border border-foreground/10 shadow-lg animate-bounce">
-            {/* Clock face */}
-            <div className="w-20 h-20 rounded-full border-2 border-foreground/30 relative flex items-center justify-center">
-              {/* Clock center dot */}
-              <div className="absolute w-2 h-2 bg-foreground/60 rounded-full z-10"></div>
-              
-              {/* Hour hand */}
-              <div 
-                className="absolute w-1 h-6 bg-foreground/60 rounded-full origin-bottom"
-                style={{
-                  transform: "translateY(-50%) rotate(45deg)",
-                  animation: "spin 4s linear infinite"
-                }}
-              ></div>
-              
-              {/* Minute hand */}
-              <div 
-                className="absolute w-0.5 h-8 bg-foreground/50 rounded-full origin-bottom"
-                style={{
-                  transform: "translateY(-50%) rotate(90deg)",
-                  animation: "spin 2s linear infinite"
-                }}
-              ></div>
-              
-              {/* Clock marks */}
-              <div className="absolute top-0.5 left-1/2 w-0.5 h-1.5 bg-foreground/40 -translate-x-1/2"></div>
-              <div className="absolute bottom-0.5 left-1/2 w-0.5 h-1.5 bg-foreground/40 -translate-x-1/2"></div>
-              <div className="absolute left-0.5 top-1/2 w-1.5 h-0.5 bg-foreground/40 -translate-y-1/2"></div>
-              <div className="absolute right-0.5 top-1/2 w-1.5 h-0.5 bg-foreground/40 -translate-y-1/2"></div>
-            </div>
-          </div>
-        </div>
+      <div className="relative flex items-center justify-center mb-8">
+        {/* Outer rotating ring */}
+        <motion.div
+          animate={{ rotate: 360 }}
+          transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
+          className="w-24 h-24 rounded-full border border-foreground/10 border-t-primary border-r-primary/50"
+        />
 
-        {/* Loading text */}
-        <div className="flex flex-col items-center gap-3">
-          <h2 className="text-2xl font-medium text-foreground/80 animate-pulse">
-            جاري التحميل...
-          </h2>
-          
-          {/* Loading dots */}
-          <div className="flex gap-2">
-            <div className="w-2 h-2 bg-foreground/60 rounded-full animate-bounce" style={{ animationDelay: "0ms" }}></div>
-            <div className="w-2 h-2 bg-foreground/60 rounded-full animate-bounce" style={{ animationDelay: "150ms" }}></div>
-            <div className="w-2 h-2 bg-foreground/60 rounded-full animate-bounce" style={{ animationDelay: "300ms" }}></div>
-          </div>
-        </div>
+        {/* Inner reverse rotating ring */}
+        <motion.div
+          animate={{ rotate: -360 }}
+          transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
+          className="absolute w-16 h-16 rounded-full border border-foreground/10 border-b-primary/80"
+        />
+
+        {/* Center pulsing core */}
+        <motion.div
+          animate={{ scale: [1, 0.8, 1], opacity: [0.5, 1, 0.5] }}
+          transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute w-4 h-4 rounded-full bg-primary blur-[2px]"
+        />
       </div>
 
-      <style jsx>{`
-        @keyframes spin {
-          from {
-            transform: translateY(-50%) rotate(0deg);
-          }
-          to {
-            transform: translateY(-50%) rotate(360deg);
-          }
-        }
-      `}</style>
-    </div>
+      <motion.p
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: exit ? 0 : 1, y: exit ? -10 : 0 }}
+        transition={{ delay: 0.2, duration: 0.5 }}
+        className="text-sm font-medium tracking-[0.2em] text-muted-foreground uppercase"
+      >
+        جاري التحميل
+      </motion.p>
+    </motion.div>
   );
 };
 

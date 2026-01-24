@@ -2,7 +2,7 @@
 
 
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import axios from "axios";
 import TaskCard from "@/components/tasks/TaskCard";
 import TaskFilters, { FilterType } from "@/components/tasks/TaskFilters";
@@ -13,9 +13,10 @@ import { Button } from "@/components/ui/button";
 import CreateTaskForm from "./CreateTaskForm";
 import TaskPagination from "./render-tasks/TaskPagination";
 import TaskCardSkeleton from "./TaskCardSkeleton";
-import IncompletedTasks from "./render-tasks/IncompletedTasks";
-import AllTaks from "./render-tasks/AllTaks";
+import IncompletedTasks, { IncompletedTasksRef } from "./render-tasks/IncompletedTasks";
+import AllTaks, { AllTaksRef } from "./render-tasks/AllTaks";
 import CompletedTasks from "./render-tasks/CompletedTasks";
+import useTasksActions from "@/hooks/useTasksActions";
 
 interface PaginationData {
     total: number;
@@ -39,9 +40,12 @@ export default function TasksPage() {
         hasPrevPage: false,
     });
 
+    // Use Redux actions
+    const { createTask, deleteTask, updateTask, createPostLoading } = useTasksActions();
 
-
-
+    // Create refs for task list components
+    const allTasksRef = useRef<AllTaksRef>(null);
+    const incompletedTasksRef = useRef<IncompletedTasksRef>(null);
 
     const handlePageChange = (newPage: number) => {
         setPagination((prev) => ({ ...prev, page: newPage }));
@@ -55,13 +59,13 @@ export default function TasksPage() {
     const renderTaskCategory = useCallback(() => {
         switch (filter) {
             case "all":
-                return <AllTaks />;
+                return <AllTaks ref={allTasksRef} createLoading={createPostLoading} />;
             case "active":
-                return <IncompletedTasks />;
+                return <IncompletedTasks ref={incompletedTasksRef} createLoading={createPostLoading} />;
             case "completed":
-                return <CompletedTasks />;
+                return <CompletedTasks createLoading={createPostLoading} />;
         }
-    }, [filter]);
+    }, [filter, createPostLoading]);
     return (
         <div className="container max-w-4xl mx-auto py-8 px-4 min-h-screen">
             <div className="mb-8 flex items-end justify-between">
@@ -78,7 +82,15 @@ export default function TasksPage() {
                         <FiCheckCircle className="text-primary" />
                         إضافة مهمة جديدة
                     </h2>
-                    <CreateTaskForm onSuccess={renderTaskCategory} />
+                    <CreateTaskForm
+                        createTask={createTask}
+                        setLoading={(loading) => { }}
+                        onSuccess={(newTask) => {
+                            // Add the new task to both AllTasks and IncompletedTasks
+                            allTasksRef.current?.addTask(newTask);
+                            incompletedTasksRef.current?.addTask(newTask);
+                        }}
+                    />
                 </div>
 
                 {/* Filters & List Section */}

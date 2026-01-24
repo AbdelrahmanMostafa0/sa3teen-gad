@@ -9,6 +9,10 @@ import { Button } from "@/components/ui/button";
 import { FcGoogle } from "react-icons/fc";
 import { Loader2 } from "lucide-react";
 import { useUser } from "@/hooks/useUser";
+// import { getIncompleteTasks } from "@/services/tasksApis";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "@/store/store";
+import { getAllTasks } from "@/store/features/allTasksSlice";
 
 interface GoogleLoginButtonProps {
   onError?: (error: string) => void;
@@ -18,6 +22,7 @@ export default function GoogleLoginButton({ onError }: GoogleLoginButtonProps) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const { refetchUser } = useUser()
+  const dispatch = useDispatch<AppDispatch>();
   const login = useGoogleLogin({
     onSuccess: async (tokenResponse) => {
       setLoading(true);
@@ -31,6 +36,7 @@ export default function GoogleLoginButton({ onError }: GoogleLoginButtonProps) {
           router.push("/");
           router.refresh();
           refetchUser()
+          dispatch(getAllTasks({ page: 1 }));
         }
       } catch (error) {
         console.error("Google login error:", error);

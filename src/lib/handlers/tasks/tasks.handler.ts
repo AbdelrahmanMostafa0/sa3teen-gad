@@ -354,6 +354,7 @@ export const deleteTaskHandler = async (
     const task = await Task.findById(id);
     const verification = verifyTaskOwnership(task, authId, "delete");
     if (verification.error) return verification.error;
+
     const deletedTask = await Task.findByIdAndDelete(id);
 
     return NextResponse.json(

@@ -11,6 +11,7 @@ import Footer from "@/components/Footer";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import ServiceWorkerRegistration from "@/components/ServiceWorkerRegistration";
 import { generateMetadata as generateSEOMetadata, generateWebApplicationStructuredData } from "@/utils/seo";
+import LoadingWrapper from "@/providers/SyncLocalstorageDataProvider";
 
 export const metadata: Metadata = generateSEOMetadata();
 
@@ -50,7 +51,7 @@ export default function RootLayout({
               disableTransitionOnChange
               themes={["light", "dark", "black"]}
             >
-              <SyncLocalstorageDataProvider>
+              <LoadingWrapper>
                 <TimeProvider>
                   <Navbar />
                   <PrayerReminder />
@@ -58,7 +59,7 @@ export default function RootLayout({
                   {children}
                   <Footer />
                 </TimeProvider>
-              </SyncLocalstorageDataProvider>
+              </LoadingWrapper>
             </ThemeProvider>
           </ReduxProvider>
         </GoogleOAuthProvider>

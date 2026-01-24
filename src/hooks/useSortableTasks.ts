@@ -79,8 +79,29 @@ const useSortableTasks = ({
       nextOrder = reorderedTasks[newIndex + 1].order ?? null;
     }
 
-    // Optimistic update - immediately reflect the change in UI
-    setSortedTasks(reorderedTasks);
+    // Calculate new order based on neighbors (same logic as server)
+    let newOrder: number;
+    if (prevOrder !== null && nextOrder !== null) {
+      // Insert between two tasks: use midpoint
+      newOrder = (prevOrder + nextOrder) / 2;
+    } else if (nextOrder !== null) {
+      // Insert at end (after prevTask)
+      newOrder = nextOrder + 10000;
+    } else if (prevOrder !== null) {
+      // Insert at beginning (before nextTask)
+      newOrder = prevOrder / 2;
+    } else {
+      // Only task in the list
+      newOrder = 10000;
+    }
+
+    // Update the dragged task's order locally
+    const updatedTasks = reorderedTasks.map((task) =>
+      task.id === active.id ? { ...task, order: newOrder } : task,
+    );
+
+    // Optimistic update - immediately reflect the change in UI with updated order
+    setSortedTasks(updatedTasks);
     setOrderApiState("loading");
 
     try {

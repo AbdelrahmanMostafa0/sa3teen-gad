@@ -2,7 +2,7 @@ import { FiCheckCircle } from 'react-icons/fi'
 
 const NoTasks = () => {
     return (
-        <div className="text-center py-16 px-4 border-2 border-dashed border-foreground/10">
+        <div className="text-center py-16 px-4 border-2 border-dashed border-foreground/10 rounded-md">
             <div className="mb-4 flex justify-center">
                 <div className="p-4 rounded-full bg-foreground/5">
                     <FiCheckCircle className="text-5xl text-foreground/30" />

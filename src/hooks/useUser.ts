@@ -7,6 +7,7 @@ import { updateProfile } from "@/services/profile";
 import Cookies from "js-cookie";
 import { updateSettings } from "@/store/features/settingsSlice";
 import { IUser } from "@/types/user";
+import { resetAllTasks } from "@/store/features/allTasksSlice";
 
 export const useUser = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -36,6 +37,9 @@ export const useUser = () => {
   }, [userType]);
   const handleLogout = () => {
     dispatch(logout());
+    Cookies.remove("token");
+    Cookies.remove("guestId");
+    dispatch(resetAllTasks());
     router.push("/login");
   };
 

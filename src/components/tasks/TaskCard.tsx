@@ -16,9 +16,10 @@ interface DragHandleProps {
 interface TaskCardProps {
   task: ITask;
   dragHandle?: DragHandleProps;
+  onDelete?: () => void;
 }
 
-const TaskCard = ({ task, dragHandle }: TaskCardProps) => {
+const TaskCard = ({ task, dragHandle, onDelete }: TaskCardProps) => {
   const [checked, setChecked] = useState(task.completed);
   const { updateTask, deleteTask } = useTasksActions();
   const taskId = task.id;
@@ -110,6 +111,7 @@ const TaskCard = ({ task, dragHandle }: TaskCardProps) => {
         setIsOpen={handleModalToggle}
         updateTask={updateTask}
         deleteTask={deleteTask}
+        onDelete={onDelete}
       />
     </motion.div>
   );

@@ -7,14 +7,19 @@ import { FaPlus } from "react-icons/fa6";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import detectStartingLang from "@/utils/detectLang";
-import useTasksActions from "@/hooks/useTasksActions";
+import { ITask } from "@/types/tasks";
 
 interface TaskFormData {
     title: string;
 }
 
-const CreateTaskForm = ({ onSuccess }: { onSuccess?: () => void }) => {
-    const { createTask } = useTasksActions();
+interface CreateTaskFormProps {
+    onSuccess?: (newTask: ITask) => void;
+    setLoading?: (loading: boolean) => void;
+    createTask?: (task: ITask) => Promise<any>;
+}
+
+const CreateTaskForm = ({ onSuccess, setLoading, createTask }: CreateTaskFormProps) => {
     const [inputDirection, setInputDirection] = useState<"rtl" | "ltr">("rtl");
 
     const {
@@ -42,12 +47,15 @@ const CreateTaskForm = ({ onSuccess }: { onSuccess?: () => void }) => {
             setInputDirection("ltr");
         }
     }, [titleValue]);
-    const onSubmit = (data: TaskFormData) => {
-        if (data.title.trim()) {
-            createTask({ title: data.title.trim() });
-            if (onSuccess) onSuccess();
+
+    const onSubmit = async (data: TaskFormData) => {
+        if (data.title.trim() && createTask) {
+            setLoading?.(true);
+            const newTask = await createTask({ title: data.title.trim() } as ITask);
+            if (onSuccess && newTask) onSuccess(newTask);
             reset();
             setInputDirection("rtl");
+            setLoading?.(false);
         }
     };
 

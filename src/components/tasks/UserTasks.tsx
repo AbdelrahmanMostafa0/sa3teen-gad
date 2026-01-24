@@ -7,9 +7,11 @@ import useTasksActions from "@/hooks/useTasksActions";
 import RenderTasks from "./RenderTasks";
 import TasksHeader from "./TasksHeader";
 import CreateTaskForm from "./CreateTaskForm";
+import { useState } from "react";
 
 const UserTasks = () => {
   const { fetchAllTasks, hasFetched } = useTasksActions();
+  const [loading, setLoading] = useState(false);
   const fetchRef = useRef(false);
   useEffect(() => {
     if (!hasFetched) {
@@ -22,8 +24,8 @@ const UserTasks = () => {
   return (
     <div className="w-full space-y-6 max-w-[700px]">
       <TasksHeader />
-      <CreateTaskForm />
-      <RenderTasks isDraggable />
+      <CreateTaskForm setLoading={setLoading} />
+      <RenderTasks taskLoading={loading} isDraggable />
     </div>
   );
 };

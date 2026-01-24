@@ -18,6 +18,9 @@ import { login } from "@/lib/auth";
 import { Loader2 } from "lucide-react";
 import GoogleLoginButton from "@/components/auth/GoogleLoginButton";
 import { useUser } from "@/hooks/useUser";
+import { getAllTasks } from "@/store/features/allTasksSlice";
+import { AppDispatch } from "@/store/store";
+import { useDispatch } from "react-redux";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -29,6 +32,8 @@ export default function LoginPage() {
     email: "",
     password: "",
   });
+
+  const dispatch = useDispatch<AppDispatch>();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -42,6 +47,8 @@ export default function LoginPage() {
       refetchUser();
       router.push("/");
       router.refresh();
+      dispatch(getAllTasks({ page: 1 }));
+
     } else {
       if (result.errors) {
         setFieldErrors(result.errors);

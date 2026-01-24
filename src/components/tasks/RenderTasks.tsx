@@ -13,10 +13,12 @@ import {
 
 interface RenderTasksProps {
     isDraggable?: boolean;
+    taskLoading?: boolean;
 }
 
-const RenderTasks = ({ isDraggable = false }: RenderTasksProps) => {
-    const { tasks, loading, hasFetched, createPostLoading } = useTasksActions();
+const RenderTasks = ({ isDraggable = false, taskLoading }: RenderTasksProps) => {
+    const { tasks, hasFetched } = useTasksActions();
+
     const {
         sortedTasks,
         sensors,
@@ -25,9 +27,9 @@ const RenderTasks = ({ isDraggable = false }: RenderTasksProps) => {
 
     return (
         <div className="space-y-3">
-            {createPostLoading && <TaskCardSkeleton />}
+            {taskLoading && <TaskCardSkeleton />}
 
-            {!hasFetched && loading ? (
+            {!hasFetched ? (
                 <>
                     <TaskCardSkeleton />
                     <TaskCardSkeleton />

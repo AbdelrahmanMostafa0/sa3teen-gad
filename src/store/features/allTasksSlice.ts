@@ -79,14 +79,23 @@ const allTasksSlice = createSlice({
       state.error = action.payload;
     },
     removeTask: (state, action: { payload: string }) => {
-      console.log(
-        "[allTasksSlice] removeTask reducer called for id:",
-        action.payload,
-      );
       state.tasks = state.tasks.filter(
         (task) =>
           task.id !== action.payload && (task as any)._id !== action.payload,
       );
+    },
+    resetAllTasks: (state) => {
+      state.tasks = [];
+      state.pagination = {
+        total: 0,
+        limit: 0,
+        page: 0,
+        totalPages: 0,
+        hasNextPage: false,
+        hasPrevPage: false,
+      };
+      state.range = "all_time";
+      state.hasFetched = false;
     },
   },
   extraReducers: (builder) => {
@@ -153,6 +162,6 @@ const allTasksSlice = createSlice({
   },
 });
 
-export const { setTasks, setLoading, setError, removeTask } =
+export const { setTasks, setLoading, setError, removeTask, resetAllTasks } =
   allTasksSlice.actions;
 export default allTasksSlice.reducer;

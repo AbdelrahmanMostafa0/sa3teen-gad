@@ -1,14 +1,25 @@
 import { ITask, PaginationData } from '@/types/tasks';
-import { useCallback, useEffect, useState } from 'react'
-import { getAllTasks, getCompletedTasks, getIncompleteTasks } from '@/services/tasksApis';
+import { useCallback, useEffect, useState, useImperativeHandle, forwardRef } from 'react'
+import { getIncompleteTasks } from '@/services/tasksApis';
 import { AnimatePresence, motion } from 'motion/react';
 import TaskCard from '../TaskCard';
 import TaskLoadingList from './TaskLoadingList';
+import TaskCardSkeleton from '../TaskCardSkeleton';
 import { FiCheckCircle } from 'react-icons/fi';
+import useTasksActions from '@/hooks/useTasksActions';
 
-const IncompletedTasks = () => {
+interface IncompletedTasksProps {
+    createLoading?: boolean;
+}
+
+export interface IncompletedTasksRef {
+    addTask: (task: ITask) => void;
+}
+
+const IncompletedTasks = forwardRef<IncompletedTasksRef, IncompletedTasksProps>(({ createLoading }, ref) => {
     const [tasks, setTasks] = useState<ITask[]>([]);
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(false);
+    const [hasFetched, setHasFetched] = useState(false);
     const [pagination, setPagination] = useState<PaginationData>({
         total: 0,
         page: 1,
@@ -17,6 +28,20 @@ const IncompletedTasks = () => {
         hasNextPage: false,
         hasPrevPage: false,
     });
+
+    // const {  deleteTask } = useTasksActions();
+    const onDelete = (id: string) => {
+        setTasks(tasks.filter((task) => task.id !== id));
+    }
+
+    const addTask = useCallback((newTask: ITask) => {
+        setTasks(prevTasks => [newTask, ...prevTasks]);
+    }, []);
+
+    useImperativeHandle(ref, () => ({
+        addTask
+    }), [addTask]);
+
     const fetchData = useCallback(async () => {
         setLoading(true);
         try {
@@ -26,24 +51,34 @@ const IncompletedTasks = () => {
             });
             setTasks(response.tasks);
             setPagination(response.pagination);
+            setHasFetched(true);
             setLoading(false);
         } catch (err) {
             console.error(err);
             setLoading(false);
         }
-    }, [pagination.page, pagination.limit]);
+    }, [pagination.page, pagination.limit, setTasks]);
+
     useEffect(() => {
+        if (hasFetched) return;
+        if (loading) return;
         fetchData();
-    }, [fetchData]);
+    }, [fetchData, hasFetched, loading]);
     return (
         <div className="space-y-3 min-h-[300px]">
-            {loading ? (
+            {createLoading && <TaskCardSkeleton />}
+
+            {!hasFetched ? (
                 <TaskLoadingList />
             ) : (
                 <AnimatePresence mode="popLayout">
                     {tasks.length > 0 ? (
                         tasks.map((task) => (
-                            <TaskCard key={task.id} task={task} />
+                            <TaskCard
+                                key={task.id}
+                                task={task}
+                                onDelete={() => onDelete(task.id as string)}
+                            />
                         ))
                     ) : (
                         <motion.div
@@ -69,6 +104,8 @@ const IncompletedTasks = () => {
             )}
         </div>
     )
-}
+});
+
+IncompletedTasks.displayName = 'IncompletedTasks';
 
 export default IncompletedTasks

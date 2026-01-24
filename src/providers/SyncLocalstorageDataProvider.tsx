@@ -1,14 +1,12 @@
 "use client"
-import useSyncLocalStorageToRedux from "@/hooks/useSyncLocalStorageToRedux";
 import LoadingScreen from "@/components/LoadingScreen";
 import { useEffect, useState } from "react";
 import useUpdateSettings from "@/hooks/useUpdateSettings";
 
-const SyncLocalstorageDataProvider = ({ children }: { children: React.ReactNode }) => {
+const LoadingWrapper = ({ children }: { children: React.ReactNode }) => {
     const [isLoading, setIsLoading] = useState(true);
     const { getUserSettings, loading: settingLoading } = useUpdateSettings()
 
-    // const { isLoading } = useSyncLocalStorageToRedux();
     useEffect(() => {
 
         const timer = setTimeout(() => {
@@ -26,4 +24,4 @@ const SyncLocalstorageDataProvider = ({ children }: { children: React.ReactNode 
     return <>{children}</>;
 };
 
-export default SyncLocalstorageDataProvider;
+export default LoadingWrapper;

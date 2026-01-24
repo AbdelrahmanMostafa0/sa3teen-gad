@@ -4,8 +4,8 @@ import { Metadata } from "next";
 import { generateMetadata } from "@/utils/seo";
 
 export const metadata: Metadata = generateMetadata({
-  title: "ساعتين جد - مؤقت بومودورو وإدارة المهام",
-  description: "ساعتين شاى وكوباية جد وكله هيبقا تمام. مؤقت بومودورو، إدارة المهام، وأوقات الصلاة في تطبيق واحد",
+  title: "ساعتين جد",
+  description: "ساعتين شاى وكوباية جد وكله هيبقا تمام",
   path: "/",
 });
 export default function Home() {

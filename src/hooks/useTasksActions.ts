@@ -54,6 +54,7 @@ const useTasksActions = () => {
   };
 
   const deleteTask = (id: string) => {
+    dispatch(removeTask(id));
     dispatch(deleteTaskThunk(id));
   };
 
@@ -62,6 +63,7 @@ const useTasksActions = () => {
     createTask,
     updateTask,
     deleteTask,
+    setTasks: (tasks: ITask[]) => dispatch(setTasks(tasks)),
     loading,
     hasFetched,
     tasks,

@@ -34,7 +34,7 @@ const SettingsSchema = new Schema<ISettings>(
     },
 
     waterReminder: {
-      enabled: { type: Boolean, default: false },
+      enabled: { type: Boolean, default: true },
       interval: { type: Number, default: 15 },
     },
     homeTaskFilter: {
@@ -43,7 +43,7 @@ const SettingsSchema = new Schema<ISettings>(
       default: "week",
     },
     prayerReminder: {
-      enabled: { type: Boolean, default: false },
+      enabled: { type: Boolean, default: true },
       preReminderMinutes: { type: Number, default: 10 },
       preReminderEnabled: { type: Boolean, default: true },
       atTimeReminderEnabled: { type: Boolean, default: true },

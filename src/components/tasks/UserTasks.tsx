@@ -10,21 +10,19 @@ import CreateTaskForm from "./CreateTaskForm";
 import { useState } from "react";
 
 const UserTasks = () => {
-  const { fetchAllTasks, hasFetched } = useTasksActions();
+  const { fetchAllTasks, hasFetched, createTask } = useTasksActions();
   const [loading, setLoading] = useState(false);
-  const fetchRef = useRef(false);
   useEffect(() => {
     if (!hasFetched) {
       fetchAllTasks();
     }
-    fetchRef.current = true;
   }, [fetchAllTasks]);
 
 
   return (
     <div className="w-full space-y-6 max-w-[700px]">
       <TasksHeader />
-      <CreateTaskForm setLoading={setLoading} />
+      <CreateTaskForm setLoading={setLoading} createTask={createTask} />
       <RenderTasks taskLoading={loading} isDraggable />
     </div>
   );

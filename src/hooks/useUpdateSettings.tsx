@@ -11,7 +11,6 @@ import Cookies from "js-cookie";
 const useUpdateSettings = () => {
   const settings = useSelector((state: RootState) => state.Settings);
   const cookies = Cookies.get("guestID");
-  // console.log(cookies);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const dispatch = useDispatch<AppDispatch>();

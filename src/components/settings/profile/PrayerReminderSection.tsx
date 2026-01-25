@@ -63,7 +63,6 @@ export default function PrayerReminderSection({ onUpdate, loading }: PrayerRemin
         setIsEditing(true);
     };
     useEffect(() => {
-        // console.log(prayerReminder);
         setEnabled(prayerReminder.enabled);
         setPreReminderMinutes(prayerReminder.preReminderMinutes);
         setPreReminderEnabled(prayerReminder.preReminderEnabled);

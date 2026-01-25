@@ -21,6 +21,7 @@ import { useUser } from "@/hooks/useUser";
 import { getAllTasks } from "@/store/features/allTasksSlice";
 import { AppDispatch } from "@/store/store";
 import { useDispatch } from "react-redux";
+import useUpdateSettings from "@/hooks/useUpdateSettings";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -32,6 +33,7 @@ export default function LoginPage() {
     email: "",
     password: "",
   });
+  const { getUserSettings } = useUpdateSettings()
 
   const dispatch = useDispatch<AppDispatch>();
 
@@ -47,6 +49,7 @@ export default function LoginPage() {
       refetchUser();
       router.push("/");
       router.refresh();
+      getUserSettings()
       dispatch(getAllTasks({ page: 1 }));
 
     } else {

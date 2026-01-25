@@ -8,10 +8,13 @@ import Cookies from "js-cookie";
 import { updateSettings } from "@/store/features/settingsSlice";
 import { IUser } from "@/types/user";
 import { resetAllTasks } from "@/store/features/allTasksSlice";
+import useUpdateSettings from "./useUpdateSettings";
 
 export const useUser = () => {
   const dispatch = useDispatch<AppDispatch>();
   const router = useRouter();
+  const { getUserSettings } = useUpdateSettings();
+
   const {
     user,
     loading,
@@ -40,6 +43,7 @@ export const useUser = () => {
     Cookies.remove("token");
     Cookies.remove("guestId");
     dispatch(resetAllTasks());
+    getUserSettings();
     router.push("/login");
   };
 

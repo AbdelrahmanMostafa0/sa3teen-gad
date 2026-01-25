@@ -44,22 +44,14 @@ const useTasksPageActions = ({
 
   const deleteTask = useCallback(
     async (id: string) => {
-      console.log("[useTasksPageActions] deleteTask called with id:", id);
-
-      // Optimistic update - remove immediately from UI
       const previousTasks = tasks;
       const optimisticTasks = tasks.filter(
         (task) => task.id !== id && (task as any)._id !== id,
       );
       updateLocalTasks(optimisticTasks);
-
       try {
-        console.log("[useTasksPageActions] Calling deleteTaskApi with id:", id);
         await deleteTaskApi(id);
-        console.log("[useTasksPageActions] Delete successful");
       } catch (error) {
-        // Rollback on error
-        console.error("Error deleting task:", error);
         updateLocalTasks(previousTasks);
         throw error;
       }

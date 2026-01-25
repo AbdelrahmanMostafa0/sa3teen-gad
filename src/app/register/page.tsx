@@ -21,6 +21,7 @@ import { useUser } from "@/hooks/useUser";
 import { AppDispatch } from "@/store/store";
 import { useDispatch } from "react-redux";
 import { getAllTasks } from "@/store/features/allTasksSlice";
+import useUpdateSettings from "@/hooks/useUpdateSettings";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -28,6 +29,7 @@ export default function RegisterPage() {
   const [error, setError] = useState<string>("");
   const [fieldErrors, setFieldErrors] = useState<Record<string, string[]>>({});
   const { refetchUser } = useUser();
+  const { getUserSettings } = useUpdateSettings()
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
@@ -49,6 +51,7 @@ export default function RegisterPage() {
       router.push("/");
       router.refresh();
       dispatch(getAllTasks({ page: 1 }));
+      getUserSettings()
     } else {
       if (result.errors) {
         setFieldErrors(result.errors);

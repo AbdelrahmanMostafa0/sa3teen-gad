@@ -49,9 +49,7 @@ const CreateTaskForm = ({ onSuccess, setLoading, createTask }: CreateTaskFormPro
     }, [titleValue]);
 
     const onSubmit = async (data: TaskFormData) => {
-        console.log(data);
         if (data.title.trim() && createTask) {
-            console.log("createTask");
             setLoading?.(true);
             const newTask = await createTask({ title: data.title.trim() } as ITask);
             if (onSuccess && newTask) onSuccess(newTask);

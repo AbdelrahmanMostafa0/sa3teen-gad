@@ -12,7 +12,7 @@ export interface AuthenticatedRequest extends NextRequest {
 
 type AuthHandler<T> = (
   req: AuthenticatedRequest,
-  context?: T
+  context?: T,
 ) => Promise<NextResponse>;
 
 export default function authMiddleware<T>(handler: AuthHandler<T>) {
@@ -20,7 +20,6 @@ export default function authMiddleware<T>(handler: AuthHandler<T>) {
     const token = req.cookies.get("token")?.value;
     const guestId = req.cookies.get("guestId")?.value;
     const decoded = token ? verifyToken(token as string) : null;
-    console.log(guestId);
 
     const authenticatedReq = req as AuthenticatedRequest;
 

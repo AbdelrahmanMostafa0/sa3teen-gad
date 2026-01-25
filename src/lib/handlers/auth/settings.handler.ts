@@ -30,7 +30,6 @@ export async function updateSettings(req: AuthenticatedRequest) {
 
     const { userId, guestId } = req.user;
     const body = await req.json();
-    console.log("update guestId", guestId);
 
     delete body._id;
     delete body.userId;

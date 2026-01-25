@@ -9,7 +9,7 @@ export const getSettings = createAsyncThunk(
     const response = await getMySettings();
     const data = await response;
     return data;
-  }
+  },
 );
 const settingsSlice = createSlice({
   name: "settings",
@@ -50,14 +50,14 @@ const settingsSlice = createSlice({
     },
     toggleIndividualPrayerPreReminder: (
       state,
-      action: { payload: { prayer: PrayerName; enabled: boolean } }
+      action: { payload: { prayer: PrayerName; enabled: boolean } },
     ) => {
       const { prayer, enabled } = action.payload;
       state.prayerReminder.perPrayer[prayer].pre = enabled;
     },
     toggleIndividualPrayerAtTimeReminder: (
       state,
-      action: { payload: { prayer: PrayerName; enabled: boolean } }
+      action: { payload: { prayer: PrayerName; enabled: boolean } },
     ) => {
       const { prayer, enabled } = action.payload;
       state.prayerReminder.perPrayer[prayer].atTime = enabled;
@@ -65,7 +65,7 @@ const settingsSlice = createSlice({
     // Location reducers
     updateLocation: (
       state,
-      action: { payload: { country: string; city: string } }
+      action: { payload: { country: string; city: string } },
     ) => {
       state.location = action.payload;
     },
@@ -76,8 +76,6 @@ const settingsSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder.addCase(getSettings.fulfilled, (state, action) => {
-      console.log("action.payload", action.payload);
-
       return action.payload;
     });
   },

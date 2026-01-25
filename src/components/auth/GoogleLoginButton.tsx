@@ -13,6 +13,7 @@ import { useUser } from "@/hooks/useUser";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "@/store/store";
 import { getAllTasks } from "@/store/features/allTasksSlice";
+import useUpdateSettings from "@/hooks/useUpdateSettings";
 
 interface GoogleLoginButtonProps {
   onError?: (error: string) => void;
@@ -22,6 +23,7 @@ export default function GoogleLoginButton({ onError }: GoogleLoginButtonProps) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const { refetchUser } = useUser()
+  const { getUserSettings } = useUpdateSettings()
   const dispatch = useDispatch<AppDispatch>();
   const login = useGoogleLogin({
     onSuccess: async (tokenResponse) => {
@@ -36,6 +38,7 @@ export default function GoogleLoginButton({ onError }: GoogleLoginButtonProps) {
           router.push("/");
           router.refresh();
           refetchUser()
+          getUserSettings()
           dispatch(getAllTasks({ page: 1 }));
         }
       } catch (error) {

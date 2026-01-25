@@ -35,19 +35,9 @@ const useTasksActions = () => {
   };
 
   const updateTask = (id: string, changes: Partial<ITask>) => {
-    console.log(
-      "[useTasksActions] updateTask called with id:",
-      id,
-      "changes:",
-      changes,
-    );
     dispatch(updateTaskThunk({ id, changes }));
     if (changes.completed) {
       setTimeout(() => {
-        console.log(
-          "[useTasksActions] Timeout reached, dispatching removeTask for id:",
-          id,
-        );
         dispatch(removeTask(id));
       }, 1000);
     }

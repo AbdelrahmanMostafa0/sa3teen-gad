@@ -33,7 +33,6 @@ export default function TimerSettingsSection({
     setFocusDuration(timers.focusDurationTime);
     setShortBreak(timers.shortBreakDuration);
     setLongBreak(timers.longBreakDuration);
-    console.log(timers);
   }, [timers]);
   const handleSave = async () => {
     const updates: Partial<SettingsType["timers"]> = {

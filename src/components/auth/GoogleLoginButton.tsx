@@ -14,6 +14,7 @@ import { useDispatch } from "react-redux";
 import { AppDispatch } from "@/store/store";
 import { getAllTasks } from "@/store/features/allTasksSlice";
 import useUpdateSettings from "@/hooks/useUpdateSettings";
+import { loginWithGoogle } from "@/lib/auth";
 
 interface GoogleLoginButtonProps {
   onError?: (error: string) => void;
@@ -29,12 +30,9 @@ export default function GoogleLoginButton({ onError }: GoogleLoginButtonProps) {
     onSuccess: async (tokenResponse) => {
       setLoading(true);
       try {
-        const res = await axios.post("/api/auth/google", {
-          access_token: tokenResponse.access_token,
-        });
+        const res = await loginWithGoogle(tokenResponse.access_token);
 
-        if (res.data.success) {
-          Cookies.set("token", res.data.token);
+        if (res.success) {
           router.push("/");
           router.refresh();
           refetchUser()

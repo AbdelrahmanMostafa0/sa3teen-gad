@@ -8,11 +8,22 @@ import Timer from "./Timer";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/store/store";
 import { setActiveTab } from "@/store/features/timerSlice";
+import { useUser } from "@/hooks/useUser";
+import ChangePomoDialog from "./ChangePomoDialog";
 const Pomodoro = () => {
   const dispatch = useDispatch();
   const displayedTimer = useSelector((state: RootState) => state.Timer.activeTab);
-
+  const { type } = useSelector((state: RootState) => state.Pomodoro);
+  const [changeTo, setChangeTo] = useState<string>("");
+  const { isAuthenticated } = useUser();
+  const [ConfirmDialogOpen, setConfirmDialogOpen] = useState(false);
   const handleTabChange = (value: string) => {
+    if (isAuthenticated && type) {
+      setConfirmDialogOpen(true);
+      setChangeTo(value);
+
+      return;
+    }
     dispatch(setActiveTab(value as "focus" | "shortBreak" | "longBreak"));
   };
 
@@ -51,6 +62,7 @@ const Pomodoro = () => {
           <Timer type="shortBreak" />
         </TabsContent>
       </Tabs>
+      <ChangePomoDialog open={ConfirmDialogOpen} setIsOpen={setConfirmDialogOpen} changeTo={changeTo} />
     </div>
   );
 };

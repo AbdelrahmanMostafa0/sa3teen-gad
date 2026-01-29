@@ -17,8 +17,10 @@ export interface IPomodoroSession extends Document {
   completed: boolean;
   lastPing: Date;
   pauses: IPause[];
-  totalPausedTime: number; // in seconds
+  totalPausedTime: number; // in minutes
   notes?: string;
   createdAt: Date;
   updatedAt: Date;
+  isTerminated: boolean;
+  timeSpent: number; // in minutes
 }

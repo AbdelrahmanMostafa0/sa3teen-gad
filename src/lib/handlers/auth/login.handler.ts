@@ -25,7 +25,7 @@ export const loginHandler = async (req: NextRequest) => {
           message: "Validation failed",
           errors: validationResult.error.flatten().fieldErrors,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -42,7 +42,7 @@ export const loginHandler = async (req: NextRequest) => {
           success: false,
           message: "البريد الإلكتروني غير مسجل",
         },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -54,7 +54,7 @@ export const loginHandler = async (req: NextRequest) => {
           message:
             "هذا الحساب مسجل عن طريق جوجل. الرجاء استخدام تسجيل الدخول بجوجل",
         },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -67,7 +67,7 @@ export const loginHandler = async (req: NextRequest) => {
           success: false,
           message: "كلمة المرور غير صحيحة",
         },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -91,15 +91,26 @@ export const loginHandler = async (req: NextRequest) => {
       fullName: user.fullName,
     });
 
-    return NextResponse.json(
+    const response = NextResponse.json(
       {
         success: true,
         message: "مرحباً بعودتك!",
         user: userResponse,
-        token,
       },
-      { status: 200 }
+      { status: 200 },
     );
+
+    response.cookies.set({
+      name: "token",
+      value: token,
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      path: "/",
+      maxAge: 60 * 60 * 24 * 30,
+    });
+
+    return response;
   } catch (error) {
     console.error("Login error:", error);
 
@@ -108,7 +119,7 @@ export const loginHandler = async (req: NextRequest) => {
         success: false,
         message: "حدث خطأ ما. يرجى المحاولة لاحقاً",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 };

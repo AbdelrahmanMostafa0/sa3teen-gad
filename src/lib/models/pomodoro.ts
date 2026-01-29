@@ -23,6 +23,7 @@ const PomodoroSessionSchema = new Schema<IPomodoroSession>(
       type: String,
       enum: ["focus", "shortBreak", "longBreak"],
       required: true,
+      index: true,
     },
     duration: {
       type: Number,
@@ -40,6 +41,7 @@ const PomodoroSessionSchema = new Schema<IPomodoroSession>(
     completed: {
       type: Boolean,
       default: false,
+      index: true,
     },
     lastPing: {
       type: Date,
@@ -58,6 +60,14 @@ const PomodoroSessionSchema = new Schema<IPomodoroSession>(
       type: String,
       trim: true,
       maxlength: [500, "Notes cannot exceed 500 characters"],
+    },
+    isTerminated: {
+      type: Boolean,
+      default: false,
+    },
+    timeSpent: {
+      type: Number,
+      default: 0,
     },
   },
   {

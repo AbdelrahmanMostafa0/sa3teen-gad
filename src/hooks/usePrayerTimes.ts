@@ -26,7 +26,7 @@ export const PrayerNameMap: Record<PrayerTime["name"], string> = {
 const usePrayerTimes = () => {
   // const [prayerTimes, setPrayerTimes] = useState<PrayerTime[] | null>(null);
   const { city, country } = useSelector(
-    (state: RootState) => state.Settings.location
+    (state: RootState) => state.Settings.location,
   );
   const dispatch = useDispatch<AppDispatch>();
   const prayers = useSelector((state: RootState) => state.Prayers.prayerTimes);
@@ -34,7 +34,6 @@ const usePrayerTimes = () => {
   const settings = useSelector((state: RootState) => state.Settings);
   const profileCity = settings?.location?.city || city;
   const profileCountry = settings?.location?.country || country;
-  console.log("prayers", prayers);
   const fetchPrayerTimes = useCallback(async () => {
     // Don't fetch if location is not set
     let city = profileCity;

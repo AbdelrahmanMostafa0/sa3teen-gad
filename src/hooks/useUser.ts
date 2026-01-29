@@ -27,12 +27,10 @@ export const useUser = () => {
   const token = Cookies.get("token");
 
   useEffect(() => {
-    if (!hasFetched && !loading && token) {
+    if (!hasFetched && !loading) {
       dispatch(fetchUser());
-    } else {
-      dispatch(setStatus("failed"));
     }
-  }, [hasFetched, loading, dispatch, token]);
+  }, [hasFetched, loading, dispatch]);
   useEffect(() => {
     if (userType === "guest") {
       Cookies.get("guestId");

@@ -30,17 +30,13 @@ export interface AuthResponse {
 
 // Login with email and password
 export async function login(
-  credentials: LoginCredentials
+  credentials: LoginCredentials,
 ): Promise<AuthResponse> {
   try {
     const response = await axios.post<AuthResponse>(
       "/api/auth/login",
-      credentials
+      credentials,
     );
-
-    if (response.data.success && response.data.token) {
-      Cookies.set(TOKEN_KEY, response.data.token, { expires: 30 });
-    }
 
     return response.data;
   } catch (error: unknown) {
@@ -55,17 +51,13 @@ export async function login(
 
 // Register with email and password
 export async function register(
-  credentials: RegisterCredentials
+  credentials: RegisterCredentials,
 ): Promise<AuthResponse> {
   try {
     const response = await axios.post<AuthResponse>(
       "/api/auth/register",
-      credentials
+      credentials,
     );
-
-    if (response.data.success && response.data.token) {
-      Cookies.set(TOKEN_KEY, response.data.token, { expires: 30 });
-    }
 
     return response.data;
   } catch (error: unknown) {
@@ -80,16 +72,12 @@ export async function register(
 
 // Login with Google
 export async function loginWithGoogle(
-  access_token: string
+  access_token: string,
 ): Promise<AuthResponse> {
   try {
     const response = await axios.post<AuthResponse>("/api/auth/google", {
       access_token,
     });
-
-    if (response.data.success && response.data.token) {
-      Cookies.set(TOKEN_KEY, response.data.token, { expires: 30 });
-    }
 
     return response.data;
   } catch (error: unknown) {

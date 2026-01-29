@@ -15,7 +15,7 @@ export const googleHandler = async (req: NextRequest) => {
           success: false,
           message: "رمز الوصول مطلوب",
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -23,7 +23,7 @@ export const googleHandler = async (req: NextRequest) => {
       "https://www.googleapis.com/oauth2/v3/userinfo",
       {
         headers: { Authorization: `Bearer ${access_token}` },
-      }
+      },
     );
 
     if (!userInfoResponse.ok) {
@@ -32,7 +32,7 @@ export const googleHandler = async (req: NextRequest) => {
           success: false,
           message: "فشل التحقق من بيانات جوجل",
         },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -45,7 +45,7 @@ export const googleHandler = async (req: NextRequest) => {
           success: false,
           message: "البريد الإلكتروني غير متوفر من جوجل",
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -94,15 +94,26 @@ export const googleHandler = async (req: NextRequest) => {
       lastLoginAt: user.lastLoginAt,
     };
 
-    return NextResponse.json(
+    const response = NextResponse.json(
       {
         success: true,
-        message: "تم تسجيل الدخول بنجاح",
+        message: "مرحباً بعودتك!",
         user: userResponse,
-        token,
       },
-      { status: 200 }
+      { status: 200 },
     );
+
+    response.cookies.set({
+      name: "token",
+      value: token,
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      path: "/",
+      maxAge: 60 * 60 * 24 * 30,
+    });
+
+    return response;
   } catch (error) {
     console.error("Google auth error:", error);
     return NextResponse.json(
@@ -110,7 +121,7 @@ export const googleHandler = async (req: NextRequest) => {
         success: false,
         message: "حدث خطأ ما. يرجى المحاولة لاحقاً",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 };

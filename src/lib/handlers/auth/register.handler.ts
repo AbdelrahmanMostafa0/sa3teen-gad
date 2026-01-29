@@ -30,7 +30,7 @@ export const registerHandler = async (req: NextRequest) => {
           message: "البيانات المدخلة غير صحيحة",
           errors: validationResult.error.flatten().fieldErrors,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -48,7 +48,7 @@ export const registerHandler = async (req: NextRequest) => {
           success: false,
           message: "البريد الإلكتروني مسجل بالفعل",
         },
-        { status: 409 }
+        { status: 409 },
       );
     }
 
@@ -81,16 +81,26 @@ export const registerHandler = async (req: NextRequest) => {
       email: newUser.email,
       fullName: newUser.fullName,
     });
-
-    return NextResponse.json(
+    const response = NextResponse.json(
       {
         success: true,
-        message: "تم إنشاء الحساب بنجاح",
+        message: "مرحباً بعودتك!",
         user: userResponse,
-        token,
       },
-      { status: 201 }
+      { status: 200 },
     );
+
+    response.cookies.set({
+      name: "token",
+      value: token,
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      path: "/",
+      maxAge: 60 * 60 * 24 * 30,
+    });
+
+    return response;
   } catch (error) {
     console.error("Registration error:", error);
 
@@ -99,7 +109,7 @@ export const registerHandler = async (req: NextRequest) => {
         success: false,
         message: "حدث خطأ ما. يرجى المحاولة لاحقاً",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 };

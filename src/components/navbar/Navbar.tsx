@@ -80,19 +80,20 @@ const Navbar = () => {
 
       <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 border-t border-border/40 bg-background/95 backdrop-blur flex justify-around py-3">
         <Link
-          href="/tasks"
-          className="flex flex-col items-center text-primary hover:text-primary/80 transition-colors"
-        >
-          <FiCheckSquare className="w-6 h-6" />
-          <span className="text-xs mt-1">المهام</span>
-        </Link>
-        <Link
           href="/"
           className="flex flex-col items-center text-primary hover:text-primary/80 transition-colors"
         >
           <Home className="w-6 h-6" />
           <span className="text-xs mt-1">الرئيسية</span>
         </Link>
+        <Link
+          href="/tasks"
+          className="flex flex-col items-center text-primary hover:text-primary/80 transition-colors"
+        >
+          <FiCheckSquare className="w-6 h-6" />
+          <span className="text-xs mt-1">المهام</span>
+        </Link>
+
         <Link
           href="/settings"
           className="flex flex-col items-center text-primary hover:text-primary/80 transition-colors"

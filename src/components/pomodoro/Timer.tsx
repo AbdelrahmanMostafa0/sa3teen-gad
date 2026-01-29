@@ -17,7 +17,7 @@ const Timer = ({
   const { timers: { focusDurationTime, longBreakDuration, shortBreakDuration } } = useSelector((state: RootState) => state.Settings);
   const duration = type === "focus" ? focusDurationTime : type === "shortBreak" ? shortBreakDuration : longBreakDuration;
   const isBreak = type === "shortBreak" || type === "longBreak";
-  const { hasStarted, minutes, seconds, isActive, togglePomodoro, resetPomodoro } = usePomodoro({ specificMinutes: Number(duration), isBreak });
+  const { hasStarted, minutes, seconds, isActive, togglePomodoro, resetPomodoro } = usePomodoro({ specificMinutes: Number(duration), isBreak, type: type });
   const progress = useMemo(() => {
     const total = Number(duration) * 60;
     const remaining = Number(minutes) * 60 + Number(seconds);
@@ -89,7 +89,7 @@ const Timer = ({
         {/* RESET BUTTON */}
         {(hasStarted || isActive) && (
           <Button
-            onClick={resetPomodoro}
+            onClick={() => resetPomodoro({ finished: false })}
             variant="outline"
             size="icon"
             className="rounded-full w-14 h-14 shadow-md bg-white/30 hover:bg-white/40 backdrop-blur-md border-white/40"

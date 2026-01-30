@@ -6,6 +6,7 @@ import {
   resumePomodoroSession,
   terminatePomodoroSession,
   pingPomodoroSession,
+  getPomodoroStats,
 } from "@/services/pomodoro.service";
 // import {
 //   updateAutoSwitch,
@@ -20,6 +21,7 @@ import {
   resetPomodoroSession,
   resumePomodoro,
   setPomodoroSession,
+  setPomodoroStats,
 } from "@/store/features/pomodoroSlice";
 import { RootState } from "@/store/store";
 interface TimerProps {
@@ -171,18 +173,28 @@ function usePomodoro({
   const stopPomodoro = useCallback((): void => {
     setIsActive(false);
   }, []);
+  const getStats = useCallback(async () => {
+    if (isAuthenticated) {
+      const res = await getPomodoroStats();
+      dispatch(setPomodoroStats({ stats: res.data }));
+    }
+  }, [isAuthenticated, dispatch]);
+  useEffect(() => {
+    getStats();
+  }, [getStats]);
   const resetPomodoro = useCallback(
     async ({ finished = false }: { finished?: boolean }): Promise<void> => {
-      if (isAuthenticated && id && !finished) {
-        await terminatePomodoroSession(id);
-      }
       dispatch(resetPomodoroSession());
       setIsActive(false);
       setHasStarted(false);
       setFinished(false);
       setTimeLeft(specificMinutes * 60);
+      if (isAuthenticated && id && !finished) {
+        await terminatePomodoroSession(id);
+      }
+      await getStats();
     },
-    [specificMinutes, isAuthenticated, id, dispatch],
+    [specificMinutes, isAuthenticated, id, dispatch, getStats],
   );
   const finishSession = useCallback(async () => {
     if (isAuthenticated && id) {

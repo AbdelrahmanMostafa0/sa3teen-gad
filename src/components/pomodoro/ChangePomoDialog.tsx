@@ -1,19 +1,24 @@
-import React from 'react'
+import React, { useCallback } from 'react'
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '../ui/dialog'
 import { Button } from '../ui/button'
 import { setActiveTab } from '@/store/features/timerSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '@/store/store';
-import { terminatePomodoroSession } from '@/services/pomodoro.service';
-import { resetPomodoroSession } from '@/store/features/pomodoroSlice';
+import { getPomodoroStats, terminatePomodoroSession } from '@/services/pomodoro.service';
+import { resetPomodoroSession, setPomodoroStats } from '@/store/features/pomodoroSlice';
 
 const ChangePomoDialog = ({ changeTo, open, setIsOpen }: { changeTo: string, open: boolean, setIsOpen: (value: boolean) => void }) => {
     const dispatch = useDispatch<AppDispatch>();
     const { id } = useSelector((state: RootState) => state.Pomodoro);
+    const getStats = useCallback(async () => {
+        const res = await getPomodoroStats();
+        dispatch(setPomodoroStats({ stats: res.data }));
+    }, [dispatch]);
     const handleConfirm = async () => {
         dispatch(setActiveTab(changeTo as "focus" | "shortBreak" | "longBreak"));
-        await terminatePomodoroSession(id as string)
         dispatch(resetPomodoroSession())
+        await terminatePomodoroSession(id as string)
+        await getStats();
     };
 
     return (

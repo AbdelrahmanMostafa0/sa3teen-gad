@@ -615,3 +615,118 @@ export const terminatePomodoroHandler = async (
     );
   }
 };
+
+export const getTodayStatsHandler = async (req: AuthenticatedRequest) => {
+  try {
+    // Check if user is authenticated
+    if (!req.user.userId) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: "يجب تسجيل الدخول لعرض إحصائيات بومودورو",
+        },
+        { status: 401 },
+      );
+    }
+
+    await connect();
+
+    // Get the URL and extract query parameters
+    const url = new URL(req.url);
+    const typeFilter = url.searchParams.get("type");
+
+    // Validate type filter if provided
+    const validTypes = ["focus", "shortBreak", "longBreak"];
+    if (typeFilter && !validTypes.includes(typeFilter)) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: "نوع الجلسة غير صالح",
+          validTypes,
+        },
+        { status: 400 },
+      );
+    }
+
+    // Get start of today (midnight)
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    // Build the query
+    const query: {
+      userId: string;
+      completed: boolean;
+      startedAt: { $gte: Date };
+      type?: string;
+    } = {
+      userId: req.user.userId,
+      completed: true,
+      startedAt: { $gte: today },
+    };
+
+    // Add type filter if specified
+    if (typeFilter) {
+      query.type = typeFilter;
+    }
+
+    // Aggregate total time spent
+    const sessions = await PomodoroSession.find(query).select(
+      "type timeSpent duration",
+    );
+
+    // Calculate totals
+    let totalTimeSpent = 0;
+    const breakdown: Record<string, { count: number; timeSpent: number }> = {
+      focus: { count: 0, timeSpent: 0 },
+      shortBreak: { count: 0, timeSpent: 0 },
+      longBreak: { count: 0, timeSpent: 0 },
+    };
+
+    sessions.forEach((session) => {
+      totalTimeSpent += session.timeSpent || 0;
+      if (breakdown[session.type]) {
+        breakdown[session.type].count += 1;
+        breakdown[session.type].timeSpent += session.timeSpent || 0;
+      }
+    });
+
+    // Build response
+    const response: {
+      success: boolean;
+      message: string;
+      data: {
+        totalTimeSpent: number;
+        totalSessions: number;
+        date: string;
+        type?: string;
+        breakdown?: Record<string, { count: number; timeSpent: number }>;
+      };
+    } = {
+      success: true,
+      message: "تم جلب إحصائيات اليوم بنجاح",
+      data: {
+        totalTimeSpent, // in minutes
+        totalSessions: sessions.length,
+        date: today.toISOString().split("T")[0],
+      },
+    };
+
+    // Include breakdown only if no specific type filter was applied
+    if (typeFilter) {
+      response.data.type = typeFilter;
+    } else {
+      response.data.breakdown = breakdown;
+    }
+
+    return NextResponse.json(response, { status: 200 });
+  } catch (error) {
+    console.error("Error fetching today's Pomodoro stats:", error);
+    return NextResponse.json(
+      {
+        success: false,
+        message: "حدث خطأ أثناء جلب إحصائيات البومودورو",
+      },
+      { status: 500 },
+    );
+  }
+};

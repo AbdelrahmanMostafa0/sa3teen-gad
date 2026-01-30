@@ -1,12 +1,34 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { PomodoroType } from "@/types/pomodoro";
 
+interface PomodoroStats {
+  totalTimeSpent: number;
+  totalSessions: number;
+  date: string;
+
+  breakdown: {
+    focus: {
+      count: number;
+      timeSpent: number;
+    };
+    shortBreak: {
+      count: number;
+      timeSpent: number;
+    };
+    longBreak: {
+      count: number;
+      timeSpent: number;
+    };
+  };
+}
+
 interface PomodoroState {
   id: string | null;
   isRunning: boolean;
   isPaused: boolean;
   type: PomodoroType | null;
   duration: number; // Initial duration in minutes
+  stats: PomodoroStats;
 }
 
 const initialState: PomodoroState = {
@@ -15,6 +37,25 @@ const initialState: PomodoroState = {
   isPaused: false,
   type: null,
   duration: 0,
+  stats: {
+    totalTimeSpent: 0,
+    totalSessions: 0,
+    date: "",
+    breakdown: {
+      focus: {
+        count: 0,
+        timeSpent: 0,
+      },
+      shortBreak: {
+        count: 0,
+        timeSpent: 0,
+      },
+      longBreak: {
+        count: 0,
+        timeSpent: 0,
+      },
+    },
+  },
 };
 
 const pomodoroSlice = createSlice({
@@ -54,6 +95,12 @@ const pomodoroSlice = createSlice({
       state.type = null;
       state.duration = 0;
     },
+    setPomodoroStats: (
+      state,
+      action: PayloadAction<{ stats: PomodoroStats }>,
+    ) => {
+      state.stats = action.payload.stats;
+    },
   },
 });
 
@@ -63,6 +110,7 @@ export const {
   resumePomodoro,
   stopPomodoro,
   resetPomodoroSession,
+  setPomodoroStats,
 } = pomodoroSlice.actions;
 
 export default pomodoroSlice.reducer;

@@ -10,10 +10,24 @@ import { RootState } from "@/store/store";
 import { setActiveTab } from "@/store/features/timerSlice";
 import { useUser } from "@/hooks/useUser";
 import ChangePomoDialog from "./ChangePomoDialog";
+
+// Helper function to format minutes to readable time
+const formatTime = (minutes: number): string => {
+  if (minutes < 60) {
+    return `${minutes}د`;
+  }
+  const hours = Math.floor(minutes / 60);
+  const remainingMinutes = minutes % 60;
+  if (remainingMinutes === 0) {
+    return `${hours}س`;
+  }
+  return `${hours}س ${remainingMinutes}د`;
+};
+
 const Pomodoro = () => {
   const dispatch = useDispatch();
   const displayedTimer = useSelector((state: RootState) => state.Timer.activeTab);
-  const { type } = useSelector((state: RootState) => state.Pomodoro);
+  const { type, stats } = useSelector((state: RootState) => state.Pomodoro);
   const [changeTo, setChangeTo] = useState<string>("");
   const { isAuthenticated } = useUser();
   const [ConfirmDialogOpen, setConfirmDialogOpen] = useState(false);
@@ -50,6 +64,30 @@ const Pomodoro = () => {
           </TabsTrigger>
         </TabsList>
 
+        {/* Stats Section - Shows current tab's time */}
+        {isAuthenticated && stats?.breakdown && (
+          <div className="flex justify-center gap-2 mt-4 text-sm text-muted-foreground">
+            {displayedTimer === "focus" && (
+              <div className="flex items-center gap-1">
+                <Target size={14} />
+                <span>{formatTime(stats.breakdown.focus?.timeSpent || 0)}</span>
+              </div>
+            )}
+            {displayedTimer === "shortBreak" && (
+              <div className="flex items-center gap-1">
+                <Coffee size={14} />
+                <span>{formatTime(stats.breakdown.shortBreak?.timeSpent || 0)}</span>
+              </div>
+            )}
+            {displayedTimer === "longBreak" && (
+              <div className="flex items-center gap-1">
+                <RiZzzLine size={14} />
+                <span>{formatTime(stats.breakdown.longBreak?.timeSpent || 0)}</span>
+              </div>
+            )}
+          </div>
+        )}
+
         <TabsContent value="focus" className="mt-6 md:max-w-[400px] mx-auto">
           <Timer type="focus" />
         </TabsContent>
@@ -68,3 +106,5 @@ const Pomodoro = () => {
 };
 
 export default Pomodoro;
+
+

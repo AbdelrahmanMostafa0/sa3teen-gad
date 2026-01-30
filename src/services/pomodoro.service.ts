@@ -69,3 +69,14 @@ export const terminatePomodoroSession = async (sessionId: string) => {
     throw error;
   }
 };
+
+// Get Pomodoro stats
+export const getPomodoroStats = async () => {
+  try {
+    const response = await axios.get(`/api/pomodoro/stats/today`);
+    return response.data;
+  } catch (error) {
+    console.error("Error getting Pomodoro stats:", error);
+    throw error;
+  }
+};

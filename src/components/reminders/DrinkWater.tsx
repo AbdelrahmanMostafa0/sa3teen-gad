@@ -27,6 +27,9 @@ const DrinkWater = () => {
   }, [dispatch]);
 
   useEffect(() => {
+    // Check if Notification API is supported (not available on iOS Safari)
+    if (typeof Notification === "undefined") return;
+
     Notification.requestPermission().then((permission) => {
       if (permission === "granted" && enabled) {
         const interval = setInterval(() => {

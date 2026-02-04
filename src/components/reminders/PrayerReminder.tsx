@@ -22,8 +22,11 @@ const PrayerReminder = () => {
     audioRef.current = new Audio("/sound/prayer-reminder.mp3");
   }, []);
 
-  // Request notification permission once
+  // Request notification permission once (only if Notification API is available)
   useEffect(() => {
+    // Check if Notification API is supported (not available on iOS Safari)
+    if (typeof Notification === "undefined") return;
+
     if (prayerSettings.enabled) {
       Notification.requestPermission();
     }
@@ -61,7 +64,7 @@ const PrayerReminder = () => {
           setShowPopup(true);
           audioRef.current?.play();
 
-          if (Notification.permission === "granted") {
+          if (typeof Notification !== "undefined" && Notification.permission === "granted") {
             new Notification("🕌 تذكير بالصلاة", {
               body: `صلاة ${prayer.name} بعد ${prayerSettings.preReminderMinutes} دقيقة`,
               icon: "/prayer-icon.png",
@@ -80,7 +83,7 @@ const PrayerReminder = () => {
           setShowPopup(true);
           audioRef.current?.play();
 
-          if (Notification.permission === "granted") {
+          if (typeof Notification !== "undefined" && Notification.permission === "granted") {
             new Notification("🕌 وقت الصلاة", {
               body: `حان الآن وقت صلاة ${prayer.name}`,
               icon: "/prayer-icon.png",
